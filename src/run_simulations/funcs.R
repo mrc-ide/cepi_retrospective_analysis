@@ -47,19 +47,45 @@ implement_rt <- function(fit, Rt){
     } else if (Rt == "economic")
 }
 implement_vaccine <- function(fit, Vaccine){
-    if (Vaccine == "early") {
-        
-    } else if (Vaccine == "manufacturing"){
+    cepi_start_date <- as.Date("2020-04-20")
+    real_start_date <- as.Date("2020-12-08")
+    difference <- as.numeric(real_start_date - cepi_start_date)
 
-    } else if (Vaccine == "equity") {
-
+    if (Vaccine %in% c("early", "equity")) {
+        #staggered (but earlier) rollout
+        fit$interventions$date_vaccine_change <-
+            fit$interventions$date_vaccine_change - difference
+        fit$interventions$date_vaccine_efficacy <-
+            fit$interventions$date_vaccine_efficacy - difference
+        fit$pmcmc_results$inputs$interventions$date_vaccine_change <-
+            fit$pmcmc_results$inputs$interventions$date_vaccine_change -
+                difference
+        fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy <-
+            fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy -
+                difference
+        if (vaccine == "equity") {
+            #update final coverage to 40% by the end of the first year of vaccinations
+            #update rollout speed to be much quicker
+        }
+    } else if (vaccine == "manufacturing") {
+        #update to AZ or mRNA efficacy
+        #vaccination campaigns begin at the same time
+        #final coverage remains the same as before
     }
+
+    #generate a plot to show the differences between these
+
+
+
+    #currently no forwards adjustments to dose ratio or rates (we can take this from the real data?)
+    #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 implement_variant <- function(fit, Variant){
     if (Variant == "baseline") {
         fit
     } else if (Variant == "reduced") {
         #just set to delta shift to occur very far into the future
+        #instead of removing entirely we could just delay this?
         fit$interventions$delta_adjustments$start_date <-
             fit$pmcmc_results$inputs$pars_obs$delta_start_date <-
                 "3050-01-01"

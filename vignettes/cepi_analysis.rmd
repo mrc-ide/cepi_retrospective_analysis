@@ -1,0 +1,18 @@
+---
+title: "CEPI Retrospective Analysis"
+output: html_document
+date: "2023-02-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Get Vaccine Data
+
+This is used to extend the vaccine inputs in the old fits
+
+```{r cars}
+get_vaccine_data_id <- orderly::orderly_run("get_vaccine_data", echo = FALSE)
+orderly::orderly_commit(get_vaccine_data_id)
+```
