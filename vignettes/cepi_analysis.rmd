@@ -12,7 +12,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is used to extend the vaccine inputs in the old fits
 
-```{r cars}
+```{r vaccine_data}
+#this current does the latest version of this task, i.e. we don't really get dose_ratio
 get_vaccine_data_id <- orderly::orderly_run("get_vaccine_data", echo = FALSE)
 orderly::orderly_commit(get_vaccine_data_id)
+```
+
+
+```{r dev}
+orderly::orderly_develop_start("run_simulations", list(iso3c = "GBR", excess_mortality = TRUE))
+setwd(here::here("src", "run_simulations"))
 ```

@@ -30,10 +30,10 @@ describe_scenarios <- function(scenarios){
     )
 }
 #convert scenario codes and fit object into a list of simulations ready to run
-implement_scenarios <- function(fit, scenarios){
+implement_scenarios <- function(fit, scenarios, iso3c){
     pmap(scenarios, function(Rt, Vaccine, Variant, fit){
         #order matters since Rt can depend on vaccine coverage
-        fit <- implement_vaccine(fit, Vaccine)
+        fit <- implement_vaccine(fit, Vaccine, iso3c)
         fit <- implement_rt(fit, Rt)
         fit <- implement_variant(fit, Variant)
         fit
@@ -43,13 +43,33 @@ implement_rt <- function(fit, Rt){
     if (Rt == "baseline") {
         fit
     } else if (Rt == "target") {
-
-    } else if (Rt == "economic")
+        fit
+    } else if (Rt == "economic") {
+        fit
+    }
 }
-implement_vaccine <- function(fit, Vaccine){
+implement_vaccine <- function(fit, Vaccine, iso3c){
     cepi_start_date <- as.Date("2020-04-20")
     real_start_date <- as.Date("2020-12-08")
     difference <- as.numeric(real_start_date - cepi_start_date)
+    
+    #load extended vaccine inputs
+    vaccine_inputs <- readRDS("vacc_inputs.Rds")[[iso3c]]
+
+    #simply replace the old for now
+    fit$interventions$max_vaccine <- c(0, vaccine_inputs$primary_doses)
+    fit$interventions$date_vaccine_change <- vaccine_inputs$date_vaccine_change
+    #impute dose ratio (adjusting for waning)
+    waned <- cumsum(lag(vaccine_inputs$primary_doses, fit$parameters$dur_V, default = 0))
+    second_dose <- cumsum(lag(vaccine_inputs$primary_doses, vaccine_inputs$second_dose_delay, default = 0))
+    first_dose <- cumsum(vaccine_inputs$primary_doses)
+    fit$interventions$dose_ratio <-
+        fit$pmcmc_results$inputs$interventions$dose_ratio <-
+        (second_dose - waned)/
+            (first_dose - waned)
+    fit$interventions$date_vaccine_efficacy <-
+        fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy <-
+            vaccine_inputs$date_vaccine_change
 
     if (Vaccine %in% c("early", "equity")) {
         #staggered (but earlier) rollout
@@ -65,7 +85,16 @@ implement_vaccine <- function(fit, Vaccine){
                 difference
         if (vaccine == "equity") {
             #update final coverage to 40% by the end of the first year of vaccinations
+            pop <- sum(fit$parameters$population)
+            full_dose_coverage <- tail(
+                second_dose[vaccine_inputs$date_vaccine_change <= (real_start_date + 365)],
+                1
+            )
+            if (full_dose_coverage/pop < 0.4) {
+
+            }
             #update rollout speed to be much quicker
+
         }
     } else if (vaccine == "manufacturing") {
         #update to AZ or mRNA efficacy
@@ -77,7 +106,6 @@ implement_vaccine <- function(fit, Vaccine){
 
 
 
-    #currently no forwards adjustments to dose ratio or rates (we can take this from the real data?)
     #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 implement_variant <- function(fit, Variant){
