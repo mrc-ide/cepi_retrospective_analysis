@@ -48,64 +48,165 @@ implement_rt <- function(fit, Rt){
         fit
     }
 }
+calculate_true_uptake <- function(doses, eligible_pop, t_extension){
+    if(sum(doses) > eligible_pop){
+        i_exceeds_eligible <- min(which(cumsum(doses) >= eligible_pop)) - 1
+        actual_doses <- doses
+        actual_doses[(i_exceeds_eligible + 1):(t_extension + 2)] <- 0
+        actual_doses[i_exceeds_eligible] <- eligible_pop - sum(doses[1:i_exceeds_eligible])
+        actual_doses
+    } else {
+        doses
+    }
+    
+}
+generate_vaccination_curve <- function(coverage, dose_ratio, t_coverage, t_staging, t_extension, max_vaccinatable_pop, dur_V, date_start) {
+    #calculate first doses to meet coverage
+    daily_doses <- coverage/(t_coverage - t_staging + sum(seq(t_staging))/t_staging)
+    #setup first doses
+    first_doses <- rep(0, t_extension + 2)
+    first_doses[1:(t_staging + 1)] <- seq(0, t_staging) * daily_doses / t_staging
+    first_doses[(t_staging + 1):(t_extension + 2)] <- daily_doses
+
+    #how many does will actually be taken up
+    actual_doses <- calculate_true_uptake(first_doses, max_vaccinatable_pop, t_extension)
+    #could account for delay here
+    
+    #adjust for waning
+    waning <- lag(actual_doses, dur_V, default = 0) #could make this align with exponential dist
+    waned <- sum(waning[1:(t_coverage + 1)])
+
+    #derive dose ratio, assuming second doses occur at the same rate
+    #second_dose_delay <- t_coverage - t_staging + (sum(seq(t_staging))/t_staging) - dose_ratio * coverage / daily_doses
+    second_dose_delay <- round(t_coverage - t_staging + (sum(seq(t_staging))/t_staging) - ((dose_ratio * (coverage - waned) + waned) / daily_doses))
+
+    second_doses <- lag(first_doses, second_dose_delay, default = 0)
+    #how many does will actually be taken up
+    actual_doses_2 <- calculate_true_uptake(second_doses, max_vaccinatable_pop, t_extension)
+
+    dose_ratio <- (cumsum(actual_doses_2) - cumsum(waning))/(cumsum(actual_doses) - cumsum(waning))
+
+    tt <- seq(0, t_extension) + date_start
+
+    list(
+        tt = tt,
+        max_vaccine = first_doses,
+        dose_ratio = dose_ratio[-1]
+    )
+}
+update_fit_vaccinations <- function(fit, new_values){
+    fit$interventions$max_vaccine <-
+        fit$pmcmc_results$inputs$interventions$max_vaccine <-
+            new_values$max_vaccine
+    fit$interventions$dose_ratio <-
+        fit$pmcmc_results$inputs$interventions$dose_ratio <-
+            new_values$dose_ratio
+    fit$interventions$date_vaccine_change <-
+        fit$pmcmc_results$inputs$interventions$date_vaccine_change  <-
+            new_values$tt
+    fit$interventions$date_vaccine_efficacy <-
+        fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy <-
+            new_values$tt
+    fit
+}
 implement_vaccine <- function(fit, Vaccine, iso3c){
     cepi_start_date <- as.Date("2020-04-20")
     real_start_date <- as.Date("2020-12-08")
     difference <- as.numeric(real_start_date - cepi_start_date)
     
-    #load extended vaccine inputs
-    vaccine_inputs <- readRDS("vacc_inputs.Rds")[[iso3c]]
+    #get vaccine details
+    baseline_date <- as.Date("2021-12-08")
+    baseline_coverage <- sum(fit$interventions$max_vaccine)
+    baseline_dose_ratio <- tail(fit$interventions$dose_ratio, 1)
+    max_vaccinatable_pop <- sum(fit$parameters$population * fit$odin_parameters$vaccine_coverage_mat[fit$odin_parameters$N_prioritisation_steps, ])
+    dur_V <- fit$parameters$dur_V
+    baseline_date_start <- head(fit$interventions$date_vaccine_change, 1)
+    t_staging <- 60
 
-    #simply replace the old for now
-    fit$interventions$max_vaccine <- c(0, vaccine_inputs$primary_doses)
-    fit$interventions$date_vaccine_change <- vaccine_inputs$date_vaccine_change
-    #impute dose ratio (adjusting for waning)
-    waned <- cumsum(lag(vaccine_inputs$primary_doses, fit$parameters$dur_V, default = 0))
-    second_dose <- cumsum(lag(vaccine_inputs$primary_doses, vaccine_inputs$second_dose_delay, default = 0))
-    first_dose <- cumsum(vaccine_inputs$primary_doses)
-    fit$interventions$dose_ratio <-
-        fit$pmcmc_results$inputs$interventions$dose_ratio <-
-        (second_dose - waned)/
-            (first_dose - waned)
-    fit$interventions$date_vaccine_efficacy <-
-        fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy <-
-            vaccine_inputs$date_vaccine_change
-
-    if (Vaccine %in% c("early", "equity")) {
+    if (Vaccine == "early") {
         #staggered (but earlier) rollout
-        fit$interventions$date_vaccine_change <-
-            fit$interventions$date_vaccine_change - difference
-        fit$interventions$date_vaccine_efficacy <-
-            fit$interventions$date_vaccine_efficacy - difference
-        fit$pmcmc_results$inputs$interventions$date_vaccine_change <-
-            fit$pmcmc_results$inputs$interventions$date_vaccine_change -
-                difference
-        fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy <-
-            fit$pmcmc_results$inputs$interventions$date_vaccine_efficacy -
-                difference
-        if (vaccine == "equity") {
-            #update final coverage to 40% by the end of the first year of vaccinations
-            pop <- sum(fit$parameters$population)
-            full_dose_coverage <- tail(
-                second_dose[vaccine_inputs$date_vaccine_change <= (real_start_date + 365)],
-                1
-            )
-            if (full_dose_coverage/pop < 0.4) {
-
+        vaccination_start <- baseline_date_start - difference
+        t_coverage <- as.numeric(baseline_date - baseline_date_start)
+        t_extension <- as.numeric(baseline_date - vaccination_start)
+        return(update_fit_vaccinations(fit, generate_vaccination_curve(
+            baseline_coverage, baseline_dose_ratio, t_coverage, t_staging, t_extension, max_vaccinatable_pop, dur_V, vaccination_start
+        )))
+    } else if (Vaccine == "equity") {
+        #staggered (but earlier) rollout
+        vaccination_start <- baseline_date_start - difference
+        t_extension <- as.numeric(baseline_date - vaccination_start)
+        #update final coverage to 40% by the end of the first year of vaccinations
+        t_coverage <- 365
+        pop <- sum(fit$parameters$population)
+        if (baseline_dose_ratio * baseline_coverage / pop < 0.4) {
+            dose_ratio <- pmin(1, 0.4 * pop / baseline_coverage)
+            if (baseline_dose_ratio * baseline_coverage / pop < 0.4) {
+                coverage <- pop * 0.4 / dose_ratio
+            } else {
+                coverage <- baseline_coverage
             }
-            #update rollout speed to be much quicker
-
+        } else {
+            coverage <- baseline_coverage
+            dose_ratio <- baseline_dose_ratio
         }
-    } else if (vaccine == "manufacturing") {
+        #update rollout speed to be much quicker
+        t_staging_q <- t_staging/2
+        return(update_fit_vaccinations(fit, generate_vaccination_curve(
+            coverage, dose_ratio, t_coverage, t_staging_q, t_extension, max_vaccinatable_pop, dur_V, vaccination_start
+        )))
+    } else if (Vaccine == "manufacturing") {
         #update to AZ or mRNA efficacy
+        mrna <- readRDS("dominant_vaccines.Rds") %>%
+            mutate(
+                Moderna = if_else(is.na(Moderna), 0, Moderna),
+                `Pfizer.BioNTech` = if_else(is.na(`Pfizer.BioNTech`), 0, `Pfizer.BioNTech`)
+            ) %>% 
+            transmute(
+                iso3 = countrycode::countrycode(country, "country.name", "iso3c"),
+                mrna = if_else(
+                    dominant %in% c("Pfizer/BioNTech", "Moderna") |
+                        Moderna == 1 | `Pfizer.BioNTech` == 1,
+                    TRUE,
+                    FALSE
+                )
+            ) %>%
+            filter(iso3 == iso3c) %>%
+            pull(mrna)
+        if (mrna) {
+            ve <- list(
+                ve_i_low = 0.63,
+                ve_i_high = 0.86,
+                ve_d_low = 0.83,
+                ve_d_high = 0.95,
+                ve_i_low_d = 0.36,
+                ve_i_high_d = 0.88,
+                ve_d_low_d = 0.83,
+                ve_d_high_d = 0.93
+            )
+        } else {
+            ve <- list(
+                ve_i_low = 0.64,
+                ve_i_high = 0.77,
+                ve_d_low = 0.79,
+                ve_d_high = 0.94,
+                ve_i_low_d = 0.3,
+                ve_i_high_d = 0.67,
+                ve_d_low_d = 0.71,
+                ve_d_high_d = 0.92
+            )
+        }
+        ve <- map(ve, ~c(.x, 0.8 * .x, min(1, 1.1 * .x)))
+        fit$interventions$vaccine_efficacies <- ve
         #vaccination campaigns begin at the same time
-        #final coverage remains the same as before
+        vaccination_start <- cepi_start_date
+        t_coverage <- as.numeric(baseline_date - baseline_date_start)
+        t_extension <- as.numeric(baseline_date - vaccination_start)
+        return(update_fit_vaccinations(fit, generate_vaccination_curve(
+            baseline_coverage, baseline_dose_ratio, t_coverage, t_staging, t_extension, max_vaccinatable_pop, dur_V, vaccination_start
+        )))
     }
 
     #generate a plot to show the differences between these
-
-
-
     #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 implement_variant <- function(fit, Variant){

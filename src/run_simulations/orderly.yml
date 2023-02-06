@@ -136,8 +136,3 @@ resources:
 #         use:
 #           other-data.csv: data.csv
 #
-depends:
-  get_vaccine_data:
-    id: latest
-    use:
-      vacc_inputs.Rds: vacc_inputs.Rds
