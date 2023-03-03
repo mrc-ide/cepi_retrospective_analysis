@@ -110,10 +110,91 @@ generate_vaccination_curve <- function(coverage, dose_ratio, t_coverage, t_stagi
   )
 }
 
+
+# Function to convert doses for Manufacture Scenario
+max_grow <- function(x, roll = 7, tot_mult = 1) {
+
+  # final dose
+  fin <- tail(x, 1)
+
+  # what is the total coverage
+  tot <- sum(x) * tot_mult
+
+  # use a weekly mean to decide on daily maximums
+  x2 <- zoo::rollmean(x, roll, na.pad = TRUE)
+  x2[is.na(x2)] <- 0
+
+  # convert roll out to never decrease below current max daily dose
+  for(i in seq_len(length(x2)-1)) {
+    if(x2[i] > x2[i+1]) {
+      x2[i+1] <- x2[i]
+    }
+  }
+
+  # Create new doses over time to  stop at max coverage
+  x3 <- cumsum(x2)
+  end <- which(x3 > tot)[1]
+  x2[end:length(x2)] <- 0
+  x2[end] <- tot - sum(x2)
+
+  # if it didn't finish on the last day
+  # then allocate at the continued last rate to be fair against comparisons to early
+  if(end < length(x2)) {
+  x2[(end+1):length(x2)] <- fin
+  }
+
+  return(x2)
+
+}
+
+# Function to convert doses for equity/systems scenario
+fast_grow <- function(x, roll = 7, tot_mult = 2, speed = 2, eoy_x) {
+
+  # final dose
+  fin <- tail(x, 1)
+
+  # what is the total coverage
+  tot <- sum(x) * tot_mult
+
+  # use a weekly mean to decide on daily maximums
+  x2 <- zoo::rollmean(x, roll, na.pad = TRUE)
+  x2[is.na(x2)] <- 0
+
+  # Increase roll out speed
+  x2 <- x2 * speed
+
+  # Now check that it reaches desired total coverage by end of year (eoy_x)
+  x3 <- cumsum(x2)
+  end <- which(x3[seq_len(eoy_x)] > tot)[1]
+
+  # if nothing then we didn't hit desired coverage with the increase in speed
+  # so scale it so it hits it the day before
+  if(is.na(end)){
+    x2 <- x2 * (tot/x3[eoy_x-1])
+    x3 <- cumsum(x2)
+    end <- which(x3[seq_len(eoy_x+1)] > tot)[1]
+  }
+
+  # and correct to stop increasing coverage there
+  x2[end:length(x2)] <- 0
+  x2[end] <- tot - sum(x2)
+
+  # if it didn't finish on the last day
+  # then allocate at the continued last rate to be fair against comparisons to early
+  if(end < length(x2)) {
+    x2[(end+1):length(x2)] <- fin
+  }
+
+  return(x2)
+
+}
+
+# Update vaccinations in a country model fit with new values
 update_fit_vaccinations <- function(fit, new_values) {
   UseMethod("update_fit_vaccinations")
 }
 
+# Update vaccinations in a country model fit with new values for nimue model
 update_fit_vaccinations.vacc_durR_nimue_simulation <- function(fit, new_values){
   fit$interventions$max_vaccine <-
     fit$pmcmc_results$inputs$interventions$max_vaccine <-
@@ -130,6 +211,7 @@ update_fit_vaccinations.vacc_durR_nimue_simulation <- function(fit, new_values){
   fit
 }
 
+# Update vaccinations in a country model fit with new values for booster model
 update_fit_vaccinations.rt_optimised <- function(fit, new_values){
   fit$parameters$primary_doses <- new_values$primary_doses
   fit$parameters$booster_doses <- new_values$booster_doses
@@ -139,38 +221,45 @@ update_fit_vaccinations.rt_optimised <- function(fit, new_values){
 }
 
 
+# Implement a vaccine strategy for a country fit
 implement_vaccine <- function(fit, Vaccine, iso3c) {
   UseMethod("implement_vaccine")
 }
 
 implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
+
   cepi_start_date <- as.Date("2020-04-20")
+  end_of_cepi_year_one <- as.Date("2021-04-20")
   real_start_date <- as.Date("2020-12-08")
-  difference <- as.numeric(real_start_date - cepi_start_date)
 
   #get vaccine details
   baseline_date <- as.Date("2021-12-08")
   baseline_coverage <- sum(fit$parameters$primary_doses)
-
-  max_vaccinatable_pop <- sum(fit$parameters$population * fit$parameters$vaccine_coverage_mat[fit$odin_parameters$N_prioritisation_steps, ])
-
   baseline_date_start <- fit$inputs$start_date[1] + fit$parameters$tt_primary_doses[2]
-  t_staging <- 60
+
+  # difference in start of vaccination
+  difference <- as.numeric(real_start_date - cepi_start_date)
+  if (Vaccine %in% c("manufacturing", "both")) {
+    difference <- as.numeric(baseline_date_start - cepi_start_date)
+  }
+
+  # Extend our dose series as used in all scenarios:
+
+  # Extend our doses
+  primary <- c(
+    fit$parameters$primary_doses,
+    rep(mean(tail(fit$parameters$primary_doses,30)), difference)
+  )
+
+  # Extend our booster
+  booster <- c(
+    fit$parameters$booster_doses,
+    rep(mean(tail(fit$parameters$booster_doses, 30)), difference)
+  )
+
 
   # SO FAR just the early scenario is coded
    if (Vaccine == "early") {
-
-  # Extend our doses
-    primary <- c(
-      fit$parameters$primary_doses,
-      rep(mean(tail(fit$parameters$primary_doses,30)), difference)
-    )
-
-    # Extend our booster
-    booster <- c(
-      fit$parameters$booster_doses,
-      rep(mean(tail(fit$parameters$booster_doses, 30)), difference)
-    )
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -182,33 +271,40 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
       booster_doses = booster,
       tt = tt_doses
     )
-
     return(update_fit_vaccinations(fit, new_values))
 
   } else if (Vaccine == "equity") {
-    #staggered (but earlier) rollout
-    vaccination_start <- baseline_date_start - difference
-    t_extension <- as.numeric(baseline_date - vaccination_start)
-    #update final coverage to 40% by the end of the first year of vaccinations
-    t_coverage <- 365
-    pop <- sum(fit$parameters$population)
-    if (baseline_dose_ratio * baseline_coverage / pop < 0.4) {
-      dose_ratio <- pmin(1, 0.4 * pop / baseline_coverage)
-      if (baseline_dose_ratio * baseline_coverage / pop < 0.4) {
-        coverage <- pop * 0.4 / dose_ratio
-      } else {
-        coverage <- baseline_coverage
-      }
-    } else {
-      coverage <- baseline_coverage
-      dose_ratio <- baseline_dose_ratio
-    }
-    #update rollout speed to be much quicker
-    t_staging_q <- t_staging/2
-    return(update_fit_vaccinations(fit, generate_vaccination_curve(
-      coverage, dose_ratio, t_coverage, t_staging_q, t_extension, max_vaccinatable_pop, dur_V, vaccination_start
-    )))
+
+    # forty percent of vaccinatable population
+    forty_vaccinatable_pop <- (sum(squire::get_population(fit$parameters$country)$n[-(1:3)])*0.4)
+
+    # how much increase is this for coverage
+    increased_cov <- forty_vaccinatable_pop / sum(fit$parameters$primary_doses)
+
+    # by what date/tt is this to be achieved by
+    new_vacc_dates <- c(0, fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+    eoy <- which(new_vacc_dates == end_of_cepi_year_one)
+
+    # adjust our primary vaccines
+    primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+
+    # adjust boosters as well?
+    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+
+    # bring vaccination earlier
+    start_vacc <- fit$parameters$tt_booster_doses[2] - difference
+    end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
+    tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+
+    new_values <- list(
+      primary_doses = primary,
+      booster_doses = booster,
+      tt = tt_doses
+    )
+    return(update_fit_vaccinations(fit, new_values))
+
   } else if (Vaccine == "manufacturing") {
+
     #update to AZ or mRNA efficacy
     mrna <- readRDS("dominant_vaccines.Rds") %>%
       mutate(
@@ -251,19 +347,72 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     }
     ve <- map(ve, ~c(.x, 0.8 * .x, min(1, 1.1 * .x)))
     fit$interventions$vaccine_efficacies <- ve
-    #vaccination campaigns begin at the same time
-    vaccination_start <- cepi_start_date
-    t_coverage <- as.numeric(baseline_date - baseline_date_start)
-    t_extension <- as.numeric(baseline_date - vaccination_start)
-    return(update_fit_vaccinations(fit, generate_vaccination_curve(
-      baseline_coverage, baseline_dose_ratio, t_coverage, t_staging, t_extension, max_vaccinatable_pop, dur_V, vaccination_start
-    )))
+
+
+
+    # adjust our primary vaccines
+    primary <- max_grow(primary)
+
+    # adjust boosters as well?
+    booster <- max_grow(booster)
+
+    # bring vaccination earlier
+    start_vacc <- fit$parameters$tt_booster_doses[2] - difference
+    end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
+    tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+
+    new_values <- list(
+      primary_doses = primary,
+      booster_doses = booster,
+      tt = tt_doses
+    )
+    return(update_fit_vaccinations(fit, new_values))
+
+  } else if (Vaccine == "both") {
+
+
+    # adjust our primary vaccines
+    primary <- max_grow(primary)
+
+    # adjust boosters as well?
+    booster <- max_grow(booster)
+
+    # bring vaccination earlier
+    start_vacc <- fit$parameters$tt_booster_doses[2] - difference
+    end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
+    tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+
+    # forty percent of vaccinatable population
+    forty_vaccinatable_pop <- (sum(squire::get_population(fit$parameters$country)$n[-(1:3)])*0.4)
+
+    # how much increase is this for coverage
+    increased_cov <- forty_vaccinatable_pop / sum(fit$parameters$primary_doses)
+
+    # by what date/tt is this to be achieved by
+    new_vacc_dates <- c(0, fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+    eoy <- which(new_vacc_dates == end_of_cepi_year_one)
+
+    # adjust our primary vaccines
+    primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+
+    # adjust boosters as well?
+    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+
+
+    new_values <- list(
+      primary_doses = primary,
+      booster_doses = booster,
+      tt = tt_doses
+    )
+    return(update_fit_vaccinations(fit, new_values))
+
   }
 
   #generate a plot to show the differences between these
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
+# Not Updated/Used anymore
 implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
   cepi_start_date <- as.Date("2020-04-20")
   real_start_date <- as.Date("2020-12-08")

@@ -1,5 +1,5 @@
-iso3c <- "GBR"
-excess_mortality <- FALSE
+iso3c <- "KEN"
+excess_mortality <- TRUE
 booster <- TRUE
 
 ## Get fit from github
@@ -9,8 +9,11 @@ original_out <- squire.page::generate_draws(fit, pars.list = NULL, draws = NULL,
 ## Setup Scenarios
 scenarios <- read_csv("scenarios.csv")
 
-# Note have just set to the default here
-scenario_objects <- implement_scenarios(fit, scenarios[1,])
+# Note have just set to the default here for Rt
+scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
+
+# Plot of our vaccine scenarios
+vacc_gg <- vacc_allocation_plot(scenarios, scenario_objects, fit)
 
 ## Run simulations
 scenario_out <- squire.page::generate_draws(scenario_objects[[1]], pars.list = NULL, draws = NULL, parallel = TRUE)

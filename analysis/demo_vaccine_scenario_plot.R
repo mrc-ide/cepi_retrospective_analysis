@@ -1,4 +1,5 @@
 ## Demonstration of vaccine roll out scenarios for primary doses
+library(tidyverse)
 
 # Function to get Manufacture Scenario
 max_grow <- function(x, roll = 7, tot_mult = 1) {
@@ -66,7 +67,7 @@ excess_mortality <- FALSE
 booster <- TRUE
 
 ## Get fit from github
-source(here::here("funcs.R"))
+source(here::here("src/run_simulations/funcs.R"))
 fit <- grab_fit(iso3c, excess_mortality, booster)
 
 
@@ -106,8 +107,20 @@ increased_cov <- (sum(squire::get_population(fit$parameters$country)$n[-(1:3)])*
 eoy <- which(df4$date == (as.integer((as.Date("2020-04-20") + 365))))
 df4$doses <- fast_grow(df4$doses, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
 
+# 4. Create the Systems + Manufacturing scenario
+df5 <- data.frame("doses" = max_grow(fit$parameters$primary_doses),
+                  "date" = c(0, fit$parameters$tt_primary_doses[-1] - (fit$parameters$tt_primary_doses[2] - 100)) + as.Date("2020-01-08") ,
+                  "scen" = "Science + Manufacturing + Systems")  %>%
+  complete(date = seq.Date(min(date), max(date), 1)) %>%
+  mutate(doses = replace_na(doses, 0)) %>%
+  mutate(scen = replace_na(scen, "Science + Manufacturing + Systems"))
+
+increased_cov <- (sum(squire::get_population(fit$parameters$country)$n[-(1:3)])*0.4) / sum(fit$parameters$primary_doses)
+eoy <- which(df5$date == (as.integer((as.Date("2020-04-20") + 365))))
+df5$doses <- fast_grow(df5$doses, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+
 # Demonstration Plot of it all together
-gg2 <- rbind(df, df2, df3, df4) %>%
+gg2 <- rbind(df, df2, df3, df4, df5) %>%
   group_by(scen) %>%
   mutate(doses = cumsum(doses)) %>%
   complete(date = seq.Date(min(date), max(df$date), 1)) %>%
@@ -123,7 +136,7 @@ gg2 <- rbind(df, df2, df3, df4) %>%
   xlab("Days Since Recognition of COVID-19") +
   ylab("Cumulative Primary Vaccine Doses")
 
-gg1 <- rbind(df, df2, df3, df4) %>%
+gg1 <- rbind(df, df2, df3, df4, df5) %>%
   group_by(scen) %>%
   mutate(doses = (doses)) %>%
   complete(date = seq.Date(min(date), max(df$date), 1)) %>%
