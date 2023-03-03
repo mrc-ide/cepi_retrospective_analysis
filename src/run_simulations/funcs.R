@@ -8,10 +8,10 @@ grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
   }
   if (booster) {
     if (excess_mortality) {
-    path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/excess_mortality/", iso3c, ".Rds")
-  } else {
-    path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/reported_deaths/", iso3c, ".Rds")
-  }
+      path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/excess_mortality/", iso3c, ".Rds")
+    } else {
+      path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/reported_deaths/", iso3c, ".Rds")
+    }
   }
 
   download.file(path, "temp.Rds", mode = "wb")
@@ -140,7 +140,7 @@ max_grow <- function(x, roll = 7, tot_mult = 1) {
   # if it didn't finish on the last day
   # then allocate at the continued last rate to be fair against comparisons to early
   if(end < length(x2)) {
-  x2[(end+1):length(x2)] <- fin
+    x2[(end+1):length(x2)] <- fin
   }
 
   return(x2)
@@ -226,6 +226,7 @@ implement_vaccine <- function(fit, Vaccine, iso3c) {
   UseMethod("implement_vaccine")
 }
 
+# Implement a vaccine strategy for a country fit created using booster model
 implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
 
   cepi_start_date <- as.Date("2020-04-20")
@@ -258,8 +259,8 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   )
 
 
-  # SO FAR just the early scenario is coded
-   if (Vaccine == "early") {
+  # All scenarios coded up EXCEPT Vaccine efficacy adjustments
+  if (Vaccine == "early") {
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -412,7 +413,7 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
-# Not Updated/Used anymore
+# Implement a vaccine strategy for a country fit created using nimue
 implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
   cepi_start_date <- as.Date("2020-04-20")
   real_start_date <- as.Date("2020-12-08")
@@ -533,7 +534,25 @@ implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
-implement_variant <- function(fit, Variant){
+
+# Implement a variant strategy for a country fit
+implement_variant <- function(fit, Vaccine) {
+  UseMethod("implement_vaccine")
+}
+
+
+implement_variant.rt_optimised <- function(fit, Variant){
+  if (Variant == "baseline") {
+    fit
+  } else if (Variant == "reduced") {
+
+    # TODO
+
+  }
+}
+
+
+implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
   if (Variant == "baseline") {
     fit
   } else if (Variant == "reduced") {
