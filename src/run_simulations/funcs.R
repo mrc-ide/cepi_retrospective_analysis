@@ -556,10 +556,18 @@ implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
   if (Variant == "baseline") {
     fit
   } else if (Variant == "reduced") {
-    #just set to delta shift to occur very far into the future
-    #instead of removing entirely we could just delay this?
-    fit$interventions$delta_adjustments$start_date <-
-      fit$pmcmc_results$inputs$pars_obs$delta_start_date <-
-      "3050-01-01"
+
+    # just set all future shift to occur very far into the future
+    fit$parameters$tt_dur_get_ox_survive <- fit$parameters$tt_dur_get_ox_survive + 1e6
+    fit$parameters$tt_dur_get_ox_die <- fit$parameters$tt_dur_get_ox_die + 1e6
+    fit$parameters$tt_dur_get_mv_survive <- fit$parameters$tt_dur_get_mv_survive + 1e6
+    fit$parameters$tt_dur_get_mv_die <- fit$parameters$tt_dur_get_mv_die + 1e6
+
+    for(i in seq_along(fit$samples)) {
+      fit$samples[[i]]$tt_dur_R <- fit$samples[[i]]$tt_dur_R + 1e6
+      fit$samples[[i]]$tt_dur_V <- fit$samples[[i]]$tt_dur_R + 1e6
+    }
+
+
   }
 }
