@@ -1,5 +1,4 @@
-iso3c <- "KEN"
-excess_mortality <- TRUE
+orderly::orderly_develop_start("run_simulations", list(iso3c = "KEN", excess_mortality = TRUE))
 booster <- TRUE
 
 ## Get fit from github
@@ -15,8 +14,9 @@ scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
 # Plot of our vaccine scenarios
 vacc_gg <- vacc_allocation_plot(scenarios, scenario_objects, fit)
 
-## Run simulations
+## Run simulations and export
 scenario_out <- squire.page::generate_draws(scenario_objects[[1]], pars.list = NULL, draws = NULL, parallel = TRUE)
 
 ## Format and export
 # Note have been testing this in demo_check_baseline at the moment
+

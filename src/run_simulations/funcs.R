@@ -48,7 +48,7 @@ implement_scenarios <- function(fit, scenarios, iso3c){
     fit <- implement_rt(fit, Rt)
     fit <- implement_variant(fit, Variant)
     fit
-  }, fit)
+  }, fit = fit)
 }
 
 # implements rt trends for fits
@@ -62,7 +62,7 @@ implement_rt <- function(fit, Rt){
   }
 }
 
-calculate_true_uptake <- function(doses, eligible_pop, t_extension){
+calculate_true_uptake <- function(doses, eligible_pop, t_extension) {
   if(sum(doses) > eligible_pop){
     i_exceeds_eligible <- min(which(cumsum(doses) >= eligible_pop)) - 1
     actual_doses <- doses
@@ -306,50 +306,7 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
 
   } else if (Vaccine == "manufacturing") {
 
-    #update to AZ or mRNA efficacy
-    mrna <- readRDS("dominant_vaccines.Rds") %>%
-      mutate(
-        Moderna = if_else(is.na(Moderna), 0L, Moderna),
-        `Pfizer.BioNTech` = if_else(is.na(`Pfizer.BioNTech`), 0L, `Pfizer.BioNTech`)
-      ) %>%
-      transmute(
-        iso3 = countrycode::countrycode(country, "country.name", "iso3c"),
-        mrna = if_else(
-          dominant %in% c("Pfizer/BioNTech", "Moderna") |
-            Moderna == 1 | `Pfizer.BioNTech` == 1,
-          TRUE,
-          FALSE
-        )
-      ) %>%
-      filter(iso3 == iso3c) %>%
-      pull(mrna)
-    if (mrna) {
-      ve <- list(
-        ve_i_low = 0.63,
-        ve_i_high = 0.86,
-        ve_d_low = 0.83,
-        ve_d_high = 0.95,
-        ve_i_low_d = 0.36,
-        ve_i_high_d = 0.88,
-        ve_d_low_d = 0.83,
-        ve_d_high_d = 0.93
-      )
-    } else {
-      ve <- list(
-        ve_i_low = 0.64,
-        ve_i_high = 0.77,
-        ve_d_low = 0.79,
-        ve_d_high = 0.94,
-        ve_i_low_d = 0.3,
-        ve_i_high_d = 0.67,
-        ve_d_low_d = 0.71,
-        ve_d_high_d = 0.92
-      )
-    }
-    ve <- map(ve, ~c(.x, 0.8 * .x, min(1, 1.1 * .x)))
-    fit$interventions$vaccine_efficacies <- ve
-
-
+    fit <- update_vaccine_profile(fit)
 
     # adjust our primary vaccines
     primary <- max_grow(primary)
@@ -371,6 +328,7 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
 
   } else if (Vaccine == "both") {
 
+    fit <- update_vaccine_profile(fit)
 
     # adjust our primary vaccines
     primary <- max_grow(primary)
@@ -412,6 +370,105 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   #generate a plot to show the differences between these
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
+
+update_vaccine_profile <- function(fit){
+  #update to AZ or mRNA efficacy
+  mrna <- readRDS("dominant_vaccines.Rds") %>%
+    mutate(
+      Moderna = if_else(is.na(Moderna), 0L, Moderna),
+      `Pfizer.BioNTech` = if_else(is.na(`Pfizer.BioNTech`), 0L, `Pfizer.BioNTech`)
+    ) %>%
+    transmute(
+      iso3 = countrycode::countrycode(country, "country.name", "iso3c"),
+      mrna = if_else(
+        dominant %in% c("Pfizer/BioNTech", "Moderna") |
+          Moderna == 1 | `Pfizer.BioNTech` == 1,
+        TRUE,
+        FALSE
+      )
+    ) %>%
+    filter(iso3 == iso3c) %>%
+    pull(mrna)
+  if (mrna) {
+    new_profile <- readRDS("vaccine_profiles.Rds")$mRNA
+  } else {
+    new_profile <- readRDS("vaccine_profiles.Rds")$Adenovirus
+  }
+  #derive variant timings
+  new_ve_values <- reduce(c("Wild", "Delta", "Omicron"), function(params, variant){
+    new_params <- compute_VoC_fixing_changes(fit, variant, new_profile)
+    if(is.null(params)){
+      new_params
+    } else {
+      out <- map(names(new_params), ~append(params[[.x]], new_params[[.x]]))
+      names(out) <- names(new_params)
+      out
+    }
+  }, .init = NULL)
+  #one profile for all samples
+  fit$parameters$vaccine_efficacy_disease <- new_ve_values$vaccine_efficacy_disease
+  fit$parameters$vaccine_efficacy_infection <- new_ve_values$vaccine_efficacy_infection
+  fit$parameters$dur_V <- new_ve_values$dur_V
+  fit$parameters$tt_vaccine_efficacy_infection <-
+    fit$parameters$tt_vaccine_efficacy_disease <-
+    fit$parameters$tt_dur_V <- new_ve_values$tt
+  #remove ve's from samples
+  fit$samples <- map(fit$samples, function(sample){
+    sample$vaccine_efficacy_disease <-
+      sample$vaccine_efficacy_infection <-
+      sample$dur_V <-
+      sample$tt_vaccine_efficacy_infection <-
+      sample$tt_vaccine_efficacy_disease <-
+      sample$tt_dur_V <- NULL
+    sample
+  })
+
+  fit
+}
+
+compute_VoC_fixing_changes <- function(fit, variant, new_profile){
+  profile <- new_profile[new_profile$variant == variant, ] %>%
+    arrange(parameter) %>%
+    pull(value, parameter)
+  if(variant == "Wild") {
+    params <- extract_profile(profile) %>%
+      map(~list(.x))
+    params$tt <- 0
+  } else {
+    dur_R_index <- list(Delta = 1:2, Omicron = 3:4)[[variant]]
+    t_timings <- fit$samples[[1]]$tt_dur_R[-1][dur_R_index]
+    previous_variant <- list(Delta = "Wild", Omicron = "Delta")[[variant]]
+    old_profile <- new_profile[new_profile$variant == previous_variant, ] %>%
+      arrange(parameter) %>%
+      pull(value, parameter)
+    #just linear change
+    interp_values <- map(seq_along(old_profile), function(i){
+      seq(old_profile[i], profile[i], length.out = diff(t_timings) + 2)[-1]
+    })
+    tt <- seq(t_timings[1], t_timings[2])
+    params <- map(seq_along(tt), function(t){
+      out <- map_dbl(interp_values, ~.x[t])
+      names(out) <- names(old_profile)
+      extract_profile(out)
+    }) %>%
+      transpose()
+    params$tt <- tt
+  }
+  params
+}
+
+extract_profile <- function(profile){
+  out <- list(
+    vaccine_efficacy_disease = profile[c("pV_1_d", "fV_1_d", "fV_2_d", "bV_1_d", "bV_2_d", "bV_3_d")],
+    vaccine_efficacy_infection = profile[c("pV_1_i", "fV_1_i", "fV_2_i", "bV_1_i", "bV_2_i", "bV_3_i")],
+    dur_V = 1/profile[c("w_p", "w_1", "w_2")]
+  )
+  map(out, function(x){
+    names(x) <- NULL
+    x
+  })
+}
+
 
 # Implement a vaccine strategy for a country fit created using nimue
 implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
@@ -537,7 +594,7 @@ implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
 
 # Implement a variant strategy for a country fit
 implement_variant <- function(fit, Vaccine) {
-  UseMethod("implement_vaccine")
+  UseMethod("implement_variant")
 }
 
 
