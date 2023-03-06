@@ -36,7 +36,7 @@ changes_booster <- master_ves %>%
   transmute(
     variant = Variant,
     endpoint = Endpoint,
-    p_change = logit(Booster)/logit(Second)
+    p_change = logit(Booster) - logit(Second)
   )
 booster_efficacies <- ves_by_type %>%
   filter(dose == "Second" & vaccine_type %in% c("mRNA", "Adenovirus")) %>%
@@ -46,7 +46,7 @@ booster_efficacies <- ves_by_type %>%
   ) %>%
   mutate(
     dose = "Booster",
-    efficacy = inv_logit(logit(efficacy) * p_change)
+    efficacy = inv_logit(logit(efficacy) + p_change)
   ) %>%
   select(!p_change)
 ves_by_type <- ves_by_type %>%
@@ -87,10 +87,12 @@ ves_by_type <- ves_by_type %>%
         0.65, #https://www.nejm.org/doi/full/10.1056/NEJMoa2119451
       vaccine_type == "mRNA" & dose == "booster" & endpoint == "Hospitalisation" & variant == "Omicron" ~
         0.82, #https://www.sciencedirect.com/science/article/pii/S0264410X22005230
-      vaccine_type == "Whole Virus" & dose == "booster" & endpoint == "Hospitalisation" & variant == "Omicron" ~
-        0.80, #evidence suggest that its similar to mRNA so we'll keep them the same
-      #https://doi.org/10.1016/S2214-109X(22)00112-7 #Not the right variant but presumably will be lower?
-      #some evidence that it's much higher https://www.medrxiv.org/content/10.1101/2022.03.22.22272769v1#:~:text=Two%20doses%20of%20either%20vaccine,%3A%2067.8%25%2C%2079.2%25).
+      vaccine_type == "Adenovirus" & dose == "booster" & endpoint == "Infection" & variant == "Delta" ~
+        93, #seems way too high https://www.researchsquare.com/article/rs-1792139/v1
+      vaccine_type == "Adenovirus" & dose == "booster" & endpoint == "Infection" & variant == "Omicron" ~
+        27, #not neccesarily all AZ doses https://www.researchsquare.com/article/rs-1792139/v1 + preprint
+      vaccine_type == "Adenovirus" & dose == "booster" & endpoint == "Hospitalisation" & variant == "Omicron" ~
+        84, #seems too high https://www.researchsquare.com/article/rs-2015733/v1
       TRUE ~ efficacy
     )
   )
@@ -356,8 +358,9 @@ fit_curve <- function(df) {
       , aes(x = t, y = `Vaccine Efficacy`, colour = `Protection:`, linetype = `Version:`)
     ) +
       geom_line() +
-      labs(y = "Vaccine Efficacy", x = "Days Since Dose", title = paste0("Dose: ", dose, ", Variant: ", variant, ", Type: ", df$vaccine_type[1])) +
-      ggpubr::theme_pubclean()
+      labs(y = "Vaccine Efficacy", x = "Days Since Dose", title = paste0("Type: ", df$vaccine_type[1])) +
+      ggpubr::theme_pubclean() +
+      coord_cartesian(ylim = c(0, 1))
 
     out <- as.data.frame(res$par)
     out <- mutate(out, parameter = rownames(out),
@@ -387,8 +390,14 @@ plots <- map(values, ~.x[[2]])
 efficacies <- map(values, ~.x[[1]])
 
 #calibration plot
+types <- map_chr(efficacies, ~if_else(.x$parameter[1] == "pV_1_i", "", paste0("Dose: ", .x$dose[1], ", Variant: ", .x$variant[1])))
 pdf("calibration_plot.pdf")
-plots
+map(unique(types), function(type){
+  if (type != ""){
+    ggpubr::ggarrange(plotlist = plots[types == type], common.legend = TRUE) %>%
+      ggpubr::annotate_figure(top = ggpubr::text_grob(type))
+  }
+})
 dev.off()
 
 #save profiles
