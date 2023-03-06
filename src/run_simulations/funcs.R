@@ -620,3 +620,69 @@ implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
       "3050-01-01"
   }
 }
+
+quick_format <- function(x, var_select, date_0) {
+
+  d <- nimue:::odin_index(x$model)
+
+  do.call(rbind,lapply(var_select, function(i){
+    do.call(rbind, lapply(seq_len(dim(x$output)[3]), function(y) {
+      df <- data.frame(y = rowSums(x$output[,d[[i]],y]), compartment = i)
+      df$t <- seq_len(nrow(df)) - nrow(df)
+      df$replicate <- y
+      df$date <- df$t + date_0
+      return(df)
+    }))
+  }))
+
+}
+
+get_deaths_infections_time <- function(out){
+  value <- quick_format(out, c("D", "infections_cumu"), out$inputs$start_date)
+  value$date <- as.Date(rownames(value))
+  value <- value %>%
+    group_by(replicate, compartment) %>%
+    arrange(date) %>%
+    filter(y > 0) %>%
+    transmute(
+      y = c(0, diff(y)),
+      date = date,
+      replicate = replicate
+    ) %>%
+    ungroup() %>%
+    pivot_wider(names_from = compartment, values_from = y) %>%
+    rename(deaths = D, infections = infections_cumu)
+  value
+}
+
+get_deaths_infections_age <- function(out){
+
+  indexes <- nimue:::odin_index(out$model)[c("D", "infections_cumu")]
+
+  map_dfr(
+    indexes, function(index){
+      map_dfr(1:17, function(age){
+        map_dfr(seq_len(dim(out$output)[3]), function(i){
+          df <- data.frame(y = rowSums(out$output[, index[age, ], i]), age_group = age)
+          df$replicate <- i
+          df$date <- seq_len(nrow(df)) + out$inputs$start_date
+          return(df)
+        })
+      })
+    }, .id = "compartment"
+  ) %>%
+    group_by(replicate, age_group, compartment) %>%
+    summarise(
+      y = max(y),
+      .groups = "drop"
+    ) %>%
+    pivot_wider(names_from = compartment, values_from = y) %>%
+    rename(deaths = D, infections = infections_cumu)
+}
+
+save_scenario <- function(out, name){
+  df_time <- get_deaths_infections_time(out)
+  df_age <- get_deaths_infections_age(out)
+  saveRDS(df_time, paste0("data/time_", name, ".Rds"))
+  saveRDS(df_age, paste0("data/age_", name, ".Rds"))
+}

@@ -43,7 +43,17 @@ script: script.R
 #             - report.html
 #             - figures/fig1.png
 #             - figures/fig2.png
-artefacts: ~
+artefacts:
+  - staticgraph:
+      description: Plot for sense-checking scenarios
+      filenames: scenario_plot.pdf
+  - data:
+      description: Scenario outputs
+      filenames:
+        - time_baseline.Rds
+        - age_baseline.Rds
+        - time_scenarios.Rds
+        - age_scenarios.Rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -88,6 +98,7 @@ packages:
   - dplyr
   - readr
   - purrr
+  - tidyr
   - geomtextpath
 
 # Source files, in addition to the script.  Typically these will
