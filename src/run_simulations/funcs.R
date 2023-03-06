@@ -686,3 +686,84 @@ save_scenario <- function(out, name){
   saveRDS(df_time, paste0("data/time_", name, ".Rds"))
   saveRDS(df_age, paste0("data/age_", name, ".Rds"))
 }
+
+plot_deaths <- function(scenario_df){
+  baseline <- readRDS("data/time_baseline.Rds") %>%
+    group_by(replicate) %>%
+    arrange(date) %>%
+    mutate(
+      across(
+        c(deaths, infections), ~cumsum(.x)
+      )
+    ) %>%
+    group_by(date) %>%
+    summarise(
+      across(
+        c(deaths, infections), ~median(.x),
+        .names = "{col}_med"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.025),
+        .names = "{col}_025"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.975),
+        .names = "{col}_975"
+      ),
+      .groups = "drop"
+    )
+  scenarios <- readRDS("data/time_scenarios.Rds") %>%
+    group_by(scenario, replicate) %>%
+    arrange(date) %>%
+    mutate(
+      across(
+        c(deaths, infections), ~cumsum(.x)
+      )
+    ) %>%
+    group_by(scenario, date) %>%
+    summarise(
+      across(
+        c(deaths, infections), ~median(.x),
+        .names = "{col}_med"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.025),
+        .names = "{col}_025"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.975),
+        .names = "{col}_975"
+      ),
+      .groups = "drop"
+    )
+
+  factor_label <- scenario_df %>%
+    mutate(
+      label = if_else(
+        Variant == "baseline",
+        paste0(scenario_df$Rt, " & ", scenario_df$Vaccine),
+        paste0(scenario_df$Rt, ", ", scenario_df$Vaccine, " & ", scenario_df$Variant)
+      )
+    ) %>%
+    pull(label)
+
+  scenarios$scenario <- factor(
+    factor_label[scenarios$scenario],
+    levels = factor_label
+  )
+
+  ggplot(baseline, aes(x = date)) +
+    geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
+                alpha = 0.1) +
+    geom_line(aes(y = deaths_med)) +
+    geom_ribbon(data = scenarios, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
+                inherit.aes = FALSE,
+                alpha = 0.1) +
+    geom_line(
+      data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+      inherit.aes = FALSE
+    ) +
+    facet_wrap(vars(scenario)) +
+    ggpubr::theme_pubr(legend = "none") +
+    labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
+}
