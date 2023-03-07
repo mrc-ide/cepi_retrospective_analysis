@@ -49,7 +49,7 @@ implement_scenarios <- function(fit, scenarios, iso3c){
   pmap(scenarios, function(Rt, Vaccine, Variant, fit){
     #order matters since Rt can depend on vaccine coverage
     fit <- implement_vaccine(fit, Vaccine, iso3c)
-    fit <- implement_rt(fit, Rt)
+    fit <- implement_rt(fit, Rt, iso3c)
     fit <- implement_variant(fit, Variant)
     fit
   }, fit = fit)
@@ -59,7 +59,7 @@ implement_scenarios <- function(fit, scenarios, iso3c){
 #  Functions for Rt
 # ------------------------------------------------------------------------------
 
-# get simple Rt by date data.frame
+# get simple Rt by date list for all sample draws
 simple_rt <- function (model_out) {
   date_0 <- model_out$inputs$start_date
   iso3c <- squire::get_population(model_out$parameters$country)$iso3c[1]
@@ -80,27 +80,27 @@ simple_rt <- function (model_out) {
 }
 
 # implements rt trends for fits
-implement_rt <- function(fit, Rt){
+implement_rt <- function(fit, Rt, iso3c){
   if (Rt == "baseline") {
     fit
   } else if (Rt == "target") {
 
-    implement_target_Rt(fit)
+    implement_target_Rt(fit, iso3c)
 
   } else if (Rt == "economic") {
 
-    implement_economic_Rt(fit)
+    implement_economic_Rt(fit, iso3c)
 
   }
 }
 
 # implements rt trends for target scenario
-implement_target_Rt <- function(fit){
+implement_target_Rt <- function(fit, iso3c){
   UseMethod("implement_target_Rt")
 }
 
 # implements rt trends for target scenario for booster model
-implement_target_Rt.rt_optimised <- function(fit) {
+implement_target_Rt.rt_optimised <- function(fit, iso3c) {
 
   # get previous rt trend
   rt <- simple_rt(fit)
@@ -117,9 +117,14 @@ implement_target_Rt.rt_optimised <- function(fit) {
 
   # coverage needed for 80% coverage of over 60s
   cov_needed <- sum(tail(pop,5) * 0.8)
+  cov_needed_adults <- sum(head(pop, -3) * 0.8)
 
-  # date of opening
-  open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+  # date of opening dependent on income group
+  if(squire.page:::get_income_group(iso3c) == "HIC") {
+    open_date <- vacc$date[which(vacc$secondary > cov_needed_adults)[1]]
+  } else {
+    open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+  }
 
   # Rt associated with "opening" and update the Rt data frames for each sample
   rt_new <- lapply(rt, function(x){
@@ -146,12 +151,12 @@ implement_target_Rt.rt_optimised <- function(fit) {
 }
 
 # implements rt trends for economic scenario
-implement_economic_Rt <- function(fit){
+implement_economic_Rt <- function(fit, iso3c){
   UseMethod("implement_economic_Rt")
 }
 
 # implements rt trends for economic scenario for booster model
-implement_economic_Rt.rt_optimised <- function(fit) {
+implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
   # get previous rt trend
   rt <- simple_rt(fit)
@@ -172,6 +177,10 @@ implement_economic_Rt.rt_optimised <- function(fit) {
   # date of opening
   open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
 
+  # income group and related school effect size from separate analysis
+  income <- squire.page:::get_income_group(iso3c)
+  school_eff <- c(0.2, 0.1, 0.05, 0.02)[as.integer(income)]
+
   # Rt associated with "opening" and update the Rt data frames for each sample
   rt_new <- lapply(rt, function(x){
 
@@ -180,9 +189,15 @@ implement_economic_Rt.rt_optimised <- function(fit) {
     rt_open <- quantile(x2$Rt, prob = c(0.95))
     rt_preopen <- (x2$Rt[x2$date > open_date])[1]
 
-    # set the new rt
+    # set rt to be fully open
     x$Rt[x$date > open_date] <- rt_open
-    x$Rt[x$date > open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+
+    # set the new rt for school opening for the first month
+    x$Rt[x$date > open_date][1:2] <- rt_preopen * (school_eff+1)
+
+    # Rt for stepped opening over the next 6 months
+    x$Rt[x$date > open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
+
     return(x)
 
   })
@@ -792,7 +807,7 @@ save_scenario <- function(out, name){
   saveRDS(df_age, paste0("data/age_", name, ".Rds"))
 }
 
-plot_deaths <- function(scenario_df){
+plot_deaths <- function(scenario_df, facet = FALSE){
   baseline <- readRDS("data/time_baseline.Rds") %>%
     group_by(replicate) %>%
     arrange(date) %>%
@@ -846,17 +861,19 @@ plot_deaths <- function(scenario_df){
     mutate(
       label = if_else(
         Variant == "baseline",
-        paste0(scenario_df$Rt, " & ", scenario_df$Vaccine),
-        paste0(scenario_df$Rt, ", ", scenario_df$Vaccine, " & ", scenario_df$Variant)
+        paste0(Rt, " & ", Vaccine),
+        paste0(Rt, ", ", Vaccine, " & ", Variant)
       )
     ) %>%
     pull(label)
 
   scenarios$scenario <- factor(
     factor_label[scenarios$scenario],
-    levels = factor_label
+    levels = sort(factor_label)
   )
+  scenarios$Rt <- gsub("(.*)( & .*)","\\1", scenarios$scenario)
 
+  if(facet) {
   ggplot(baseline, aes(x = date)) +
     geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
                 alpha = 0.1) +
@@ -871,4 +888,116 @@ plot_deaths <- function(scenario_df){
     facet_wrap(vars(scenario)) +
     ggpubr::theme_pubr(legend = "none") +
     labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
+  } else {
+    ggplot(baseline, aes(x = date)) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
+                  alpha = 0.1) +
+      geom_line(aes(y = deaths_med)) +
+      geom_line(
+        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+        inherit.aes = FALSE
+      ) +
+      ggpubr::theme_pubr() +
+      facet_wrap(vars(Rt), ncol = 1) +
+      paletteer::scale_colour_paletteer_d("pals::stepped", name="Scenario:")+
+      labs(x = "", y = "Cumulative Deaths (95% quantile and median)") +
+      guides(color=guide_legend(nrow=4, byrow=TRUE))
+  }
+}
+
+plot_averted_deaths <- function(scenario_df, facet = FALSE){
+  baseline <- readRDS("data/time_baseline.Rds") %>%
+    group_by(replicate) %>%
+    arrange(date) %>%
+    mutate(
+      across(
+        c(deaths, infections), ~cumsum(.x)
+      )
+    ) %>%
+    group_by(date) %>%
+    summarise(
+      across(
+        c(deaths, infections), ~median(.x),
+        .names = "{col}_med"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.025),
+        .names = "{col}_025"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.975),
+        .names = "{col}_975"
+      ),
+      .groups = "drop"
+    )
+  scenarios <- readRDS("data/time_scenarios.Rds") %>%
+    group_by(scenario, replicate) %>%
+    arrange(date) %>%
+    mutate(
+      across(
+        c(deaths, infections), ~cumsum(.x)
+      )
+    ) %>%
+    group_by(scenario, date) %>%
+    summarise(
+      across(
+        c(deaths, infections), ~median(.x),
+        .names = "{col}_med"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.025),
+        .names = "{col}_025"
+      ),
+      across(
+        c(deaths, infections), ~quantile(.x, 0.975),
+        .names = "{col}_975"
+      ),
+      .groups = "drop"
+    )
+
+  factor_label <- scenario_df %>%
+    mutate(
+      label = if_else(
+        Variant == "baseline",
+        paste0(scenario_df$Vaccine, " & ", scenario_df$Rt),
+        paste0(scenario_df$Vaccine, ", ", scenario_df$Rt, " & ", scenario_df$Variant)
+      )
+    ) %>%
+    pull(label)
+
+  scenarios$scenario <- factor(
+    factor_label[scenarios$scenario],
+    levels = factor_label
+  )
+  scenarios$
+
+  if(facet) {
+    ggplot(baseline, aes(x = date)) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
+                  alpha = 0.1) +
+      geom_line(aes(y = deaths_med)) +
+      geom_ribbon(data = scenarios, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
+                  inherit.aes = FALSE,
+                  alpha = 0.1) +
+      geom_line(
+        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+        inherit.aes = FALSE
+      ) +
+      facet_wrap(vars(scenario)) +
+      ggpubr::theme_pubr(legend = "none") +
+      labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
+  } else {
+    ggplot(baseline, aes(x = date)) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
+                  alpha = 0.1) +
+      geom_line(aes(y = deaths_med)) +
+      geom_line(
+        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+        inherit.aes = FALSE
+      ) +
+      ggpubr::theme_pubr() +
+      paletteer::scale_colour_paletteer_d("pals::stepped", name="Scenario:")+
+      labs(x = "", y = "Cumulative Deaths (95% quantile and median)") +
+      guides(color=guide_legend(nrow=4, byrow=TRUE))
+  }
 }
