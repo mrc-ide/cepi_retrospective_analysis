@@ -1,4 +1,4 @@
-vacc_allocation_plot <- function(scenarios, scenario_objects, fit) {
+vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRUE) {
 
   # create our vaccine allocation dataframe
   vacc_list <- list()
@@ -53,8 +53,11 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit) {
     xlab("Days Since Recognition of COVID-19") +
     ylab("Daily Primary Vaccine Doses")
 
+  if(combine) {
   cowplot::plot_grid(gg1, gg2, ncol = 1, align = "v")
-
+  } else {
+  list(gg1, gg2)
+  }
 }
 
 rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
