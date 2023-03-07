@@ -1,10 +1,10 @@
-iso3c <- "KEN"
-excess_mortality <- TRUE
+orderly::orderly_develop_start("run_simulations", list(iso3c = "KEN", excess_mortality = TRUE))
 booster <- TRUE
+future::plan(future::multisession()) #not sure what the best way to do this in an orderly task is
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)
-original_out <- squire.page::generate_draws(fit, pars.list = NULL, draws = NULL, parallel = TRUE)
+original_out <- squire.page::generate_draws(fit)
 
 ## Setup Scenarios
 scenarios <- read_csv("scenarios.csv")
@@ -13,10 +13,40 @@ scenarios <- read_csv("scenarios.csv")
 scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
 
 # Plot of our vaccine scenarios
-vacc_gg <- vacc_allocation_plot(scenarios, scenario_objects, fit)
+output_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit)
 
-## Run simulations
-scenario_out <- squire.page::generate_draws(scenario_objects[[1]], pars.list = NULL, draws = NULL, parallel = TRUE)
+if(simulate_counterfactuals){
+  ## Run simulations and export (roughly ~<1 minute per scenario on a 12 core machine)
+  dir.create("data")
+  walk(seq_len(nrow(scenarios)), function(i){
+    out <- squire.page::generate_draws(scenario_objects[[i]])
+    save_scenario(out, i)
+  })
 
-## Format and export
-# Note have been testing this in demo_check_baseline at the moment
+  #recombine into a single file
+  walk(c("time", "age"), function(name){
+    map_dfr(seq_len(nrow(scenarios)), function(scenario){
+      out <- readRDS(paste0("data/", name, "_", scenario, ".Rds")) %>%
+        mutate(scenario = scenario)
+      unlink(paste0("data/", name, "_", scenario, ".Rds"))
+      out
+    }) %>%
+      saveRDS(paste0("data/", name, "_scenarios.Rds"))
+  })
+
+  #export baseline
+  save_scenario(original_out, "baseline")
+
+  #Add counterfactual comparisons
+  output_plot <- cowplot::plot_grid(
+    plot_deaths(scenarios), output_plot
+
+  )
+} else {
+  walk(paste0("data/", c("age_baseline", "age_scenarios", "time_baseline", "time_scenarios"), ".Rds")
+       ~saveRDS(NULL, .x))
+}
+
+
+#plot output
+ggsave("scenario_plot.pdf", output_plot, width = 17, height = 10) #need to add Rt diagnostics to this too

@@ -44,16 +44,12 @@ script: script.R
 #             - figures/fig1.png
 #             - figures/fig2.png
 artefacts:
-  - staticgraph:
-      description: Plot for sense-checking scenarios
-      filenames: scenario_plot.pdf
   - data:
-      description: Scenario outputs
-      filenames:
-        - time_baseline.Rds
-        - age_baseline.Rds
-        - time_scenarios.Rds
-        - age_scenarios.Rds
+      description: Fitted vaccine profiles
+      filenames: vaccine_profiles.Rds
+  - staticgraph:
+      description: Fitted vaccine profiles
+      filenames: calibration_plot.pdf
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -78,11 +74,7 @@ artefacts:
 # would declare a parameter called 'a' with a default value of 1, and
 # a parameter of b with no default.
 #
-parameters:
-  iso3c: ~
-  excess_mortality: ~
-  simulate_counterfactuals:
-    default: TRUE
+# parameters:
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual
@@ -95,13 +87,7 @@ parameters:
 # will make it easier to provision containers to run the orderly
 # reports.
 #
-packages:
-  - squire.page
-  - dplyr
-  - readr
-  - purrr
-  - tidyr
-  - geomtextpath
+# packages:
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
@@ -109,9 +95,7 @@ packages:
 # preference to explicit source() calls in your script because
 # otherwise you will have to add them to "resources" (see below)
 #
-sources:
-  - funcs.R
-  - plotting.R
+# sources:
 
 # Resources that the script needs to run; this is an array of strings
 # representing filenames *relative to, and below, this directory*.
@@ -122,8 +106,13 @@ sources:
 # to list files already listed in "sources" here, or any .sql files
 # referenced in "views" or "data"
 #
+
 resources:
-  - scenarios.csv
+  - vaccine_efficacy_groups.csv
+
+packages:
+  - tidyverse
+  - odin
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
@@ -151,9 +140,4 @@ resources:
 #         use:
 #           other-data.csv: data.csv
 #
-
-depends:
-  generate_vaccine_profiles:
-    id: latest
-    use:
-      vaccine_profiles.Rds: vaccine_profiles.Rds
+# depends:
