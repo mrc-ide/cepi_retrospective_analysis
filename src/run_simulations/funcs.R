@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------
+#  Functions for set up
+# ------------------------------------------------------------------------------
+
 # gathers fit from github
 grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
 
@@ -51,65 +55,150 @@ implement_scenarios <- function(fit, scenarios, iso3c){
   }, fit = fit)
 }
 
+# ------------------------------------------------------------------------------
+#  Functions for Rt
+# ------------------------------------------------------------------------------
+
+# get simple Rt by date data.frame
+simple_rt <- function (model_out) {
+  date_0 <- model_out$inputs$start_date
+  iso3c <- squire::get_population(model_out$parameters$country)$iso3c[1]
+  return(
+      lapply(seq_along(model_out$samples),
+             function(y) {
+               Rt <- model_out$samples[[y]]$R0
+               tt <- list(change = seq_along(Rt), dates = date_0 +
+                            model_out$samples[[y]]$tt_R0)
+               df <- data.frame(
+                 Rt = Rt,
+                 date = date_0 + model_out$samples[[y]]$tt_R0
+                 ) %>%
+                 dplyr::mutate(t = as.numeric(.data$date - min(.data$date))) %>%
+                 dplyr::mutate(iso3c = iso3c, rep = y)
+               return(df)
+             }))
+}
+
 # implements rt trends for fits
 implement_rt <- function(fit, Rt){
   if (Rt == "baseline") {
     fit
   } else if (Rt == "target") {
-    fit
+
+    implement_target_Rt(fit)
+
   } else if (Rt == "economic") {
-    fit
+
+    implement_economic_Rt(fit)
+
   }
 }
 
-calculate_true_uptake <- function(doses, eligible_pop, t_extension) {
-  if(sum(doses) > eligible_pop){
-    i_exceeds_eligible <- min(which(cumsum(doses) >= eligible_pop)) - 1
-    actual_doses <- doses
-    actual_doses[(i_exceeds_eligible + 1):(t_extension + 2)] <- 0
-    actual_doses[i_exceeds_eligible] <- eligible_pop - sum(doses[1:i_exceeds_eligible])
-    actual_doses
-  } else {
-    doses
+# implements rt trends for target scenario
+implement_target_Rt <- function(fit){
+  UseMethod("implement_target_Rt")
+}
+
+# implements rt trends for target scenario for booster model
+implement_target_Rt.rt_optimised <- function(fit) {
+
+  # get previous rt trend
+  rt <- simple_rt(fit)
+
+  # get vaccine allocation
+  vacc <- data.frame(
+    "date" = fit$parameters$tt_booster_doses + fit$inputs$start_date,
+    "primary" = cumsum(fit$parameters$primary_doses)
+  ) %>%
+    mutate(secondary = lag(primary, fit$parameters$second_dose_delay))
+
+  # population size for the fit
+  pop <- squire::get_population(fit$parameters$country)$n
+
+  # coverage needed for 80% coverage of over 60s
+  cov_needed <- sum(tail(pop,5) * 0.8)
+
+  # date of opening
+  open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+
+  # Rt associated with "opening" and update the Rt data frames for each sample
+  rt_new <- lapply(rt, function(x){
+
+    # filter to after July 2020
+    x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
+    rt_open <- quantile(x2$Rt, prob = c(0.95))
+    rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+
+    # set the new rt
+    x$Rt[x$date > open_date] <- rt_open
+    x$Rt[x$date > open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+    return(x)
+
+  })
+
+  # Assign the new Rt for each sample
+  for(i in seq_along(rt_new)) {
+    fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
   }
 
+  return(fit)
+
 }
 
-generate_vaccination_curve <- function(coverage, dose_ratio, t_coverage, t_staging, t_extension, max_vaccinatable_pop, dur_V, date_start) {
-  #calculate first doses to meet coverage
-  daily_doses <- coverage/(t_coverage - t_staging + sum(seq(t_staging))/t_staging)
-  #setup first doses
-  first_doses <- rep(0, t_extension + 2)
-  first_doses[1:(t_staging + 1)] <- seq(0, t_staging) * daily_doses / t_staging
-  first_doses[(t_staging + 1):(t_extension + 2)] <- daily_doses
-
-  #how many does will actually be taken up
-  actual_doses <- calculate_true_uptake(first_doses, max_vaccinatable_pop, t_extension)
-  #could account for delay here
-
-  #adjust for waning
-  waning <- lag(actual_doses, dur_V, default = 0) #could make this align with exponential dist
-  waned <- sum(waning[1:(t_coverage + 1)])
-
-  #derive dose ratio, assuming second doses occur at the same rate
-  #second_dose_delay <- t_coverage - t_staging + (sum(seq(t_staging))/t_staging) - dose_ratio * coverage / daily_doses
-  second_dose_delay <- round(t_coverage - t_staging + (sum(seq(t_staging))/t_staging) - ((dose_ratio * (coverage - waned) + waned) / daily_doses))
-
-  second_doses <- lag(first_doses, second_dose_delay, default = 0)
-  #how many does will actually be taken up
-  actual_doses_2 <- calculate_true_uptake(second_doses, max_vaccinatable_pop, t_extension)
-
-  dose_ratio <- (cumsum(actual_doses_2) - cumsum(waning))/(cumsum(actual_doses) - cumsum(waning))
-
-  tt <- seq(0, t_extension) + date_start
-
-  list(
-    tt = tt,
-    max_vaccine = first_doses,
-    dose_ratio = dose_ratio[-1]
-  )
+# implements rt trends for economic scenario
+implement_economic_Rt <- function(fit){
+  UseMethod("implement_economic_Rt")
 }
 
+# implements rt trends for economic scenario for booster model
+implement_economic_Rt.rt_optimised <- function(fit) {
+
+  # get previous rt trend
+  rt <- simple_rt(fit)
+
+  # get vaccine allocation
+  vacc <- data.frame(
+    "date" = fit$parameters$tt_booster_doses + fit$inputs$start_date,
+    "primary" = cumsum(fit$parameters$primary_doses)
+  ) %>%
+    mutate(secondary = lag(primary, fit$parameters$second_dose_delay))
+
+  # population size for the fit
+  pop <- squire::get_population(fit$parameters$country)$n
+
+  # coverage needed for 80% coverage of over 60s
+  cov_needed <- sum(tail(pop,5) * 0.8)
+
+  # date of opening
+  open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+
+  # Rt associated with "opening" and update the Rt data frames for each sample
+  rt_new <- lapply(rt, function(x){
+
+    # filter to after July 2020
+    x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
+    rt_open <- quantile(x2$Rt, prob = c(0.95))
+    rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+
+    # set the new rt
+    x$Rt[x$date > open_date] <- rt_open
+    x$Rt[x$date > open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+    return(x)
+
+  })
+
+  # Assign the new Rt for each sample
+  for(i in seq_along(rt_new)) {
+    fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
+  }
+
+  return(fit)
+
+}
+
+# ------------------------------------------------------------------------------
+#  Functions for Vaccines
+# ------------------------------------------------------------------------------
 
 # Function to convert doses for Manufacture Scenario
 max_grow <- function(x, roll = 7, tot_mult = 1) {
@@ -219,7 +308,6 @@ update_fit_vaccinations.rt_optimised <- function(fit, new_values){
   fit$parameters$tt_booster_doses <- new_values$tt
   fit
 }
-
 
 # Implement a vaccine strategy for a country fit
 implement_vaccine <- function(fit, Vaccine, iso3c) {
@@ -371,6 +459,7 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
+# Update vaccine profile for different classes of vaccines
 update_vaccine_profile <- function(fit){
   #update to AZ or mRNA efficacy
   mrna <- readRDS("dominant_vaccines.Rds") %>%
@@ -426,6 +515,7 @@ update_vaccine_profile <- function(fit){
   fit
 }
 
+# Update timings of vaccine efficacies for
 compute_VoC_fixing_changes <- function(fit, variant, new_profile){
   profile <- new_profile[new_profile$variant == variant, ] %>%
     arrange(parameter) %>%
@@ -457,6 +547,7 @@ compute_VoC_fixing_changes <- function(fit, variant, new_profile){
   params
 }
 
+# Extract vaccine profile
 extract_profile <- function(profile){
   out <- list(
     vaccine_efficacy_disease = profile[c("pV_1_d", "fV_1_d", "fV_2_d", "bV_1_d", "bV_2_d", "bV_3_d")],
@@ -469,6 +560,9 @@ extract_profile <- function(profile){
   })
 }
 
+# ------------------------------------------------------------------------------
+#  Functions for Variants
+# ------------------------------------------------------------------------------
 
 # Implement a vaccine strategy for a country fit created using nimue
 implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
@@ -591,13 +685,12 @@ implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
-
 # Implement a variant strategy for a country fit
 implement_variant <- function(fit, Vaccine) {
   UseMethod("implement_variant")
 }
 
-
+# Implement a variant strategy for a country fit using booster model
 implement_variant.rt_optimised <- function(fit, Variant){
   if (Variant == "baseline") {
     fit
@@ -608,7 +701,7 @@ implement_variant.rt_optimised <- function(fit, Variant){
   }
 }
 
-
+# Implement a variant strategy for a country fit using nimue model
 implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
   if (Variant == "baseline") {
     fit
@@ -628,6 +721,10 @@ implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
 
   }
 }
+
+# ------------------------------------------------------------------------------
+#  Accessory Functions (could go in plotting)
+# ------------------------------------------------------------------------------
 
 quick_format <- function(x, var_select, date_0) {
 
