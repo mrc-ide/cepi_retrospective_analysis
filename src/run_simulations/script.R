@@ -16,7 +16,11 @@ scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
 # Plot of our vaccine and Rt scenarios
 output_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
 rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
-output_plot <- cowplot::plot_grid(output_plot[[1]], output_plot[[2]], rt_plot, ncol = 1, align = "v")
+input_plot <- cowplot::plot_grid(
+  output_plot[[1]],
+  output_plot[[2]] + theme(legend.position = "none"),
+  rt_plot, ncol = 1, align = "v",
+  rel_heights = c(1,0.8,1))
 
 if(simulate_counterfactuals){
   ## Run simulations and export (roughly ~<1 minute per scenario on a 12 core machine)
@@ -42,13 +46,44 @@ if(simulate_counterfactuals){
 
   #Add counterfactual comparisons
   death_plot <- plot_deaths(scenarios, FALSE)
+  death_averted_plot <- plot_deaths_averted(scenarios, FALSE)
 
 } else {
   walk(paste0("data/", c("age_baseline", "age_scenarios", "time_baseline", "time_scenarios"), ".Rds")
        ~saveRDS(NULL, .x))
   death_plot <- NULL
+  deaths_averted_plot <- NULL
 }
 
+# vertical line to separate plots
+line_v <- ggplot() + cowplot::draw_line(x = 0,y=1:10, colour = "grey") +
+  theme(panel.background = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+
+# horizintal line to separate plots
+line_h <- ggplot() + cowplot::draw_line(x = 1:10,y=0, colour = "grey") +
+  theme(panel.background = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+
+# title for the plot
+title <- cowplot::ggdraw() +
+  cowplot::draw_label(
+    paste0(fit$parameters$country, " - 100 Day Mission Scenarios"),
+    fontface = 'bold',
+    x = 0.5
+  )
+
+
+outplot <- cowplot::plot_grid(input_plot, line_v, death_plot, line_v, death_averted_plot,
+                              ncol = 5, rel_widths = c(1,0.1,1,0.1,1))
+
+
+outplot <- cowplot::plot_grid(title, line_h, outplot,
+                              ncol = 1, rel_heights = c(0.05,0.03,1))
 
 #plot output
-ggsave("scenario_plot.pdf", output_plot, width = 17, height = 10) #need to add Rt diagnostics to this too
+ggsave("scenario_plot.pdf", outplot, width = 30, height = 14)

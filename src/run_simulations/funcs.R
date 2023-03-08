@@ -25,23 +25,46 @@ grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
 }
 
 # utility for converting scenario codes to a description
-describe_scenarios <- function(scenarios){
-  mutate(scenarios,
-         Rt = case_when(
-           Rt == "baseline" ~ "Public Health Optimum",
-           Rt == "target" ~ "Target based",
-           Rt == "economic" ~ "Economic based"
-         ),
-         Vaccine = case_when(
-           Vaccine == "early" ~ "Science",
-           Vaccine == "manufacturing" ~ "Science + Manufacturing",
-           Vaccine == "equity" ~ "Science + Infrastructure/Equity"
-         ),
-         Variant = case_when(
-           Variant == "baseline" ~ "As it occurred",
-           Variant == "reduced" ~ "Reduced"
-         )
-  )
+describe_scenarios <- function(scenarios, variant = FALSE){
+
+  if("Rt" %in% names(scenarios)) {
+    scenarios <- mutate(scenarios,
+                        Rt = case_when(
+                          Rt == "baseline" ~ "Public Health Optimum",
+                          Rt == "target" ~ "Target based",
+                          Rt == "economic" ~ "Economic based"
+                        ))
+
+    scenarios$Rt <- factor(
+      scenarios$Rt,
+      c("Public Health Optimum",
+        "Target based",
+        "Economic based"))
+  }
+
+  if("Vaccine" %in% names(scenarios)) {
+    scenarios <- mutate(scenarios,
+                        Vaccine = case_when(
+                          Vaccine == "early" ~ "Science",
+                          Vaccine == "manufacturing" ~ "Science & Manufacturing",
+                          Vaccine == "equity" ~ "Science & Infrastructure",
+                          Vaccine == "both" ~ "Science Total (Manu. & Infr.)"))
+
+    scenarios$Vaccine <- factor(
+      scenarios$Vaccine,
+      c("Science",
+        "Science & Infrastructure",
+        "Science & Manufacturing",
+        "Science Total (Manu. & Infr.)"))
+  }
+
+  if("Variant" %in% names(scenarios)) {
+    scenarios <- mutate(scenarios,
+                        Variant = case_when(
+                          Variant == "baseline" ~ "As it occurred",
+                          Variant == "reduced" ~ "Reduced"))
+  }
+  scenarios
 }
 
 #convert scenario codes and fit object into a list of simulations ready to run
@@ -832,7 +855,7 @@ plot_deaths <- function(scenario_df, facet = FALSE){
       ),
       .groups = "drop"
     )
-  scenarios <- readRDS("data/time_scenarios.Rds") %>%
+  scenarios_x <- readRDS("data/time_scenarios.Rds") %>%
     group_by(scenario, replicate) %>%
     arrange(date) %>%
     mutate(
@@ -867,22 +890,24 @@ plot_deaths <- function(scenario_df, facet = FALSE){
     ) %>%
     pull(label)
 
-  scenarios$scenario <- factor(
-    factor_label[scenarios$scenario],
+  scenarios_x$scenario <- factor(
+    factor_label[scenarios_x$scenario],
     levels = sort(factor_label)
   )
-  scenarios$Rt <- gsub("(.*)( & .*)","\\1", scenarios$scenario)
+  scenarios_x$Rt <- gsub("(.*)( & .*)","\\1", scenarios_x$scenario)
+  scenarios_x$Vaccine <- gsub("(.* & )(.*)","\\2", scenarios_x$scenario)
+  scenarios_x <- describe_scenarios(scenarios_x)
 
   if(facet) {
   ggplot(baseline, aes(x = date)) +
     geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
                 alpha = 0.1) +
     geom_line(aes(y = deaths_med)) +
-    geom_ribbon(data = scenarios, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
+    geom_ribbon(data = scenarios_x, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
                 inherit.aes = FALSE,
                 alpha = 0.1) +
     geom_line(
-      data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+      data = scenarios_x, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
       inherit.aes = FALSE
     ) +
     facet_wrap(vars(scenario)) +
@@ -890,22 +915,29 @@ plot_deaths <- function(scenario_df, facet = FALSE){
     labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
   } else {
     ggplot(baseline, aes(x = date)) +
-      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
-                  alpha = 0.1) +
-      geom_line(aes(y = deaths_med)) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975, color = "Baseline"),
+                  alpha = 0.1, show.legend = FALSE) +
+      geom_line(aes(y = deaths_med, color = "Baseline"), lwd = 0.75) +
       geom_line(
-        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
-        inherit.aes = FALSE
+        data = scenarios_x, aes(x = date, y = deaths_med, colour = Vaccine, group = scenario),
+        inherit.aes = FALSE,
+        lwd = 0.75
       ) +
-      ggpubr::theme_pubr() +
+      ggpubr::theme_pubr(base_size = 14) +
       facet_wrap(vars(Rt), ncol = 1) +
-      paletteer::scale_colour_paletteer_d("pals::stepped", name="Scenario:")+
+      scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
       labs(x = "", y = "Cumulative Deaths (95% quantile and median)") +
-      guides(color=guide_legend(nrow=4, byrow=TRUE))
+      guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+      theme(panel.grid.major = element_line(),
+            legend.key = element_rect(fill = "white", colour = "white"),
+            legend.text = element_text(size = 12),
+            axis.line = element_line(),
+            panel.border = element_rect(color = "black", fill = NA))
+
   }
 }
 
-plot_averted_deaths <- function(scenario_df, facet = FALSE){
+plot_deaths_averted <- function(scenario_df, facet = FALSE){
   baseline <- readRDS("data/time_baseline.Rds") %>%
     group_by(replicate) %>%
     arrange(date) %>%
@@ -914,90 +946,108 @@ plot_averted_deaths <- function(scenario_df, facet = FALSE){
         c(deaths, infections), ~cumsum(.x)
       )
     ) %>%
-    group_by(date) %>%
-    summarise(
-      across(
-        c(deaths, infections), ~median(.x),
-        .names = "{col}_med"
-      ),
-      across(
-        c(deaths, infections), ~quantile(.x, 0.025),
-        .names = "{col}_025"
-      ),
-      across(
-        c(deaths, infections), ~quantile(.x, 0.975),
-        .names = "{col}_975"
-      ),
-      .groups = "drop"
-    )
-  scenarios <- readRDS("data/time_scenarios.Rds") %>%
+    rename(baseline_deaths = deaths,
+           baseline_infections = infections)
+
+  scenarios_x <- readRDS("data/time_scenarios.Rds") %>%
     group_by(scenario, replicate) %>%
     arrange(date) %>%
     mutate(
       across(
         c(deaths, infections), ~cumsum(.x)
       )
-    ) %>%
-    group_by(scenario, date) %>%
-    summarise(
-      across(
-        c(deaths, infections), ~median(.x),
-        .names = "{col}_med"
-      ),
-      across(
-        c(deaths, infections), ~quantile(.x, 0.025),
-        .names = "{col}_025"
-      ),
-      across(
-        c(deaths, infections), ~quantile(.x, 0.975),
-        .names = "{col}_975"
-      ),
-      .groups = "drop"
     )
 
   factor_label <- scenario_df %>%
     mutate(
       label = if_else(
         Variant == "baseline",
-        paste0(scenario_df$Vaccine, " & ", scenario_df$Rt),
-        paste0(scenario_df$Vaccine, ", ", scenario_df$Rt, " & ", scenario_df$Variant)
+        paste0(Rt, " & ", Vaccine),
+        paste0(Rt, ", ", Vaccine, " & ", Variant)
       )
     ) %>%
     pull(label)
 
-  scenarios$scenario <- factor(
-    factor_label[scenarios$scenario],
-    levels = factor_label
-  )
-  scenarios$
+  # now calculate deaths averted per scenario against baseline
+  scenarios_x <- left_join(scenarios_x, baseline) %>%
+    mutate(deaths_averted = baseline_deaths - deaths) %>%
+    mutate(infections_averted = baseline_infections - infections) %>%
+    group_by(scenario, date) %>%
+    summarise(
+      across(
+        c(deaths_averted, infections_averted), ~median(.x),
+        .names = "{col}_med"
+      ),
+      across(
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.025),
+        .names = "{col}_025"
+      ),
+      across(
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.25),
+        .names = "{col}_25"
+      ),
+      across(
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.75),
+        .names = "{col}_75"
+      ),
+      across(
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.975),
+        .names = "{col}_975"
+      ),
+      .groups = "drop"
+    )
 
-  if(facet) {
-    ggplot(baseline, aes(x = date)) +
-      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
-                  alpha = 0.1) +
-      geom_line(aes(y = deaths_med)) +
-      geom_ribbon(data = scenarios, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
-                  inherit.aes = FALSE,
-                  alpha = 0.1) +
-      geom_line(
-        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
-        inherit.aes = FALSE
-      ) +
-      facet_wrap(vars(scenario)) +
-      ggpubr::theme_pubr(legend = "none") +
-      labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
-  } else {
-    ggplot(baseline, aes(x = date)) +
-      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
-                  alpha = 0.1) +
-      geom_line(aes(y = deaths_med)) +
-      geom_line(
-        data = scenarios, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
-        inherit.aes = FALSE
-      ) +
-      ggpubr::theme_pubr() +
-      paletteer::scale_colour_paletteer_d("pals::stepped", name="Scenario:")+
-      labs(x = "", y = "Cumulative Deaths (95% quantile and median)") +
-      guides(color=guide_legend(nrow=4, byrow=TRUE))
+  # assign descriptions for the scenarios
+  scenarios_x$scenario <- factor(
+    factor_label[scenarios_x$scenario],
+    levels = sort(factor_label)
+  )
+  scenarios_x$Rt <- gsub("(.*)( & .*)","\\1", scenarios_x$scenario)
+  scenarios_x$Vaccine <- gsub("(.* & )(.*)","\\2", scenarios_x$scenario)
+
+  deaths_averted <- scenarios_x %>%
+    group_by(scenario, Rt, Vaccine) %>%
+    summarise(across(deaths_averted_med:infections_averted_975, sum)) %>%
+    describe_scenarios() %>%
+    ggplot(aes(x = Rt, y = deaths_averted_med,
+               ymin = deaths_averted_025, ymax = deaths_averted_975,
+               color = Vaccine, group = interaction(Vaccine, Rt))) +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_linerange(position = position_dodge(width = 0.5), lwd = 2, alpha = 0.3) +
+    geom_linerange(aes(ymin = deaths_averted_25, ymax = deaths_averted_75),
+                   position = position_dodge(width = 0.5), lwd = 2, alpha = 0.6) +
+    geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
+    ggpubr::theme_pubr(base_size = 14) +
+    theme(panel.grid.major = element_line()) +
+    scale_color_manual(name = "", values = c(pals::stepped3()[c(1,5,9,13)])) +
+    labs(x = "", y = "Cumulative Deaths Averted (median, IQR, 95% quantile)") +
+    scale_y_continuous(n.breaks = 6) +
+    guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+    theme(legend.text = element_text(size = 14)) +
+    coord_flip()
+
+  infections_averted <- scenarios_x %>%
+    group_by(scenario, Rt, Vaccine) %>%
+    summarise(across(deaths_averted_med:infections_averted_975, sum)) %>%
+    describe_scenarios() %>%
+    ggplot(aes(x = Rt, y = infections_averted_med,
+               ymin = infections_averted_025, ymax = infections_averted_975,
+               color = Vaccine, group = interaction(Vaccine, Rt))) +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_linerange(position = position_dodge(width = 0.5), lwd = 2, alpha = 0.3) +
+    geom_linerange(aes(ymin = infections_averted_25, ymax = infections_averted_75),
+                   position = position_dodge(width = 0.5), lwd = 2, alpha = 0.6) +
+    geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
+    ggpubr::theme_pubr(base_size = 14) +
+    theme(panel.grid.major = element_line()) +
+    scale_color_manual(name = "", values = c(pals::stepped3()[c(1,5,9,13)])) +
+    labs(x = "", y = "Cumulative Infections Averted (median, IQR, 95% quantile)") +
+    scale_y_continuous(n.breaks = 6) +
+    guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+    theme(legend.text = element_text(size = 12)) +
+    coord_flip()
+
+  cowplot::plot_grid(deaths_averted, infections_averted + theme(legend.position = "none"), ncol = 1)
+
   }
-}
+
