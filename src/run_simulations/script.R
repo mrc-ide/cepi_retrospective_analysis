@@ -1,6 +1,4 @@
-orderly::orderly_develop_start("run_simulations", list(iso3c = "KEN", excess_mortality = TRUE))
 booster <- TRUE
-future::plan(future::multisession()) #not sure what the best way to do this in an orderly task is
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)

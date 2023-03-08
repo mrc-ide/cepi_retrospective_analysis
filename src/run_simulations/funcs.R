@@ -189,6 +189,28 @@ fast_grow <- function(x, roll = 7, tot_mult = 2, speed = 2, eoy_x) {
 
 }
 
+#function to setup a booster dose curve for equity
+add_boosters <- function(coverage, t_boosting, t_len, ramp_up_window = 30){
+  if (ramp_up_window > t_boosting){
+    #don't bother with ramp_up
+    ramp_up_window <- 0
+  }
+  v_rate <- (coverage)/(ramp_up_window/2 + (t_boosting - ramp_up_window))
+
+  if(ramp_up_window == 0){
+    c(
+      rep(0, t_len - t_boosting),
+      rep(v_rate, t_boosting)
+    )
+  } else {
+    c(
+      rep(0, t_len - t_boosting),
+      seq(0, 1, length.out = ramp_up_window + 2)[seq(2, ramp_up_window + 1)] * v_rate,
+      rep(v_rate, t_boosting - ramp_up_window)
+    )
+  }
+}
+
 # Update vaccinations in a country model fit with new values
 update_fit_vaccinations <- function(fit, new_values) {
   UseMethod("update_fit_vaccinations")
@@ -290,7 +312,14 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
 
     # adjust boosters as well?
-    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+    if(sum(booster) > 0){
+      booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+    } else {
+      #can't scale like that if there are no booster doses to begin with
+      t_boosting <- length(primary) - eoy #start boosting after end of year 1?
+      #assume that coverage in boosters is met at the end of the sim?
+      booster <- add_boosters(forty_vaccinatable_pop, t_boosting, length(primary))
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -312,7 +341,9 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     primary <- max_grow(primary)
 
     # adjust boosters as well?
-    booster <- max_grow(booster)
+    if(sum(booster) > 0){
+      booster <- max_grow(booster)
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -334,7 +365,9 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     primary <- max_grow(primary)
 
     # adjust boosters as well?
-    booster <- max_grow(booster)
+    if(sum(booster) > 0){
+      booster <- max_grow(booster)
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -355,8 +388,16 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
 
     # adjust boosters as well?
-    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
-
+    if(sum(booster) > 0){
+      booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+    } else {
+      #can't scale like that if there are no booster doses to begin with
+      t_boosting <- length(primary) - eoy #start boosting after end of year 1?
+      #assume that coverage in boosters is met at the end of year 2
+      booster <- add_boosters(forty_vaccinatable_pop, 365, eoy + 365)
+      #extend coverage at final rate
+      booster <- c(booster, rep(tail(booster, 1), length(primary) - length(booster)))
+    }
 
     new_values <- list(
       primary_doses = primary,
