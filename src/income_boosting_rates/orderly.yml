@@ -44,16 +44,9 @@ script: script.R
 #             - figures/fig1.png
 #             - figures/fig2.png
 artefacts:
-  - staticgraph:
-      description: Plot for sense-checking scenarios
-      filenames: scenario_plot.pdf
   - data:
-      description: Scenario outputs
-      filenames:
-        - data/time_baseline.Rds
-        - data/age_baseline.Rds
-        - data/time_scenarios.Rds
-        - data/age_scenarios.Rds
+      description: Annual Boosting rates by income group
+      filenames: income_boosts.Rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -70,26 +63,15 @@ artefacts:
 # Optional parameters to the report.  These will be substituted into
 # the SQL queries.  For example:
 #
-# parameters:
-#   a:
-#     default: 1
+parameters:
+  report_date:
+    default: "2023-03-09"
 #   b: ~
 #
 # would declare a parameter called 'a' with a default value of 1, and
 # a parameter of b with no default.
 #
-parameters:
-  iso3c: ~
-  excess_mortality:
-    default: TRUE
-  simulate_counterfactuals:
-    default: TRUE
-  booster:
-    default: TRUE
-  equity_speed:
-    default: 2
-  cepi_start_date:
-    default: "2020-04-20"
+# parameters:
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual
@@ -105,13 +87,6 @@ parameters:
 packages:
   - squire.page
   - dplyr
-  - readr
-  - purrr
-  - tidyr
-  - geomtextpath
-  - ggpubr
-  - paletteer
-  - pals
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
@@ -119,9 +94,7 @@ packages:
 # preference to explicit source() calls in your script because
 # otherwise you will have to add them to "resources" (see below)
 #
-sources:
-  - funcs.R
-  - plotting.R
+# sources:
 
 # Resources that the script needs to run; this is an array of strings
 # representing filenames *relative to, and below, this directory*.
@@ -132,9 +105,7 @@ sources:
 # to list files already listed in "sources" here, or any .sql files
 # referenced in "views" or "data"
 #
-resources:
-  - scenarios.csv
-  - dominant_vaccines.Rds
+# resources:
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
@@ -162,13 +133,4 @@ resources:
 #         use:
 #           other-data.csv: data.csv
 #
-
-depends:
-  generate_vaccine_profiles:
-    id: latest
-    use:
-      vaccine_profiles.Rds: vaccine_profiles.Rds
-  income_boosting_rates:
-    id: latest
-    use:
-      income_boosts.Rds: income_boosts.Rds
+# depends:

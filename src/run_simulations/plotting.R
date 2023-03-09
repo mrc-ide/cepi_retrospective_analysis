@@ -98,8 +98,6 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
   gg <- df %>%
     ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Rt)) +
     geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
-    #geom_line(lwd = 1) +
-    #geom_point(alpha = 0.2) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE, data = . %>% filter(Rt == "Public Health Optimum")) +
     ggpubr::theme_pubclean(base_size = 14) +

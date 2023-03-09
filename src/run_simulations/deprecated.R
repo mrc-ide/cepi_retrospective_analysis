@@ -47,3 +47,25 @@ generate_vaccination_curve <- function(coverage, dose_ratio, t_coverage, t_stagi
   )
 }
 
+
+#function to setup a booster dose curve for equity
+add_boosters <- function(coverage, t_boosting, t_len, ramp_up_window = 30){
+  if (ramp_up_window > t_boosting){
+    #don't bother with ramp_up
+    ramp_up_window <- 0
+  }
+  v_rate <- (coverage)/(ramp_up_window/2 + (t_boosting - ramp_up_window))
+
+  if(ramp_up_window == 0){
+    c(
+      rep(0, t_len - t_boosting),
+      rep(v_rate, t_boosting)
+    )
+  } else {
+    c(
+      rep(0, t_len - t_boosting),
+      seq(0, 1, length.out = ramp_up_window + 2)[seq(2, ramp_up_window + 1)] * v_rate,
+      rep(v_rate, t_boosting - ramp_up_window)
+    )
+  }
+}

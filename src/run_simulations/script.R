@@ -1,6 +1,21 @@
-booster <- TRUE
-#future::plan(future::multisession()) #not sure what the best way to do this in an orderly task is
-cepi_start_date <- as.Date("2020-04-20")
+# ---------------------------------------------------------------------------- #
+# 1. Set and read in global variables/data from previous runs
+# ---------------------------------------------------------------------------- #
+
+# Files to be read in
+income_boosts <- readRDS("income_boosts.Rds")
+
+# Make sure provided parameters are the correct class
+cepi_start_date <- as.Date(cepi_start_date)
+equity_speed <- as.numeric(equity_speed)
+booster <- as.logical(booster)
+simulate_counterfactuals <- as.logical(simulate_counterfactuals)
+excess_mortality <- as.logical(excess_mortality)
+iso3c <- as.character(iso3c)
+
+# ---------------------------------------------------------------------------- #
+# 2. Get fit and prepare scenarios
+# ---------------------------------------------------------------------------- #
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)
@@ -15,6 +30,10 @@ scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
 output_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
 rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
 input_plot <- cowplot::plot_grid(output_plot[[2]],rt_plot, ncol = 1, align = "v")
+
+# ---------------------------------------------------------------------------- #
+# 3. Run new scenarios
+# ---------------------------------------------------------------------------- #
 
 # start results creation in data directory
 dir.create("data")
@@ -53,6 +72,10 @@ if(simulate_counterfactuals){
   death_averted_plot <- NULL
 }
 
+# ---------------------------------------------------------------------------- #
+# 4. Process outputs
+# ---------------------------------------------------------------------------- #
+
 # vertical line to separate plots
 line_v <- ggplot() + cowplot::draw_line(x = 0,y=1:10, colour = "grey") +
   theme(panel.background = element_blank(),
@@ -75,10 +98,8 @@ title <- cowplot::ggdraw() +
     x = 0.5
   )
 
-
 outplot <- cowplot::plot_grid(input_plot, line_v, death_plot, line_v, death_averted_plot,
                               ncol = 5, rel_widths = c(0.98,0.02,1,0.02,1))
-
 
 outplot <- cowplot::plot_grid(title, line_h, outplot,
                               ncol = 1, rel_heights = c(0.05,0.02,1))
