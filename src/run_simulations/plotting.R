@@ -99,16 +99,17 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
     ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Rt)) +
     geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
     #geom_line(lwd = 1) +
-    geom_point(alpha = 0.2) +
+    #geom_point(alpha = 0.2) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE) +
+    geom_smooth(method = "loess", span = 0.02, se = FALSE, data = . %>% filter(Rt == "Public Health Optimum")) +
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(),
           panel.grid.major = element_line(),
           legend.key = element_rect(fill = "white")) +
     scale_color_discrete(name = "Scenario:") +
     xlab("Days Since Recognition of COVID-19") +
-    ylab("Rt") +
-    scale_color_manual(name = "", values = c(pals::stepped2()[c(13,1,5)])) +
+    ylab("Rt (Science Vaccine Scenario)") +
+    scale_color_manual(name = "", values = c("Black", "yellow3", "pink3")) +
     guides(color=guide_legend(nrow=1, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14), legend.position = "top")
 

@@ -1,6 +1,6 @@
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 #  Functions for set up
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 
 # gathers fit from github
 grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
@@ -78,28 +78,28 @@ implement_scenarios <- function(fit, scenarios, iso3c){
   }, fit = fit)
 }
 
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 #  Functions for Rt
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 
 # get simple Rt by date list for all sample draws
 simple_rt <- function (model_out) {
   date_0 <- model_out$inputs$start_date
   iso3c <- squire::get_population(model_out$parameters$country)$iso3c[1]
   return(
-      lapply(seq_along(model_out$samples),
-             function(y) {
-               Rt <- model_out$samples[[y]]$R0
-               tt <- list(change = seq_along(Rt), dates = date_0 +
-                            model_out$samples[[y]]$tt_R0)
-               df <- data.frame(
-                 Rt = Rt,
-                 date = date_0 + model_out$samples[[y]]$tt_R0
-                 ) %>%
-                 dplyr::mutate(t = as.numeric(.data$date - min(.data$date))) %>%
-                 dplyr::mutate(iso3c = iso3c, rep = y)
-               return(df)
-             }))
+    lapply(seq_along(model_out$samples),
+           function(y) {
+             Rt <- model_out$samples[[y]]$R0
+             tt <- list(change = seq_along(Rt), dates = date_0 +
+                          model_out$samples[[y]]$tt_R0)
+             df <- data.frame(
+               Rt = Rt,
+               date = date_0 + model_out$samples[[y]]$tt_R0
+             ) %>%
+               dplyr::mutate(t = as.numeric(.data$date - min(.data$date))) %>%
+               dplyr::mutate(iso3c = iso3c, rep = y)
+             return(df)
+           }))
 }
 
 # implements rt trends for fits
@@ -234,9 +234,9 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
 }
 
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 #  Functions for Vaccines
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 
 # Function to convert doses for Manufacture Scenario
 max_grow <- function(x, roll = 7, tot_mult = 1) {
@@ -249,6 +249,12 @@ max_grow <- function(x, roll = 7, tot_mult = 1) {
 
   # use a weekly mean to decide on daily maximums
   x2 <- zoo::rollmean(x, roll, na.pad = TRUE)
+
+  # fill the end NAs with fin
+  x2_end_na <- (which(diff(which(is.na(x2)))>1)+1)
+  x2[which(is.na(x2))][x2_end_na:length(which(is.na(x2)))] <- fin
+
+  # and 0 for the starters
   x2[is.na(x2)] <- 0
 
   # convert roll out to never decrease below current max daily dose
@@ -275,7 +281,7 @@ max_grow <- function(x, roll = 7, tot_mult = 1) {
 }
 
 # Function to convert doses for equity/systems scenario
-fast_grow <- function(x, roll = 7, tot_mult = 2, speed = 2, eoy_x) {
+fast_grow <- function(x, roll = 7, tot_mult = 2, speed = 2, eoy_x, booster = FALSE) {
 
   # final dose
   fin <- tail(x, 1)
@@ -285,33 +291,41 @@ fast_grow <- function(x, roll = 7, tot_mult = 2, speed = 2, eoy_x) {
 
   # use a weekly mean to decide on daily maximums
   x2 <- zoo::rollmean(x, roll, na.pad = TRUE)
+
+  # fill the end NAs with fin
+  x2_end_na <- (which(diff(which(is.na(x2)))>1)+1)
+  x2[which(is.na(x2))][x2_end_na:length(which(is.na(x2)))] <- fin
+
+  # and 0 for the starters
   x2[is.na(x2)] <- 0
 
   # Increase roll out speed
   x2 <- x2 * speed
 
-  # Now check that it reaches desired total coverage by end of year (eoy_x)
-  x3 <- cumsum(x2)
-  end <- which(x3[seq_len(eoy_x)] > tot)[1]
-
-  # if nothing then we didn't hit desired coverage with the increase in speed
-  # so scale it so it hits it the day before
-  if(is.na(end)){
-    x2 <- x2 * (tot/x3[eoy_x-1])
+  if(!booster){
+    # Now check that it reaches desired total coverage by end of year (eoy_x)
     x3 <- cumsum(x2)
-    end <- which(x3[seq_len(eoy_x+1)] > tot)[1]
+    end <- which(x3[seq_len(eoy_x)] > tot)[1]
+
+    # if nothing then we didn't hit desired coverage with the increase in speed
+    # so scale it so it hits it the day before
+    if(is.na(end)){
+      x2 <- x2 * (tot/x3[eoy_x-1])
+      x3 <- cumsum(x2)
+      end <- which(x3[seq_len(eoy_x+1)] > tot)[1]
+
+      # and correct to stop increasing coverage there
+      x2[end:length(x2)] <- 0
+      x2[end] <- tot - sum(x2)
+
+      # if it didn't finish on the last day
+      # then allocate at the continued last rate to be fair against comparisons to early
+      if(end < length(x2)) {
+        x2[(end+1):length(x2)] <- fin
+      }
+
+    }
   }
-
-  # and correct to stop increasing coverage there
-  x2[end:length(x2)] <- 0
-  x2[end] <- tot - sum(x2)
-
-  # if it didn't finish on the last day
-  # then allocate at the continued last rate to be fair against comparisons to early
-  if(end < length(x2)) {
-    x2[(end+1):length(x2)] <- fin
-  }
-
   return(x2)
 
 }
@@ -415,8 +429,10 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     # adjust our primary vaccines
     primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
 
-    # adjust boosters as well?
-    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
+    # adjust boosters as well only if they actually boosted in real world
+    if(sum(booster) > 0) {
+      booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2, booster = TRUE)
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -437,8 +453,10 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     # adjust our primary vaccines
     primary <- max_grow(primary)
 
-    # adjust boosters as well?
-    booster <- max_grow(booster)
+    # adjust boosters as well only if they actually boosted in real world
+    if(sum(booster) > 0) {
+      booster <- max_grow(booster)
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -459,8 +477,10 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     # adjust our primary vaccines
     primary <- max_grow(primary)
 
-    # adjust boosters as well?
-    booster <- max_grow(booster)
+    # adjust boosters as well only if they actually boosted in real world
+    if(sum(booster) > 0) {
+      booster <- max_grow(booster)
+    }
 
     # bring vaccination earlier
     start_vacc <- fit$parameters$tt_booster_doses[2] - difference
@@ -481,8 +501,9 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
     primary <- fast_grow(primary, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
 
     # adjust boosters as well?
-    booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2)
-
+    if(sum(booster) > 0) {
+      booster <- fast_grow(booster, tot_mult = increased_cov, eoy_x = eoy, speed = 2, booster = TRUE)
+    }
 
     new_values <- list(
       primary_doses = primary,
@@ -496,111 +517,6 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   #generate a plot to show the differences between these
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
-
-# Update vaccine profile for different classes of vaccines
-update_vaccine_profile <- function(fit){
-  #update to AZ or mRNA efficacy
-  mrna <- readRDS("dominant_vaccines.Rds") %>%
-    mutate(
-      Moderna = if_else(is.na(Moderna), 0L, Moderna),
-      `Pfizer.BioNTech` = if_else(is.na(`Pfizer.BioNTech`), 0L, `Pfizer.BioNTech`)
-    ) %>%
-    transmute(
-      iso3 = countrycode::countrycode(country, "country.name", "iso3c"),
-      mrna = if_else(
-        dominant %in% c("Pfizer/BioNTech", "Moderna") |
-          Moderna == 1 | `Pfizer.BioNTech` == 1,
-        TRUE,
-        FALSE
-      )
-    ) %>%
-    filter(iso3 == iso3c) %>%
-    pull(mrna)
-  if (mrna) {
-    new_profile <- readRDS("vaccine_profiles.Rds")$mRNA
-  } else {
-    new_profile <- readRDS("vaccine_profiles.Rds")$Adenovirus
-  }
-  #derive variant timings
-  new_ve_values <- reduce(c("Wild", "Delta", "Omicron"), function(params, variant){
-    new_params <- compute_VoC_fixing_changes(fit, variant, new_profile)
-    if(is.null(params)){
-      new_params
-    } else {
-      out <- map(names(new_params), ~append(params[[.x]], new_params[[.x]]))
-      names(out) <- names(new_params)
-      out
-    }
-  }, .init = NULL)
-  #one profile for all samples
-  fit$parameters$vaccine_efficacy_disease <- new_ve_values$vaccine_efficacy_disease
-  fit$parameters$vaccine_efficacy_infection <- new_ve_values$vaccine_efficacy_infection
-  fit$parameters$dur_V <- new_ve_values$dur_V
-  fit$parameters$tt_vaccine_efficacy_infection <-
-    fit$parameters$tt_vaccine_efficacy_disease <-
-    fit$parameters$tt_dur_V <- new_ve_values$tt
-  #remove ve's from samples
-  fit$samples <- map(fit$samples, function(sample){
-    sample$vaccine_efficacy_disease <-
-      sample$vaccine_efficacy_infection <-
-      sample$dur_V <-
-      sample$tt_vaccine_efficacy_infection <-
-      sample$tt_vaccine_efficacy_disease <-
-      sample$tt_dur_V <- NULL
-    sample
-  })
-
-  fit
-}
-
-# Update timings of vaccine efficacies for
-compute_VoC_fixing_changes <- function(fit, variant, new_profile){
-  profile <- new_profile[new_profile$variant == variant, ] %>%
-    arrange(parameter) %>%
-    pull(value, parameter)
-  if(variant == "Wild") {
-    params <- extract_profile(profile) %>%
-      map(~list(.x))
-    params$tt <- 0
-  } else {
-    dur_R_index <- list(Delta = 1:2, Omicron = 3:4)[[variant]]
-    t_timings <- fit$samples[[1]]$tt_dur_R[-1][dur_R_index]
-    previous_variant <- list(Delta = "Wild", Omicron = "Delta")[[variant]]
-    old_profile <- new_profile[new_profile$variant == previous_variant, ] %>%
-      arrange(parameter) %>%
-      pull(value, parameter)
-    #just linear change
-    interp_values <- map(seq_along(old_profile), function(i){
-      seq(old_profile[i], profile[i], length.out = diff(t_timings) + 2)[-1]
-    })
-    tt <- seq(t_timings[1], t_timings[2])
-    params <- map(seq_along(tt), function(t){
-      out <- map_dbl(interp_values, ~.x[t])
-      names(out) <- names(old_profile)
-      extract_profile(out)
-    }) %>%
-      transpose()
-    params$tt <- tt
-  }
-  params
-}
-
-# Extract vaccine profile
-extract_profile <- function(profile){
-  out <- list(
-    vaccine_efficacy_disease = profile[c("pV_1_d", "fV_1_d", "fV_2_d", "bV_1_d", "bV_2_d", "bV_3_d")],
-    vaccine_efficacy_infection = profile[c("pV_1_i", "fV_1_i", "fV_2_i", "bV_1_i", "bV_2_i", "bV_3_i")],
-    dur_V = 1/profile[c("w_p", "w_1", "w_2")]
-  )
-  map(out, function(x){
-    names(x) <- NULL
-    x
-  })
-}
-
-# ------------------------------------------------------------------------------
-#  Functions for Variants
-# ------------------------------------------------------------------------------
 
 # Implement a vaccine strategy for a country fit created using nimue
 implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
@@ -723,6 +639,111 @@ implement_vaccine.vacc_durR_nimue_simulation <- function(fit, Vaccine, iso3c){
   #also need to make adjustments where doses will occur before the model begins (need to recheck how the initial states work)
 }
 
+# Update vaccine profile for different classes of vaccines
+update_vaccine_profile <- function(fit){
+  #update to AZ or mRNA efficacy
+  mrna <- readRDS("dominant_vaccines.Rds") %>%
+    mutate(
+      Moderna = if_else(is.na(Moderna), 0L, Moderna),
+      `Pfizer.BioNTech` = if_else(is.na(`Pfizer.BioNTech`), 0L, `Pfizer.BioNTech`)
+    ) %>%
+    transmute(
+      iso3 = countrycode::countrycode(country, "country.name", "iso3c"),
+      mrna = if_else(
+        dominant %in% c("Pfizer/BioNTech", "Moderna") |
+          Moderna == 1 | `Pfizer.BioNTech` == 1,
+        TRUE,
+        FALSE
+      )
+    ) %>%
+    filter(iso3 == iso3c) %>%
+    pull(mrna)
+  if (mrna) {
+    new_profile <- readRDS("vaccine_profiles.Rds")$mRNA
+  } else {
+    new_profile <- readRDS("vaccine_profiles.Rds")$Adenovirus
+  }
+  #derive variant timings
+  new_ve_values <- reduce(c("Wild", "Delta", "Omicron"), function(params, variant){
+    new_params <- compute_VoC_fixing_changes(fit, variant, new_profile)
+    if(is.null(params)){
+      new_params
+    } else {
+      out <- map(names(new_params), ~append(params[[.x]], new_params[[.x]]))
+      names(out) <- names(new_params)
+      out
+    }
+  }, .init = NULL)
+  #one profile for all samples
+  fit$parameters$vaccine_efficacy_disease <- new_ve_values$vaccine_efficacy_disease
+  fit$parameters$vaccine_efficacy_infection <- new_ve_values$vaccine_efficacy_infection
+  fit$parameters$dur_V <- new_ve_values$dur_V
+  fit$parameters$tt_vaccine_efficacy_infection <-
+    fit$parameters$tt_vaccine_efficacy_disease <-
+    fit$parameters$tt_dur_V <- new_ve_values$tt
+  #remove ve's from samples
+  fit$samples <- map(fit$samples, function(sample){
+    sample$vaccine_efficacy_disease <-
+      sample$vaccine_efficacy_infection <-
+      sample$dur_V <-
+      sample$tt_vaccine_efficacy_infection <-
+      sample$tt_vaccine_efficacy_disease <-
+      sample$tt_dur_V <- NULL
+    sample
+  })
+
+  fit
+}
+
+# Update timings of vaccine efficacies for
+compute_VoC_fixing_changes <- function(fit, variant, new_profile){
+  profile <- new_profile[new_profile$variant == variant, ] %>%
+    arrange(parameter) %>%
+    pull(value, parameter)
+  if(variant == "Wild") {
+    params <- extract_profile(profile) %>%
+      map(~list(.x))
+    params$tt <- 0
+  } else {
+    dur_R_index <- list(Delta = 1:2, Omicron = 3:4)[[variant]]
+    t_timings <- fit$samples[[1]]$tt_dur_R[-1][dur_R_index]
+    previous_variant <- list(Delta = "Wild", Omicron = "Delta")[[variant]]
+    old_profile <- new_profile[new_profile$variant == previous_variant, ] %>%
+      arrange(parameter) %>%
+      pull(value, parameter)
+    #just linear change
+    interp_values <- map(seq_along(old_profile), function(i){
+      seq(old_profile[i], profile[i], length.out = diff(t_timings) + 2)[-1]
+    })
+    tt <- seq(t_timings[1], t_timings[2])
+    params <- map(seq_along(tt), function(t){
+      out <- map_dbl(interp_values, ~.x[t])
+      names(out) <- names(old_profile)
+      extract_profile(out)
+    }) %>%
+      transpose()
+    params$tt <- tt
+  }
+  params
+}
+
+# Extract vaccine profile
+extract_profile <- function(profile){
+  out <- list(
+    vaccine_efficacy_disease = profile[c("pV_1_d", "fV_1_d", "fV_2_d", "bV_1_d", "bV_2_d", "bV_3_d")],
+    vaccine_efficacy_infection = profile[c("pV_1_i", "fV_1_i", "fV_2_i", "bV_1_i", "bV_2_i", "bV_3_i")],
+    dur_V = 1/profile[c("w_p", "w_1", "w_2")]
+  )
+  map(out, function(x){
+    names(x) <- NULL
+    x
+  })
+}
+
+# -------------------------------------------------------------------------- ###
+#  Functions for Variants
+# -------------------------------------------------------------------------- ###
+
 # Implement a variant strategy for a country fit
 implement_variant <- function(fit, Vaccine) {
   UseMethod("implement_variant")
@@ -730,17 +751,6 @@ implement_variant <- function(fit, Vaccine) {
 
 # Implement a variant strategy for a country fit using booster model
 implement_variant.rt_optimised <- function(fit, Variant){
-  if (Variant == "baseline") {
-    fit
-  } else if (Variant == "reduced") {
-
-    # TODO
-
-  }
-}
-
-# Implement a variant strategy for a country fit using nimue model
-implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
   if (Variant == "baseline") {
     fit
   } else if (Variant == "reduced") {
@@ -756,13 +766,25 @@ implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
       fit$samples[[i]]$tt_dur_V <- fit$samples[[i]]$tt_dur_R + 1e6
     }
 
-
   }
 }
 
-# ------------------------------------------------------------------------------
+# Implement a variant strategy for a country fit using nimue model
+implement_variant.vacc_durR_nimue_simulation <- function(fit, Variant){
+  if (Variant == "baseline") {
+    fit
+  } else if (Variant == "reduced") {
+    #just set to delta shift to occur very far into the future
+    #instead of removing entirely we could just delay this?
+    fit$interventions$delta_adjustments$start_date <-
+      fit$pmcmc_results$inputs$pars_obs$delta_start_date <-
+      "3050-01-01"
+  }
+}
+
+# -------------------------------------------------------------------------- ###
 #  Accessory Functions (could go in plotting)
-# ------------------------------------------------------------------------------
+# -------------------------------------------------------------------------- ###
 
 quick_format <- function(x, var_select, date_0) {
 
@@ -899,20 +921,20 @@ plot_deaths <- function(scenario_df, facet = FALSE){
   scenarios_x <- describe_scenarios(scenarios_x)
 
   if(facet) {
-  ggplot(baseline, aes(x = date)) +
-    geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
-                alpha = 0.1) +
-    geom_line(aes(y = deaths_med)) +
-    geom_ribbon(data = scenarios_x, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
-                inherit.aes = FALSE,
-                alpha = 0.1) +
-    geom_line(
-      data = scenarios_x, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
-      inherit.aes = FALSE
-    ) +
-    facet_wrap(vars(scenario)) +
-    ggpubr::theme_pubr(legend = "none") +
-    labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
+    ggplot(baseline, aes(x = date)) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
+                  alpha = 0.1) +
+      geom_line(aes(y = deaths_med)) +
+      geom_ribbon(data = scenarios_x, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
+                  inherit.aes = FALSE,
+                  alpha = 0.1) +
+      geom_line(
+        data = scenarios_x, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+        inherit.aes = FALSE
+      ) +
+      facet_wrap(vars(scenario)) +
+      ggpubr::theme_pubr(legend = "none") +
+      labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
   } else {
     ggplot(baseline, aes(x = date)) +
       geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975, color = "Baseline"),
@@ -926,11 +948,11 @@ plot_deaths <- function(scenario_df, facet = FALSE){
       ggpubr::theme_pubr(base_size = 14) +
       facet_wrap(vars(Rt), ncol = 1) +
       scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
-      labs(x = "", y = "Cumulative Deaths (95% quantile and median)") +
+      labs(x = "Date", y = "Cumulative Deaths (95% quantile and median)") +
       guides(color=guide_legend(nrow=2, byrow=TRUE)) +
       theme(panel.grid.major = element_line(),
             legend.key = element_rect(fill = "white", colour = "white"),
-            legend.text = element_text(size = 12),
+            legend.text = element_text(size = 14),
             axis.line = element_line(),
             panel.border = element_rect(color = "black", fill = NA))
 
@@ -1007,8 +1029,9 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
 
   deaths_averted <- scenarios_x %>%
     group_by(scenario, Rt, Vaccine) %>%
-    summarise(across(deaths_averted_med:infections_averted_975, sum)) %>%
+    filter(date == max(.$date)) %>%
     describe_scenarios() %>%
+    mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
     ggplot(aes(x = Rt, y = deaths_averted_med,
                ymin = deaths_averted_025, ymax = deaths_averted_975,
                color = Vaccine, group = interaction(Vaccine, Rt))) +
@@ -1023,13 +1046,14 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     labs(x = "", y = "Cumulative Deaths Averted (median, IQR, 95% quantile)") +
     scale_y_continuous(n.breaks = 6) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
-    theme(legend.text = element_text(size = 14)) +
+    theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
     coord_flip()
 
   infections_averted <- scenarios_x %>%
     group_by(scenario, Rt, Vaccine) %>%
     summarise(across(deaths_averted_med:infections_averted_975, sum)) %>%
     describe_scenarios() %>%
+    mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
     ggplot(aes(x = Rt, y = infections_averted_med,
                ymin = infections_averted_025, ymax = infections_averted_975,
                color = Vaccine, group = interaction(Vaccine, Rt))) +
@@ -1044,10 +1068,10 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     labs(x = "", y = "Cumulative Infections Averted (median, IQR, 95% quantile)") +
     scale_y_continuous(n.breaks = 6) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
-    theme(legend.text = element_text(size = 12)) +
+    theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
     coord_flip()
 
-  cowplot::plot_grid(deaths_averted, infections_averted + theme(legend.position = "none"), ncol = 1)
+  cowplot::plot_grid(deaths_averted, infections_averted + theme(legend.position = "none"), ncol = 1, rel_heights = c(1,0.9))
 
-  }
+}
 
