@@ -80,7 +80,8 @@ artefacts:
 #
 parameters:
   iso3c: ~
-  excess_mortality: ~
+  excess_mortality:
+    default: TRUE
   simulate_counterfactuals:
     default: TRUE
 
