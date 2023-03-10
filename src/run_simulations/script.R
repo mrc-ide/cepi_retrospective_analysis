@@ -27,9 +27,10 @@ scenarios <- read_csv("scenarios.csv")
 scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
 
 # Plot of our vaccine and Rt scenarios
-output_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
-rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
-input_plot <- cowplot::plot_grid(output_plot[[2]],rt_plot, ncol = 1, align = "v")
+vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
+#rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
+rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit)
+
 
 # ---------------------------------------------------------------------------- #
 # 3. Run new scenarios
@@ -76,33 +77,7 @@ if(simulate_counterfactuals){
 # 4. Process outputs
 # ---------------------------------------------------------------------------- #
 
-# vertical line to separate plots
-line_v <- ggplot() + cowplot::draw_line(x = 0,y=1:10, colour = "grey") +
-  theme(panel.background = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-
-# horizintal line to separate plots
-line_h <- ggplot() + cowplot::draw_line(x = 1:10,y=0, colour = "grey") +
-  theme(panel.background = element_blank(),
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-
-# title for the plot
-title <- cowplot::ggdraw() +
-  cowplot::draw_label(
-    paste0(fit$parameters$country, " - 100 Day Mission Scenarios"),
-    fontface = 'bold',
-    x = 0.5
-  )
-
-outplot <- cowplot::plot_grid(input_plot, line_v, death_plot, line_v, death_averted_plot,
-                              ncol = 5, rel_widths = c(0.98,0.02,1,0.02,1))
-
-outplot <- cowplot::plot_grid(title, line_h, outplot,
-                              ncol = 1, rel_heights = c(0.05,0.02,1))
+outplot <- combine_plot_outputs(vacc_plot, rt_plot, death_plot, death_averted_plot)
 
 #plot output
-ggsave("scenario_plot.pdf", outplot, width = 28, height = 14)
+ggsave("scenario_plot.pdf", outplot, width = 19, height = 16)
