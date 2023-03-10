@@ -149,8 +149,16 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
     open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
   }
 
+  # if they only open after the end of 2021 then set to NA as
+  # we only care about openings before 2022
+  if(!is.na(open_date)) {
+  if(open_date > as.Date("2021-12-31")) {
+    open_date <- NA
+  }
+  }
+
   # if they don't ever hit the vaccine target, then we just use their default Rt
-  #if(!is.na(open_date)){
+  if(!is.na(open_date)){
 
     # Rt associated with "opening" and update the Rt data frames for each sample
     rt_new <- lapply(rt, function(x){
@@ -172,7 +180,7 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
       fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
     }
 
-  #}
+  }
   return(fit)
 
 }
@@ -204,6 +212,15 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
   # date of opening
   open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
 
+  # if they only open after the end of 2021 then set to NA as
+  # we only care about openings before 2022
+  if(open_date > as.Date("2021-12-31")) {
+    open_date <- NA
+  }
+
+  # if they don't ever hit the vaccine target, then we just use their default Rt
+  if(!is.na(open_date)){
+
   # income group and related school effect size from separate analysis
   income <- squire.page:::get_income_group(iso3c)
   school_eff <- c(0.2, 0.1, 0.05, 0.02)[as.integer(income)]
@@ -232,6 +249,8 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
   # Assign the new Rt for each sample
   for(i in seq_along(rt_new)) {
     fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
+  }
+
   }
 
   return(fit)
