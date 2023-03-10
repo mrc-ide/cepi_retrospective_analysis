@@ -214,8 +214,10 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
+  if(!is.na(open_date)) {
   if(open_date > as.Date("2021-12-31")) {
     open_date <- NA
+  }
   }
 
   # if they don't ever hit the vaccine target, then we just use their default Rt
