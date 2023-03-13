@@ -165,7 +165,7 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
 
       # filter to after July 2020
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
-      rt_open <- quantile(x2$Rt, prob = c(0.95))
+      rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
       rt_preopen <- (x2$Rt[x2$date > open_date])[1]
 
       # set the new rt
@@ -232,7 +232,7 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
     # filter to after July 2020
     x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
-    rt_open <- quantile(x2$Rt, prob = c(0.95))
+    rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
     rt_preopen <- (x2$Rt[x2$date > open_date])[1]
 
     # set rt to be fully open
@@ -1031,15 +1031,15 @@ plot_deaths <- function(scenario_df, facet = FALSE){
     group_by(date) %>%
     summarise(
       across(
-        c(deaths, infections), ~median(.x),
+        c(deaths, infections), ~median(.x, na.rm=TRUE),
         .names = "{col}_med"
       ),
       across(
-        c(deaths, infections), ~quantile(.x, 0.025),
+        c(deaths, infections), ~quantile(.x, 0.025, na.rm=TRUE),
         .names = "{col}_025"
       ),
       across(
-        c(deaths, infections), ~quantile(.x, 0.975),
+        c(deaths, infections), ~quantile(.x, 0.975, na.rm=TRUE),
         .names = "{col}_975"
       ),
       .groups = "drop"
@@ -1055,15 +1055,15 @@ plot_deaths <- function(scenario_df, facet = FALSE){
     group_by(scenario, date) %>%
     summarise(
       across(
-        c(deaths, infections), ~median(.x),
+        c(deaths, infections), ~median(.x, na.rm=TRUE),
         .names = "{col}_med"
       ),
       across(
-        c(deaths, infections), ~quantile(.x, 0.025),
+        c(deaths, infections), ~quantile(.x, 0.025, na.rm=TRUE),
         .names = "{col}_025"
       ),
       across(
-        c(deaths, infections), ~quantile(.x, 0.975),
+        c(deaths, infections), ~quantile(.x, 0.975, na.rm=TRUE),
         .names = "{col}_975"
       ),
       .groups = "drop"
@@ -1165,23 +1165,23 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     group_by(scenario, date) %>%
     summarise(
       across(
-        c(deaths_averted, infections_averted), ~median(.x),
+        c(deaths_averted, infections_averted), ~median(.x, na.rm=TRUE),
         .names = "{col}_med"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.025),
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.025, na.rm=TRUE),
         .names = "{col}_025"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.25),
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.25, na.rm=TRUE),
         .names = "{col}_25"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.75),
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.75, na.rm=TRUE),
         .names = "{col}_75"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.975),
+        c(deaths_averted, infections_averted), ~quantile(.x, 0.975, na.rm=TRUE),
         .names = "{col}_975"
       ),
       .groups = "drop"

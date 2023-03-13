@@ -19,6 +19,7 @@ iso3c <- as.character(iso3c)
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)
+fit$inputs$data <- fit$inputs$data %>% filter((date_start <= "2022-01-01"))
 
 ## Setup Scenarios
 scenarios <- read_csv("scenarios.csv")
@@ -39,6 +40,8 @@ rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit)
 # start results creation in data directory
 dir.create("data")
 if(simulate_counterfactuals){
+
+  # future::plan(future::multisession()) #not sure what the best way to do this in an orderly task is
 
   original_out <- squire.page::generate_draws(fit)
 
@@ -81,3 +84,6 @@ outplot <- combine_plot_outputs(vacc_plot, rt_plot, death_plot, death_averted_pl
 
 #plot output
 ggsave("scenario_plot.pdf", outplot, width = 19, height = 16)
+
+# close the session
+# future::plan(future::sequential())

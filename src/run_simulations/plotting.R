@@ -139,7 +139,7 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
   df <- df %>%
     filter(date > as.Date("2020-01-08")) %>%
     group_by(scenario, date) %>%
-    summarise(Rt = median(Rt)) %>%
+    summarise(Rt = median(Rt, na.rm=TRUE)) %>%
     rename(rt = Rt,
            Rt = scenario) %>%
     describe_scenarios()
@@ -189,7 +189,7 @@ rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit) {
   df <- df %>%
     filter(date > as.Date("2020-01-08")) %>%
     group_by(scenario, Vaccine, date) %>%
-    summarise(Rt = median(Rt)) %>%
+    summarise(Rt = median(Rt, na.rm=TRUE)) %>%
     rename(rt = Rt,
            Rt = scenario) %>%
     describe_scenarios()
@@ -236,7 +236,7 @@ combine_plot_outputs <- function(vacc_plot, rt_plot, death_plot, death_averted_p
   # title for the plot
   title <- cowplot::ggdraw() +
     cowplot::draw_label(
-      paste0(fit$parameters$country, "(", iso3c, ") - 100 Day Mission Scenarios"),
+      paste0(fit$parameters$country, " (", iso3c, ") - 100 Day Mission Scenarios"),
       fontface = 'bold',
       x = 0.5
     )
