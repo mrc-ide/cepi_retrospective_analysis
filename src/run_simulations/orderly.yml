@@ -84,6 +84,12 @@ parameters:
     default: TRUE
   simulate_counterfactuals:
     default: TRUE
+  booster:
+    default: TRUE
+  equity_speed:
+    default: 2
+  cepi_start_date:
+    default: "2020-04-20"
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual
@@ -103,6 +109,9 @@ packages:
   - purrr
   - tidyr
   - geomtextpath
+  - ggpubr
+  - paletteer
+  - pals
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
@@ -159,3 +168,7 @@ depends:
     id: latest
     use:
       vaccine_profiles.Rds: vaccine_profiles.Rds
+  income_boosting_rates:
+    id: latest
+    use:
+      income_boosts.Rds: income_boosts.Rds
