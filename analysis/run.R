@@ -84,13 +84,15 @@ finished_orderly_ids <- foreach(
 parallel::stopCluster(my.cluster)
 orderly_ids$orderly_id[is.na(orderly_ids$orderly_id)] <- finished_orderly_ids
 committed <- lapply(orderly_ids$orderly_id, orderly_commit)
+saveRDS(orderly_ids, "analysis/data_out/orderly_ids.rds")
 
 # ------------------------------------------------------------------------- #
 # 3. Gather real run outputs ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
-
+orderly_ids <- readRDS("analysis/data_out/orderly_ids.rds")
 names(orderly_ids) <- c("iso3c", "id")
+library(furrr)
 
 collate_outputs <- function(orderly_ids, grouping = NULL, replicates = 100, type = "deaths", over_time = TRUE, max_date = as.Date("2022-01-01")){
 
@@ -215,21 +217,32 @@ collate_outputs <- function(orderly_ids, grouping = NULL, replicates = 100, type
 # deaths over time
 dir.create("analysis/data")
 out1 <- collate_outputs(orderly_ids, NULL, 100, "deaths", TRUE)
-saveRDS(out1, "analysis/data/demo_run_deaths.rds")
+saveRDS(out1, "analysis/data_out/run_deaths.rds")
 
 # deaths over time by income group
 out2 <- collate_outputs(iso3cs, squire.page::get_income_group, 100, "deaths", TRUE)
-saveRDS(out2, "analysis/data/demo_run_deaths_wb.rds")
+saveRDS(out2, "analysis/data_out/run_deaths_wb.rds")
 
-# deaths averted by age group by country for VSL
+# deaths avertedby country for individual country plots
+# TODO: Still need to run this with 100 but taking forever
 iso3c_grouping <- function(x){x}
-out3 <- collate_outputs(orderly_ids, iso3c_grouping, 100, "deaths", FALSE)
-saveRDS(out3, "analysis/data/demo_run_deaths_age_iso3c.rds")
+out3 <- collate_outputs(orderly_ids, iso3c_grouping, 10, "deaths", TRUE)
+saveRDS(out3, "analysis/data_out/run_deaths_iso3c.rds")
 
 # deaths averted total by scenario
 out4 <- collate_outputs(orderly_ids, grouping = NULL, 100, "deaths", FALSE)
-saveRDS(out4, "analysis/data/demo_run_deaths_total.rds")
+saveRDS(out4, "analysis/data_out/run_deaths_total.rds")
 
+# deaths averted by age and iso3c for VSL
+# TODO: Greg - could you adapt the combine function to generate a deaths averted by age and country
+# iso3c_grouping <- function(x){x}
+# out5 <- collate_outputs(orderly_ids, grouping = NULL, 100, "deaths", FALSE)
+# saveRDS(out5, "analysis/data_out/run_deaths_total.rds")
+
+# Totals by country
+iso3c_grouping <- function(x){x}
+out6 <- collate_outputs(orderly_ids, iso3c_grouping, 100, "deaths", FALSE)
+saveRDS(out6, "analysis/data_out/run_deaths_iso3c_totals.rds")
 
 # and save the relevant reports
 pdftools::pdf_combine(
@@ -267,7 +280,7 @@ save_figs <- function(name,
 # ------------------------------------------------------------------------- #
 # 4a. Global ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
-
+out1 <- readRDS("analysis/data_out/run_deaths.rds")
 colors <- c("#ff5f58", "#00244f")
 cepi_date <- as.Date("2020-04-20")
 ymax <- max(out1$deaths_baseline_med, na.rm = TRUE)
@@ -367,13 +380,15 @@ gg_global <- gg +
        subtitle = "") +
   theme(plot.title = element_text(color = "grey30"))
 
-# being lazy - but copy cam
+# save figs to plots directory
 save_figs("deaths_global", gg_global, width = 14, height = 7, root = "analysis/plots")
 
 # ------------------------------------------------------------------------- #
 # 4b. Global by income group ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
+out1 <- readRDS("analysis/data_out/run_deaths.rds")
+out2 <- readRDS("analysis/data_out/run_deaths_wb.rds")
 colors <- c("#ff5f58", "#00244f")
 wbcols <- rev(viridis::viridis(4))
 names(wbcols) <- c("Low-Income Countries","Low-Middle Income Countries","Upper-Middle Income Countries","High-Income Countries")
@@ -468,6 +483,7 @@ save_figs("deaths_global_wb", gg_global2, width = 14, height = 7, root = "analys
 # 4a. Global but different scenario ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
+out1 <- readRDS("analysis/data_out/run_deaths.rds")
 colors <- c("#ff5f58", "#00244f")
 cepi_date <- as.Date("2020-04-20")
 ymax <- max(out1$deaths_baseline_med, na.rm = TRUE)
@@ -578,6 +594,7 @@ scenarios <- read.csv("src/run_simulations/scenarios.csv") %>%
   mutate(scenario = as.integer(rownames(.))) %>%
   describe_scenarios()
 
+out4 <- readRDS("analysis/data_out/run_deaths_total.rds")
 deaths_averted <- out4 %>%
   left_join(scenarios, by = "scenario") %>%
   mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
@@ -600,3 +617,9 @@ deaths_averted <- out4 %>%
   scale_y_continuous(labels = scales::unit_format(unit = "Million", scale = 1e-6))
 
 save_figs("deaths_scenario_averted", deaths_averted, width = 10, height = 7, root = "analysis/plots")
+
+# ------------------------------------------------------------------------- #
+# 4e. Example for Japan ------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+# TODO
