@@ -166,11 +166,12 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
       # filter to after July 2020
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
       rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-      rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+      new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      rt_preopen <- (x2$Rt[x2$date > new_open_date])[1]
 
       # set the new rt
-      x$Rt[x$date > open_date] <- rt_open
-      x$Rt[x$date > open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+      x$Rt[x$date >= new_open_date] <- rt_open
+      x$Rt[x$date >= new_open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
       return(x)
 
     })
@@ -183,6 +184,14 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
   }
   return(fit)
 
+}
+
+adjust_open_date_for_rt_peaks <- function(x, open_date, rt_open){
+  # check if open_date occurs during a peak in Rt (higher than Rt open)
+  # if so we delay the open date until Rt falls back down
+  # this simulates
+  past_open <- x$date > open_date
+  n <- x$date[past_open][min(which(x$Rt[past_open] < rt_open))]
 }
 
 # implements rt trends for economic scenario
@@ -233,16 +242,17 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
     # filter to after July 2020
     x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
     rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-    rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+    new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+    rt_preopen <- (x2$Rt[x2$date > new_open_date])[1]
 
     # set rt to be fully open
-    x$Rt[x$date > open_date] <- rt_open
+    x$Rt[x$date > new_open_date] <- rt_open
 
     # set the new rt for school opening for the first month
-    x$Rt[x$date > open_date][1:2] <- rt_preopen * (school_eff+1)
+    x$Rt[x$date > new_open_date][1:2] <- rt_preopen * (school_eff+1)
 
     # Rt for stepped opening over the next 6 months
-    x$Rt[x$date > open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
+    x$Rt[x$date > new_open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
 
     return(x)
 
