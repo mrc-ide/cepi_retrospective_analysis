@@ -1,3 +1,5 @@
+devtools::install_github("mrc-ide/squire.page", ref = "fc27dcabec55d70ec293328813cec644c56a63db")
+
 iso3cs <- xml2::read_html("https://github.com/mrc-ide/nimue_global_fits/tree/main/excess_mortality")
 iso3cs <- gsub("\\.Rds","",rvest::html_text(rvest::html_nodes(iso3cs,".js-navigation-open.Link--primary")))
 

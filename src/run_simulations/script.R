@@ -47,7 +47,14 @@ if(simulate_counterfactuals){
 
   ## Run simulations and export (roughly ~<1 minute per scenario on a 12 core machine)
   walk(seq_len(nrow(scenarios)), function(i){
-    out <- squire.page::generate_draws(scenario_objects[[i]])
+    early_vacc <- any(scenario_objects[[i]]$parameters$tt_primary_doses < 0)
+    if(early_vacc){
+      out <- simulate_early_vaccinations(scenario_objects[[i]]) %>%
+        squire.page::generate_draws(project_forwards = TRUE)
+    } else {
+      out <- squire.page::generate_draws(scenario_objects[[i]])
+    }
+    nimue_format(out, "deaths")
     save_scenario(out, i)
   }, .progress = TRUE)
 

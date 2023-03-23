@@ -1268,3 +1268,72 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
 
 }
 
+simulate_early_vaccinations <- function(model_object){
+    t_offset <- model_object$parameters$tt_primary_doses[1]
+
+    #update times
+    tt_vars <- grep("tt_", names(model_object$parameters), value = TRUE)
+    model_object$parameters[tt_vars] <- map(model_object$parameters[tt_vars], function(tt){
+      tt <- tt - t_offset
+      tt[1] <- 0
+      tt
+    })
+
+    old_initial_infections <- map(model_object$samples, ~.x$initial_infections)
+
+    model_object$samples <- map(model_object$samples, function(x){
+      x$initial_infections <- 0 #ensure there is no epidemic
+
+      tt_vars <- grep("tt_", names(x), value = TRUE)
+      x[tt_vars] <- map(x[tt_vars], function(tt){
+        tt <- tt - t_offset
+        tt[1] <- 0
+        tt
+      })
+
+      x
+    })
+
+    #limit run to the just the pre-epidemic period
+    new_data <- model_object$inputs$data %>%
+      mutate(t_end = t_end - t_offset,
+             t_start = t_start - t_offset)
+    model_object$inputs$data <- model_object$inputs$data %>%
+      head(1) %>%
+      mutate(t_end= - t_offset)
+
+    model_object$inputs$start_date <- model_object$inputs$start_date + t_offset
+
+    model_object <- generate_draws(model_object)
+
+    model_object$samples <- map(seq_along(model_object$samples), function(x){
+      model_object$samples[[x]]$initial_infections <- old_initial_infections[[x]]
+      model_object$samples[[x]]
+    })
+
+    model_object$inputs$data <- new_data
+
+    #add backin the initial infections (need to do this)
+    squire.page:::assign_infections
+    #keep props the same across ages and vaccine status
+    ages <- 4:14
+    vaccines <- 1:7
+    ages_vaccines <- map(ages, ~map_chr(vaccines, function(x){paste0(.x, ",", x)})) %>%
+      unlist()
+
+    S_vars <- paste0("S[", ages_vaccines, "]")
+    E1_vars <- paste0("E1[", ages_vaccines, "]")
+
+    prop <- unlist(old_initial_infections)/colSums(model_object$output[1, S_vars, ])
+
+    last <- dim(model_object$output)[1]
+
+    model_object$output[last, E1_vars, ] <-
+      sweep(model_object$output[last, S_vars, ], 2, prop, "*")
+
+    model_object$output[last, S_vars, ] <-
+      sweep(model_object$output[last, S_vars, ], 2, 1 - prop, "*")
+
+    model_object
+}
+
