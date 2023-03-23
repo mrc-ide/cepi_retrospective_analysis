@@ -460,7 +460,12 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   # bring vaccination earlier
   start_vacc <- fit$parameters$tt_booster_doses[2] - difference
   end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
-  tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+  tt_doses <- seq(start_vacc, end_vacc, 1)
+  if(start_vacc > 0){
+    tt_doses <- c(0, tt_doses)
+  } else {
+    tt_doses <- c(tt_doses[1] - 1, tt_doses)
+  }
 
   # All scenarios coded up
   if (Vaccine == "early") {
@@ -616,7 +621,12 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   forty_vac <- (sum(pop_size[-(1:3)])*0.4)
 
   # by what date/tt is this to be achieved by
-  new_vacc_dates <- c(0, fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+  new_vacc_dates <- c(fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+  if(!fit$inputs$start_date %in% new_vacc_dates){
+    new_vacc_dates <- c(0, new_vacc_dates)
+  } else {
+    new_vacc_dates <- c(new_vacc_dates[1] - 1, new_vacc_dates)
+  }
   new_vacc_dates <- c(
     new_vacc_dates,
     seq.Date(tail(new_vacc_dates,1)+1,
@@ -650,7 +660,12 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   # bring vaccination earlier
   start_vacc <- fit$parameters$tt_booster_doses[2] - difference
   end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
-  tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+  tt_doses <- seq(start_vacc, end_vacc, 1)
+  if(start_vacc > 0){
+    tt_doses <- c(0, tt_doses)
+  } else {
+    tt_doses <- c(tt_doses[1] - 1, tt_doses)
+  }
 
   # ----------------------------------------------------------------- #
   # c) now we can correctly make the equit changes
