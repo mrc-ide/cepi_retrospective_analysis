@@ -153,8 +153,9 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   if(is.na(open_date) & force_opening){
     #if they don't open & we are forcing
     open_date <- readRDS("average_time_to_opening.Rds")
-    start_vaccinations <- fit$parameters$tt_booster_doses[2] + fit$inputs$start_date
-    open_date <- start_vaccinations + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
+    #apply for either the start of vaccinations or the first death which ever is later
+    start_vaccinations_deaths <- max(fit$parameters$tt_booster_doses[2], min(fit$inputs$data$t_start)) + fit$inputs$start_date
+    open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
   }
 
   # if they only open after the end of 2021 then set to NA as
@@ -232,8 +233,9 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   if(is.na(open_date) & force_opening){
     #if they don't open & we are forcing
     open_date <- readRDS("average_time_to_opening.Rds")
-    start_vaccinations <- fit$parameters$tt_booster_doses[2] + fit$inputs$start_date
-    open_date <- start_vaccinations + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
+    #apply for either the start of vaccinations or the first death which ever is later
+    start_vaccinations_deaths <- max(fit$parameters$tt_booster_doses[2], min(fit$inputs$data$t_start)) + fit$inputs$start_date
+    open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
   }
 
   # if they only open after the end of 2021 then set to NA as
