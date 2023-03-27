@@ -68,14 +68,14 @@ describe_scenarios <- function(scenarios, variant = FALSE){
 }
 
 #convert scenario codes and fit object into a list of simulations ready to run
-implement_scenarios <- function(fit, scenarios, iso3c){
-  pmap(scenarios, function(Rt, Vaccine, Variant, fit){
+implement_scenarios <- function(fit, scenarios, iso3c, force_opening){
+  pmap(scenarios, function(Rt, Vaccine, Variant, fit, force_opening){
     #order matters since Rt can depend on vaccine coverage
     fit <- implement_vaccine(fit, Vaccine, iso3c)
-    fit <- implement_Rt(fit, Rt, iso3c)
+    fit <- implement_Rt(fit, Rt, iso3c, force_opening)
     fit <- implement_variant(fit, Variant)
     fit
-  }, fit = fit)
+  }, fit = fit, force_opening = force_opening)
 }
 
 # -------------------------------------------------------------------------- ###
@@ -103,27 +103,27 @@ simple_Rt <- function (model_out) {
 }
 
 # implements rt trends for fits
-implement_Rt <- function(fit, Rt, iso3c){
+implement_Rt <- function(fit, Rt, iso3c, force_opening){
   if (Rt == "baseline") {
     fit
   } else if (Rt == "target") {
 
-    implement_target_Rt(fit, iso3c)
+    implement_target_Rt(fit, iso3c, force_opening)
 
   } else if (Rt == "economic") {
 
-    implement_economic_Rt(fit, iso3c)
+    implement_economic_Rt(fit, iso3c, force_opening)
 
   }
 }
 
 # implements rt trends for target scenario
-implement_target_Rt <- function(fit, iso3c){
+implement_target_Rt <- function(fit, iso3c, force_opening){
   UseMethod("implement_target_Rt")
 }
 
 # implements rt trends for target scenario for booster model
-implement_target_Rt.rt_optimised <- function(fit, iso3c) {
+implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -147,6 +147,14 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
     open_date <- vacc$date[which(vacc$secondary > cov_needed_adults)[1]]
   } else {
     open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+  }
+
+
+  if(is.na(open_date) & force_opening){
+    #if they don't open & we are forcing
+    open_date <- readRDS("average_time_to_opening.Rds")
+    start_vaccinations <- fit$parameters$tt_booster_doses[2] + fit$inputs$start_date
+    open_date <- start_vaccinations + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
   }
 
   # if they only open after the end of 2021 then set to NA as
@@ -195,12 +203,12 @@ adjust_open_date_for_rt_peaks <- function(x, open_date, rt_open){
 }
 
 # implements rt trends for economic scenario
-implement_economic_Rt <- function(fit, iso3c){
+implement_economic_Rt <- function(fit, iso3c, force_opening){
   UseMethod("implement_economic_Rt")
 }
 
 # implements rt trends for economic scenario for booster model
-implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
+implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -220,6 +228,13 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
   # date of opening
   open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+
+  if(is.na(open_date) & force_opening){
+    #if they don't open & we are forcing
+    open_date <- readRDS("average_time_to_opening.Rds")
+    start_vaccinations <- fit$parameters$tt_booster_doses[2] + fit$inputs$start_date
+    open_date <- start_vaccinations + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
+  }
 
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022

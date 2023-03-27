@@ -25,7 +25,7 @@ fit$inputs$data <- fit$inputs$data %>% filter((date_start <= "2022-01-01"))
 scenarios <- read_csv("scenarios.csv")
 
 # Note have just set to the default here for Rt
-scenario_objects <- implement_scenarios(fit, scenarios, iso3c)
+scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
 
 # Plot of our vaccine and Rt scenarios
 vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
