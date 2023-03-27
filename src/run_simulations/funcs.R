@@ -176,7 +176,7 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
       rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
       new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
-      rt_preopen <- (x2$Rt[x2$date > new_open_date])[1]
+      rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
       # set the new rt
       x$Rt[x$date >= new_open_date] <- rt_open
@@ -260,7 +260,7 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
     rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
     new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
-    rt_preopen <- (x2$Rt[x2$date > new_open_date])[1]
+    rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
     # set rt to be fully open
     x$Rt[x$date > new_open_date] <- rt_open
