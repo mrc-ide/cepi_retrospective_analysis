@@ -1354,3 +1354,51 @@ simulate_early_vaccinations <- function(model_object){
     model_object
 }
 
+calculate_openness_fit <- function(fit, full_openness_rt){
+  get_Rt(fit) %>%
+    left_join(
+      tibble(
+        open_rt = full_openness_rt,
+        rep = seq_along(full_openness_rt)
+      ),
+      by = "rep"
+    ) %>%
+    mutate(
+      openness = if_else(
+        Rt > open_rt,
+        1,
+        Rt/open_rt
+      )
+    ) %>%
+    group_by(rep) %>%
+    summarise(
+      overall_openness = sum(openness)
+    )
+}
+
+calculate_openness <- function(fit, scenario_objects, end_date){
+  #we define 1 unit of openess to be 1 day where Rt is at the 95% quantile
+  #0 is when Rt is at 0
+  #any day where Rt is greater than the 9% quantile counts as 1 unit
+  #as used as the limit in the other scenarios
+  full_openness_rt <- simple_Rt(fit) %>%
+    map_dbl(~quantile(.x$Rt[.x$date < as.Date("2022-01-01") & .x$date > as.Date("2020-07-01")], 0.95))
+  #calculate level of openness for the baseline model
+  baseline <- calculate_openness_fit(fit, full_openness_rt)
+  #calculate level of openness for each scenario
+  scenarios <- scenario_objects %>%
+    map(~calculate_openness_fit(.x, full_openness_rt))
+  #gain in openness in each scenario is the difference between these two values
+  scenarios %>%
+    map(function(scenario, baseline){
+      scenario %>%
+        full_join(
+          baseline, by = "rep"
+        ) %>%
+        transmute(
+          rep = rep,
+          gain_in_openness = overall_openness - overall_openness_b
+        )
+      }, baseline = rename(baseline, overall_openness_b = overall_openness)
+    )
+}

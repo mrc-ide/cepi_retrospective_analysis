@@ -34,6 +34,10 @@ vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FA
 #rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
 rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit, end_date)
 
+#calculate a measure openness gained over the baseline in each scenario
+calculate_openness(fit, scenario_objects, end_date) %>%
+  saveRDS("gain_in_openness.Rds")
+
 # ---------------------------------------------------------------------------- #
 # 3. Run new scenarios
 # ---------------------------------------------------------------------------- #
