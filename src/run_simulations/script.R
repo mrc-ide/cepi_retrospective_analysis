@@ -13,13 +13,15 @@ simulate_counterfactuals <- as.logical(simulate_counterfactuals)
 excess_mortality <- as.logical(excess_mortality)
 iso3c <- as.character(iso3c)
 
+end_date <- as.Date("2022-01-01")
+
 # ---------------------------------------------------------------------------- #
 # 2. Get fit and prepare scenarios
 # ---------------------------------------------------------------------------- #
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)
-fit$inputs$data <- fit$inputs$data %>% filter((date_start <= "2022-01-01"))
+fit$inputs$data <- fit$inputs$data %>% filter((date_start <= end_date))
 
 ## Setup Scenarios
 scenarios <- read_csv("scenarios.csv")
@@ -28,10 +30,9 @@ scenarios <- read_csv("scenarios.csv")
 scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
 
 # Plot of our vaccine and Rt scenarios
-vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE)
+vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE, end_date)
 #rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
-rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit)
-
+rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit, end_date)
 
 # ---------------------------------------------------------------------------- #
 # 3. Run new scenarios
