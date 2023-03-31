@@ -59,7 +59,6 @@ if(simulate_counterfactuals){
     } else {
       out <- squire.page::generate_draws(scenario_objects[[i]])
     }
-    nimue_format(out, "deaths")
     save_scenario(out, i)
   }, .progress = TRUE)
 
