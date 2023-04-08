@@ -1,4 +1,4 @@
-vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRUE) {
+vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRUE, end_date) {
 
   # create our vaccine allocation dataframe
   vacc_list <- list()
@@ -19,7 +19,8 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     "primary" = fit$parameters$primary_doses,
     "booster" = fit$parameters$booster_doses,
     "Vaccine" = "Baseline"
-  ))
+  )) %>%
+    filter(date <= end_date)
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
                                               "Science",
                                               "Science & Infrastructure",
@@ -121,7 +122,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
   }
 }
 
-rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
+rt_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
 
   # create our vaccine allocation dataframe
   rt_list <- list()
@@ -142,7 +143,8 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
     summarise(Rt = median(Rt, na.rm=TRUE)) %>%
     rename(rt = Rt,
            Rt = scenario) %>%
-    describe_scenarios()
+    describe_scenarios() %>%
+    filter(date <= end_date)
 
   # Demonstration Plot of it all together
   gg <- df %>%
@@ -165,7 +167,7 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit) {
 
 }
 
-rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit) {
+rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
 
   # create our vaccine allocation dataframe
   rt_list <- list()
@@ -192,7 +194,8 @@ rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit) {
     summarise(Rt = median(Rt, na.rm=TRUE)) %>%
     rename(rt = Rt,
            Rt = scenario) %>%
-    describe_scenarios()
+    describe_scenarios() %>%
+    filter(date <= end_date)
 
   # Demonstration Plot of it all together
   gg <- df %>%

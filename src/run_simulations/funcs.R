@@ -68,14 +68,14 @@ describe_scenarios <- function(scenarios, variant = FALSE){
 }
 
 #convert scenario codes and fit object into a list of simulations ready to run
-implement_scenarios <- function(fit, scenarios, iso3c){
-  pmap(scenarios, function(Rt, Vaccine, Variant, fit){
+implement_scenarios <- function(fit, scenarios, iso3c, force_opening){
+  pmap(scenarios, function(Rt, Vaccine, Variant, fit, force_opening){
     #order matters since Rt can depend on vaccine coverage
     fit <- implement_vaccine(fit, Vaccine, iso3c)
-    fit <- implement_Rt(fit, Rt, iso3c)
+    fit <- implement_Rt(fit, Rt, iso3c, force_opening)
     fit <- implement_variant(fit, Variant)
     fit
-  }, fit = fit)
+  }, fit = fit, force_opening = force_opening)
 }
 
 # -------------------------------------------------------------------------- ###
@@ -103,27 +103,27 @@ simple_Rt <- function (model_out) {
 }
 
 # implements rt trends for fits
-implement_Rt <- function(fit, Rt, iso3c){
+implement_Rt <- function(fit, Rt, iso3c, force_opening){
   if (Rt == "baseline") {
     fit
   } else if (Rt == "target") {
 
-    implement_target_Rt(fit, iso3c)
+    implement_target_Rt(fit, iso3c, force_opening)
 
   } else if (Rt == "economic") {
 
-    implement_economic_Rt(fit, iso3c)
+    implement_economic_Rt(fit, iso3c, force_opening)
 
   }
 }
 
 # implements rt trends for target scenario
-implement_target_Rt <- function(fit, iso3c){
+implement_target_Rt <- function(fit, iso3c, force_opening){
   UseMethod("implement_target_Rt")
 }
 
 # implements rt trends for target scenario for booster model
-implement_target_Rt.rt_optimised <- function(fit, iso3c) {
+implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -149,6 +149,15 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
     open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
   }
 
+
+  if(is.na(open_date) & force_opening){
+    #if they don't open & we are forcing
+    open_date <- readRDS("average_time_to_opening.Rds")
+    #apply for either the start of vaccinations or the first death which ever is later
+    start_vaccinations_deaths <- max(fit$parameters$tt_booster_doses[2], min(fit$inputs$data$t_start)) + fit$inputs$start_date
+    open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
+  }
+
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
   if(!is.na(open_date)) {
@@ -166,11 +175,12 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
       # filter to after July 2020
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
       rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-      rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+      new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
       # set the new rt
-      x$Rt[x$date > open_date] <- rt_open
-      x$Rt[x$date > open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+      x$Rt[x$date >= new_open_date] <- rt_open
+      x$Rt[x$date >= new_open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
       return(x)
 
     })
@@ -185,13 +195,21 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c) {
 
 }
 
+adjust_open_date_for_rt_peaks <- function(x, open_date, rt_open){
+  # check if open_date occurs during a peak in Rt (higher than Rt open)
+  # if so we delay the open date until Rt falls back down
+  # this simulates
+  past_open <- x$date > open_date
+  n <- x$date[past_open][min(which(x$Rt[past_open] < rt_open))]
+}
+
 # implements rt trends for economic scenario
-implement_economic_Rt <- function(fit, iso3c){
+implement_economic_Rt <- function(fit, iso3c, force_opening){
   UseMethod("implement_economic_Rt")
 }
 
 # implements rt trends for economic scenario for booster model
-implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
+implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -211,6 +229,14 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
 
   # date of opening
   open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
+
+  if(is.na(open_date) & force_opening){
+    #if they don't open & we are forcing
+    open_date <- readRDS("average_time_to_opening.Rds")
+    #apply for either the start of vaccinations or the first death which ever is later
+    start_vaccinations_deaths <- max(fit$parameters$tt_booster_doses[2], min(fit$inputs$data$t_start)) + fit$inputs$start_date
+    open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
+  }
 
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
@@ -233,16 +259,17 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c) {
     # filter to after July 2020
     x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
     rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-    rt_preopen <- (x2$Rt[x2$date > open_date])[1]
+    new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+    rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
     # set rt to be fully open
-    x$Rt[x$date > open_date] <- rt_open
+    x$Rt[x$date > new_open_date] <- rt_open
 
     # set the new rt for school opening for the first month
-    x$Rt[x$date > open_date][1:2] <- rt_preopen * (school_eff+1)
+    x$Rt[x$date > new_open_date][1:2] <- rt_preopen * (school_eff+1)
 
     # Rt for stepped opening over the next 6 months
-    x$Rt[x$date > open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
+    x$Rt[x$date > new_open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
 
     return(x)
 
@@ -450,7 +477,12 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
   # bring vaccination earlier
   start_vacc <- fit$parameters$tt_booster_doses[2] - difference
   end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
-  tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+  tt_doses <- seq(start_vacc, end_vacc, 1)
+  if(start_vacc > 0){
+    tt_doses <- c(0, tt_doses)
+  } else {
+    tt_doses <- c(tt_doses[1] - 1, tt_doses)
+  }
 
   # All scenarios coded up
   if (Vaccine == "early") {
@@ -606,7 +638,12 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   forty_vac <- (sum(pop_size[-(1:3)])*0.4)
 
   # by what date/tt is this to be achieved by
-  new_vacc_dates <- c(0, fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+  new_vacc_dates <- c(fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+  if(!fit$inputs$start_date %in% new_vacc_dates){
+    new_vacc_dates <- c(0, new_vacc_dates)
+  } else {
+    new_vacc_dates <- c(new_vacc_dates[1] - 1, new_vacc_dates)
+  }
   new_vacc_dates <- c(
     new_vacc_dates,
     seq.Date(tail(new_vacc_dates,1)+1,
@@ -640,7 +677,12 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   # bring vaccination earlier
   start_vacc <- fit$parameters$tt_booster_doses[2] - difference
   end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
-  tt_doses <- c(0, seq(start_vacc, end_vacc, 1))
+  tt_doses <- seq(start_vacc, end_vacc, 1)
+  if(start_vacc > 0){
+    tt_doses <- c(0, tt_doses)
+  } else {
+    tt_doses <- c(tt_doses[1] - 1, tt_doses)
+  }
 
   # ----------------------------------------------------------------- #
   # c) now we can correctly make the equit changes
@@ -1243,3 +1285,120 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
 
 }
 
+simulate_early_vaccinations <- function(model_object){
+    t_offset <- model_object$parameters$tt_primary_doses[1]
+
+    #update times
+    tt_vars <- grep("tt_", names(model_object$parameters), value = TRUE)
+    model_object$parameters[tt_vars] <- map(model_object$parameters[tt_vars], function(tt){
+      tt <- tt - t_offset
+      tt[1] <- 0
+      tt
+    })
+
+    old_initial_infections <- map(model_object$samples, ~.x$initial_infections)
+
+    model_object$samples <- map(model_object$samples, function(x){
+      x$initial_infections <- 0 #ensure there is no epidemic
+
+      tt_vars <- grep("tt_", names(x), value = TRUE)
+      x[tt_vars] <- map(x[tt_vars], function(tt){
+        tt <- tt - t_offset
+        tt[1] <- 0
+        tt
+      })
+
+      x
+    })
+
+    #limit run to the just the pre-epidemic period
+    new_data <- model_object$inputs$data %>%
+      mutate(t_end = t_end - t_offset,
+             t_start = t_start - t_offset)
+    model_object$inputs$data <- model_object$inputs$data %>%
+      head(1) %>%
+      mutate(t_end= - t_offset)
+
+    model_object$inputs$start_date <- model_object$inputs$start_date + t_offset
+
+    model_object <- generate_draws(model_object)
+
+    model_object$samples <- map(seq_along(model_object$samples), function(x){
+      model_object$samples[[x]]$initial_infections <- old_initial_infections[[x]]
+      model_object$samples[[x]]
+    })
+
+    model_object$inputs$data <- new_data
+
+    #add backin the initial infections (need to do this)
+    squire.page:::assign_infections
+    #keep props the same across ages and vaccine status
+    ages <- 4:14
+    vaccines <- 1:7
+    ages_vaccines <- map(ages, ~map_chr(vaccines, function(x){paste0(.x, ",", x)})) %>%
+      unlist()
+
+    S_vars <- paste0("S[", ages_vaccines, "]")
+    E1_vars <- paste0("E1[", ages_vaccines, "]")
+
+    prop <- unlist(old_initial_infections)/colSums(model_object$output[1, S_vars, ])
+
+    last <- dim(model_object$output)[1]
+
+    model_object$output[last, E1_vars, ] <-
+      sweep(model_object$output[last, S_vars, ], 2, prop, "*")
+
+    model_object$output[last, S_vars, ] <-
+      sweep(model_object$output[last, S_vars, ], 2, 1 - prop, "*")
+
+    model_object
+}
+
+calculate_openness_fit <- function(fit, full_openness_rt){
+  get_Rt(fit) %>%
+    left_join(
+      tibble(
+        open_rt = full_openness_rt,
+        rep = seq_along(full_openness_rt)
+      ),
+      by = "rep"
+    ) %>%
+    mutate(
+      openness = if_else(
+        Rt > open_rt,
+        1,
+        Rt/open_rt
+      )
+    ) %>%
+    group_by(rep) %>%
+    summarise(
+      overall_openness = sum(openness)
+    )
+}
+
+calculate_openness <- function(fit, scenario_objects, end_date){
+  #we define 1 unit of openess to be 1 day where Rt is at the 95% quantile
+  #0 is when Rt is at 0
+  #any day where Rt is greater than the 9% quantile counts as 1 unit
+  #as used as the limit in the other scenarios
+  full_openness_rt <- simple_Rt(fit) %>%
+    map_dbl(~quantile(.x$Rt[.x$date < as.Date("2022-01-01") & .x$date > as.Date("2020-07-01")], 0.95))
+  #calculate level of openness for the baseline model
+  baseline <- calculate_openness_fit(fit, full_openness_rt)
+  #calculate level of openness for each scenario
+  scenarios <- scenario_objects %>%
+    map(~calculate_openness_fit(.x, full_openness_rt))
+  #gain in openness in each scenario is the difference between these two values
+  scenarios %>%
+    map(function(scenario, baseline){
+      scenario %>%
+        full_join(
+          baseline, by = "rep"
+        ) %>%
+        transmute(
+          rep = rep,
+          gain_in_openness = overall_openness - overall_openness_b
+        )
+      }, baseline = rename(baseline, overall_openness_b = overall_openness)
+    )
+}

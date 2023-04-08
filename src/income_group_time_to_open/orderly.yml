@@ -44,9 +44,12 @@ script: script.R
 #             - figures/fig1.png
 #             - figures/fig2.png
 artefacts:
+  - staticgraph:
+      description: Plot of data + average for each income group
+      filenames: diagnostic_plot.pdf
   - data:
-      description: Annual Boosting rates by income group
-      filenames: income_boosts.Rds
+      description: Average for each income group
+      filenames: average_time_to_opening.Rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -63,9 +66,9 @@ artefacts:
 # Optional parameters to the report.  These will be substituted into
 # the SQL queries.  For example:
 #
-parameters:
-  report_date:
-    default: "2023-03-09"
+# parameters:
+#   a:
+#     default: 1
 #   b: ~
 #
 # would declare a parameter called 'a' with a default value of 1, and
@@ -85,9 +88,13 @@ parameters:
 # reports.
 #
 packages:
-  - squire.page
+  - readr
   - dplyr
   - lubridate
+  - squire.page
+  - ggplot2
+  - ggpubr
+  - forcats
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading

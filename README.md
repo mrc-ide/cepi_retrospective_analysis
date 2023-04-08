@@ -7,3 +7,5 @@ This is an [`orderly`](https://github.com/vimc/orderly) project.  The directorie
 * `data`: copies of data used in the reports
 
 For more documentation please see: `vignettes/cepi_analysis.rmd`.
+
+Note: use squire.page ref fc27dcabec55d70ec293328813cec644c56a63db

@@ -2,8 +2,8 @@
 
 # get owid boost data
 vaccs <- read.csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv")
-vaccs$date <- as.Date(vaccs$date)
-report_date <- as.Date(date)
+vaccs$date <- as_date(vaccs$date)
+report_date <- as_date(report_date)
 vaccs <- vaccs %>% filter(date <= report_date)
 
 # boost rates per country
