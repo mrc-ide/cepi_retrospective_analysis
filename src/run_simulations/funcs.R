@@ -639,8 +639,9 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
 
   # by what date/tt is this to be achieved by
   new_vacc_dates <- c(fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
+
   if(!fit$inputs$start_date %in% new_vacc_dates){
-    new_vacc_dates <- c(0, new_vacc_dates)
+    new_vacc_dates <- c(fit$inputs$start_date, new_vacc_dates)
   } else {
     new_vacc_dates <- c(new_vacc_dates[1] - 1, new_vacc_dates)
   }
