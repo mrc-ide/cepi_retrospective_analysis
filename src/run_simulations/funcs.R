@@ -161,9 +161,9 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
   if(!is.na(open_date)) {
-  if(open_date > as.Date("2021-12-31")) {
-    open_date <- NA
-  }
+    if(open_date > as.Date("2021-12-31")) {
+      open_date <- NA
+    }
   }
 
   # if they don't ever hit the vaccine target, then we just use their default Rt
@@ -241,44 +241,44 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
   if(!is.na(open_date)) {
-  if(open_date > as.Date("2021-12-31")) {
-    open_date <- NA
-  }
+    if(open_date > as.Date("2021-12-31")) {
+      open_date <- NA
+    }
   }
 
   # if they don't ever hit the vaccine target, then we just use their default Rt
   if(!is.na(open_date)){
 
-  # income group and related school effect size from separate analysis
-  income <- squire.page:::get_income_group(iso3c)
-  school_eff <- c(0.2, 0.1, 0.05, 0.02)[as.integer(income)]
+    # income group and related school effect size from separate analysis
+    income <- squire.page:::get_income_group(iso3c)
+    school_eff <- c(0.2, 0.1, 0.05, 0.02)[as.integer(income)]
 
-  # Rt associated with "opening" and update the Rt data frames for each sample
-  rt_new <- lapply(rt, function(x){
+    # Rt associated with "opening" and update the Rt data frames for each sample
+    rt_new <- lapply(rt, function(x){
 
-    # filter to after July 2020
-    x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
-    rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-    new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
-    rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
+      # filter to after July 2020
+      x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
+      rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
+      new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
-    # set rt to be fully open
-    x$Rt[x$date > new_open_date] <- rt_open
+      # set rt to be fully open
+      x$Rt[x$date > new_open_date] <- rt_open
 
-    # set the new rt for school opening for the first month
-    x$Rt[x$date > new_open_date][1:2] <- rt_preopen * (school_eff+1)
+      # set the new rt for school opening for the first month
+      x$Rt[x$date > new_open_date][1:2] <- rt_preopen * (school_eff+1)
 
-    # Rt for stepped opening over the next 6 months
-    x$Rt[x$date > new_open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
+      # Rt for stepped opening over the next 6 months
+      x$Rt[x$date > new_open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
 
-    return(x)
+      return(x)
 
-  })
+    })
 
-  # Assign the new Rt for each sample
-  for(i in seq_along(rt_new)) {
-    fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
-  }
+    # Assign the new Rt for each sample
+    for(i in seq_along(rt_new)) {
+      fit$samples[[i]]$R0 <- rt_new[[i]]$Rt
+    }
 
   }
 
@@ -369,6 +369,9 @@ fast_grow <- function(x, roll = 7, tot_mult, speed = 2, eoy_x, max_cov) {
   # now find the point at which we go past our total
   x3 <- cumsum(x2)
   end <- which(x3 > floor(tot))[1]
+  if(is.na(end)){
+    end <- which(x3 >= floor(tot))[2]
+  }
 
   # and correct to stop increasing coverage there
   x2[end:length(x2)] <- 0
@@ -529,7 +532,8 @@ implement_vaccine.rt_optimised <- function(fit, Vaccine, iso3c){
 }
 
 # Equity scenario
-implement_vaccine_equity <- function(fit, difference, end_of_cepi_year_one, primary, booster, start_vacc, end_vacc, tt_doses, increased_cov = NULL){
+implement_vaccine_equity <- function(fit, difference, end_of_cepi_year_one, primary, booster, start_vacc, end_vacc, tt_doses,
+                                     increased_cov = NULL, increased_cov_boost = NULL){
 
   # --------------------------------------------- #
   # 1. change vaccine rollout speed
@@ -551,24 +555,40 @@ implement_vaccine_equity <- function(fit, difference, end_of_cepi_year_one, prim
 
   # how much increase is required to reach 40% coverage by this date
   if(is.null(increased_cov)) {
-  increased_cov <- forty_vac / cumsum(primary)[eoy]
+    increased_cov <- forty_vac / cumsum(primary)[eoy]
+  }
+
+  # same for boosters but need to check they used them or not first
+  if(sum(booster) == 0){
+    #can't scale like that if there are no booster doses to begin with
+    booster <- add_boosters(booster, income_boosts, iso3c, start_vacc, end_vacc, tt_doses, pop_size)
+  }
+
+  if(is.null(increased_cov_boost)) {
+    increased_cov_boost <- forty_vac / cumsum(booster)[eoy+365]
+    # catch for if boosters did start but not before eoy + 365
+    if(is.infinite(increased_cov_boost)) {
+      booster <- add_boosters(booster, income_boosts, iso3c, start_vacc, end_vacc, tt_doses, pop_size)
+      increased_cov_boost <- forty_vac / cumsum(booster)[eoy+365]
+    }
   }
 
   # maximum before plateau on primary
   max_primary_cov <- max(forty_vac, sum(fit$parameters$primary_doses))
-  max_booster_cov <- sum(fit$parameters$booster_doses)
+  max_booster_cov <- max(forty_vac, sum(fit$parameters$booster_doses))
+  # max_booster_cov <- sum(fit$parameters$booster_doses)
 
   # adjust our primary vaccines
   primary <- fast_grow(x = primary, tot_mult = increased_cov, eoy_x = eoy, speed = equity_speed, max_cov = max_primary_cov)
 
   # adjust boosters as well
-  if(sum(booster) > 0){
-    # just double the booster rate at this moment in time
-    booster <- fast_grow(booster, tot_mult = equity_speed, eoy_x = eoy, speed = equity_speed, max_cov = max_booster_cov)
-  } else {
-    #can't scale like that if there are no booster doses to begin with
-    booster <- add_boosters(booster, income_boosts, iso3c, start_vacc, end_vacc, tt_doses, pop_size)
-  }
+
+
+  booster <- fast_grow(booster, tot_mult = increased_cov_boost, eoy_x = eoy, speed = equity_speed, max_cov = max_booster_cov)
+
+
+
+
 
   # --------------------------------------------- #
   # 2. create and assign our new values
@@ -637,10 +657,11 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   pop_size <- squire::get_population(fit$parameters$country)$n
   forty_vac <- (sum(pop_size[-(1:3)])*0.4)
 
+
   # by what date/tt is this to be achieved by
   new_vacc_dates <- c(fit$parameters$tt_primary_doses[-1] - difference) + fit$inputs$start_date
   if(!fit$inputs$start_date %in% new_vacc_dates){
-    new_vacc_dates <- c(0, new_vacc_dates)
+    new_vacc_dates <- c(fit$inputs$start_date, new_vacc_dates)
   } else {
     new_vacc_dates <- c(new_vacc_dates[1] - 1, new_vacc_dates)
   }
@@ -674,6 +695,19 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
     rep(mean(tail(fit$parameters$booster_doses, 30)), difference)
   )
 
+  # Make sure there is some ready for equity increase
+  if(sum(booster) == 0){
+    #can't scale like that if there are no booster doses to begin with
+    booster <- add_boosters(booster, income_boosts, iso3c, start_vacc, end_vacc, tt_doses, pop_size)
+  }
+  increased_cov_boost <- forty_vac / cumsum(booster)[eoy+365]
+
+  # catch for if boosters did start but not before eoy + 365
+  if(is.infinite(increased_cov_boost)) {
+    booster <- add_boosters(booster, income_boosts, iso3c, start_vacc, end_vacc, tt_doses, pop_size)
+    increased_cov_boost <- forty_vac / cumsum(booster)[eoy+365]
+  }
+
   # bring vaccination earlier
   start_vacc <- fit$parameters$tt_booster_doses[2] - difference
   end_vacc <- tail(fit$parameters$tt_booster_doses, 1)
@@ -690,7 +724,7 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
 
   # make the equity changes
   new_values <- implement_vaccine_equity(
-    fit, difference, end_of_cepi_year_one, primary, booster, start_vacc, end_vacc, tt_doses, increased_cov
+    fit, difference, end_of_cepi_year_one, primary, booster, start_vacc, end_vacc, tt_doses, increased_cov,  increased_cov_boost
   )
 
   # --------------------------------------------- #
@@ -706,11 +740,13 @@ implement_vaccine_both <- function(fit, difference, end_of_cepi_year_one, primar
   max_primary_cov <- max(c(forty_vac, sum(fit$parameters$primary_doses)))
 
   # adjust our primary vaccines
-  primary <- max_grow(new_values$primary, max_cov = max_primary_cov)
+  primary <- max_grow(new_values$primary_doses, max_cov = max_primary_cov)
+
 
   # adjust boosters as well only if they actually boosted in real world
-  if(sum(new_values$booster) > 0) {
-    booster <- max_grow(new_values$booster, max_cov = sum(new_values$booster))
+  if(sum(new_values$booster_doses) > 0) {
+    booster <- max_grow(new_values$booster_doses, max_cov = sum(new_values$booster_doses))
+
   }
 
   # --------------------------------------------- #
@@ -1286,72 +1322,72 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
 }
 
 simulate_early_vaccinations <- function(model_object){
-    t_offset <- model_object$parameters$tt_primary_doses[1]
+  t_offset <- model_object$parameters$tt_primary_doses[1]
 
-    #update times
-    tt_vars <- grep("tt_", names(model_object$parameters), value = TRUE)
-    model_object$parameters[tt_vars] <- map(model_object$parameters[tt_vars], function(tt){
+  #update times
+  tt_vars <- grep("tt_", names(model_object$parameters), value = TRUE)
+  model_object$parameters[tt_vars] <- map(model_object$parameters[tt_vars], function(tt){
+    tt <- tt - t_offset
+    tt[1] <- 0
+    tt
+  })
+
+  old_initial_infections <- map(model_object$samples, ~.x$initial_infections)
+
+  model_object$samples <- map(model_object$samples, function(x){
+    x$initial_infections <- 0 #ensure there is no epidemic
+
+    tt_vars <- grep("tt_", names(x), value = TRUE)
+    x[tt_vars] <- map(x[tt_vars], function(tt){
       tt <- tt - t_offset
       tt[1] <- 0
       tt
     })
 
-    old_initial_infections <- map(model_object$samples, ~.x$initial_infections)
+    x
+  })
 
-    model_object$samples <- map(model_object$samples, function(x){
-      x$initial_infections <- 0 #ensure there is no epidemic
+  #limit run to the just the pre-epidemic period
+  new_data <- model_object$inputs$data %>%
+    mutate(t_end = t_end - t_offset,
+           t_start = t_start - t_offset)
+  model_object$inputs$data <- model_object$inputs$data %>%
+    head(1) %>%
+    mutate(t_end= - t_offset)
 
-      tt_vars <- grep("tt_", names(x), value = TRUE)
-      x[tt_vars] <- map(x[tt_vars], function(tt){
-        tt <- tt - t_offset
-        tt[1] <- 0
-        tt
-      })
+  model_object$inputs$start_date <- model_object$inputs$start_date + t_offset
 
-      x
-    })
+  model_object <- generate_draws(model_object)
 
-    #limit run to the just the pre-epidemic period
-    new_data <- model_object$inputs$data %>%
-      mutate(t_end = t_end - t_offset,
-             t_start = t_start - t_offset)
-    model_object$inputs$data <- model_object$inputs$data %>%
-      head(1) %>%
-      mutate(t_end= - t_offset)
+  model_object$samples <- map(seq_along(model_object$samples), function(x){
+    model_object$samples[[x]]$initial_infections <- old_initial_infections[[x]]
+    model_object$samples[[x]]
+  })
 
-    model_object$inputs$start_date <- model_object$inputs$start_date + t_offset
+  model_object$inputs$data <- new_data
 
-    model_object <- generate_draws(model_object)
+  #add backin the initial infections (need to do this)
+  squire.page:::assign_infections
+  #keep props the same across ages and vaccine status
+  ages <- 4:14
+  vaccines <- 1:7
+  ages_vaccines <- map(ages, ~map_chr(vaccines, function(x){paste0(.x, ",", x)})) %>%
+    unlist()
 
-    model_object$samples <- map(seq_along(model_object$samples), function(x){
-      model_object$samples[[x]]$initial_infections <- old_initial_infections[[x]]
-      model_object$samples[[x]]
-    })
+  S_vars <- paste0("S[", ages_vaccines, "]")
+  E1_vars <- paste0("E1[", ages_vaccines, "]")
 
-    model_object$inputs$data <- new_data
+  prop <- unlist(old_initial_infections)/colSums(model_object$output[1, S_vars, ])
 
-    #add backin the initial infections (need to do this)
-    squire.page:::assign_infections
-    #keep props the same across ages and vaccine status
-    ages <- 4:14
-    vaccines <- 1:7
-    ages_vaccines <- map(ages, ~map_chr(vaccines, function(x){paste0(.x, ",", x)})) %>%
-      unlist()
+  last <- dim(model_object$output)[1]
 
-    S_vars <- paste0("S[", ages_vaccines, "]")
-    E1_vars <- paste0("E1[", ages_vaccines, "]")
+  model_object$output[last, E1_vars, ] <-
+    sweep(model_object$output[last, S_vars, ], 2, prop, "*")
 
-    prop <- unlist(old_initial_infections)/colSums(model_object$output[1, S_vars, ])
+  model_object$output[last, S_vars, ] <-
+    sweep(model_object$output[last, S_vars, ], 2, 1 - prop, "*")
 
-    last <- dim(model_object$output)[1]
-
-    model_object$output[last, E1_vars, ] <-
-      sweep(model_object$output[last, S_vars, ], 2, prop, "*")
-
-    model_object$output[last, S_vars, ] <-
-      sweep(model_object$output[last, S_vars, ], 2, 1 - prop, "*")
-
-    model_object
+  model_object
 }
 
 calculate_openness_fit <- function(fit, full_openness_rt){
@@ -1399,6 +1435,6 @@ calculate_openness <- function(fit, scenario_objects, end_date){
           rep = rep,
           gain_in_openness = overall_openness - overall_openness_b
         )
-      }, baseline = rename(baseline, overall_openness_b = overall_openness)
+    }, baseline = rename(baseline, overall_openness_b = overall_openness)
     )
 }
