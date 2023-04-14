@@ -279,7 +279,7 @@ save_figs <- function(name,
                       fig,
                       width = 6,
                       height = 6,
-                      root = file.path(here::here(), "analysis/plots_update_boost")) {
+                      root = file.path(here::here(), "analysis/plots")) {
 
   dir.create(root, showWarnings = FALSE)
   fig_path <- function(name) {paste0(root, "/", name)}
