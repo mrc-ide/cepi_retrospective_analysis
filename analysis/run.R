@@ -168,14 +168,20 @@ collate_outputs <- function(orderly_ids, grouping = NULL, replicates = 100, type
         summarise(
           across(all_of(type), sum), .groups = "drop"
         )
-      if(by_age){
 
+      if(by_age){
+      baseline_df <- readRDS(file.path("archive", "run_simulations", id, "data", "age_baseline.Rds")) %>%
+        filter(replicate == rep) %>%
+        select(age_group, all_of(type)) %>%
+        setNames(c("age_group", paste0(type, "_baseline")))
+      df <- left_join(df, baseline_df, by = "age_group")
       } else {
       df[[paste0(type, "_baseline")]] <- readRDS(file.path("archive", "run_simulations", id, "data", "age_baseline.Rds")) %>%
         filter(replicate == rep) %>%
         pull(all_of(type)) %>%
         sum()
       }
+
       df[[paste0(type, "_averted")]] <- df[[paste0(type, "_baseline")]] - df[[type]]
 
       df
@@ -273,7 +279,7 @@ save_figs <- function(name,
                       fig,
                       width = 6,
                       height = 6,
-                      root = file.path(here::here(), "analysis/plots_update")) {
+                      root = file.path(here::here(), "analysis/plots_update_boost")) {
 
   dir.create(root, showWarnings = FALSE)
   fig_path <- function(name) {paste0(root, "/", name)}
@@ -489,7 +495,7 @@ gg_global2 <- gg_global +
     color = "black", curvature = 0.9, ncp = 10) +
   geom_text(data = negative_excess, aes(label = label, x = x1-15, y = y1+1000),color = "black", hjust = "left", size = 3.5)
 
-save_figs("deaths_global_wb", gg_global2, width = 14, height = 7, root = "analysis/plots_update/")
+save_figs("deaths_global_wb", gg_global2, width = 14, height = 7)
 
 # ------------------------------------------------------------------------- #
 # 4a. Global but different scenario ------------------------------------------------------------
@@ -595,7 +601,7 @@ gg_global <- gg +
        subtitle = "") +
   theme(plot.title = element_text(color = "grey30"))
 
-save_figs("deaths_global_economic", gg_global, width = 14, height = 7, root = "analysis/plots_update/")
+save_figs("deaths_global_economic", gg_global, width = 14, height = 7)
 
 # ------------------------------------------------------------------------- #
 # 4d. Total By Scenarios ------------------------------------------------------------
@@ -628,7 +634,7 @@ deaths_averted <- out4 %>%
   coord_flip() +
   scale_y_continuous(labels = scales::unit_format(unit = "Million", scale = 1e-6))
 
-save_figs("deaths_scenario_averted", deaths_averted, width = 10, height = 7, root = "analysis/plots_update/")
+save_figs("deaths_scenario_averted", deaths_averted, width = 10, height = 7)
 
 # ------------------------------------------------------------------------- #
 # 4e. Example for Korea ------------------------------------------------------------
@@ -637,7 +643,8 @@ save_figs("deaths_scenario_averted", deaths_averted, width = 10, height = 7, roo
 out3 <- readRDS("analysis/data_out/run_deaths_iso3c.rds")
 
 # KOREA specifics
-ymax <- max(out3$KOR$deaths_baseline_med, na.rm = TRUE)
+iso3c <- "KOR"
+ymax <- max(out3[[iso3c]]$deaths_baseline_med, na.rm = TRUE)
 xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
 
 vline1 <- data.frame(x = 100,
@@ -649,7 +656,6 @@ vline2 <- data.frame(x = as.integer(as.Date("2021-02-26") - cepi_date) + 100,
                      xend = as.integer(as.Date("2021-02-26") - cepi_date) + 100,
                      y = 0,
                      yend = ymax)
-iso3c <- "KOR"
 
 gg <- out3[[iso3c]] %>%
   filter(scenario == 1) %>%
@@ -733,7 +739,113 @@ gg_global <- gg +
 #gg_global
 
 
-save_figs("deaths_korea_science", gg_global, width = 14, height = 7, root = "analysis/plots")
+save_figs("deaths_korea_science", gg_global, width = 14, height = 7)
+
+# ------------------------------------------------------------------------- #
+# 4e2. Example for Japan ------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+# JAPAN specifics
+iso3c <- "JPN"
+ymax <- max(out3[[iso3c]]$deaths_baseline_med, na.rm = TRUE)
+xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
+
+vline1 <- data.frame(x = 100,
+                     xend = 100,
+                     y = 0,
+                     yend = ymax)
+
+vline2 <- data.frame(x = as.integer(as.Date("2021-02-26") - cepi_date) + 100,
+                     xend = as.integer(as.Date("2021-02-26") - cepi_date) + 100,
+                     y = 0,
+                     yend = ymax)
+
+gg <- out3[[iso3c]] %>%
+  filter(scenario == 1) %>%
+  complete(date = seq.Date(as.Date("2020-01-01"), max(out3[[iso3c]]$date), 1)) %>%
+  fill(scenario:deaths_averted_975,.direction = "up") %>%
+  filter(date < as.Date("2022-01-01")) %>%
+  ggplot(aes(as.integer(date-cepi_date)+100)) +
+  #geom_vline(xintercept = as.integer(as.Date("2020-12-08") - cepi_date) + 100, color = colors[1], lwd = 0.8) +
+  geom_segment(data = vline1, aes(x = x, xend = xend, y = y, yend = yend), color = colors[2], lwd = 0.8) +
+  geom_segment(data = vline2, aes(x = x, xend = xend, y = y, yend = yend), color = colors[1], lwd = 0.8) +
+  #geom_vline(xintercept = 100, color = colors[2], lwd = 0.8) +
+  geom_ribbon(aes(ymin=deaths_med,ymax=deaths_baseline_med), fill="#fff3b5", alpha=1) +
+  geom_line(lwd = 1.2, aes(y = deaths_baseline_med, linetype = "dashed"), show.legend = FALSE, color = colors[1]) +
+  geom_line(lwd = 1.2, aes(y = deaths_med, linetype = "solid"), show.legend = FALSE, color = colors[2]) +
+  ggpubr::theme_pubclean(base_size = 14) +
+  theme(axis.line.x = element_line(color = "grey"),
+        panel.grid.major.y = element_line(color = "grey", linetype = "dashed", size = 0.25)) +
+  scale_x_continuous(breaks = c(100, 465), limits = c(0, xmax)) +
+  #scale_y_continuous(breaks = seq(0,50000,10000), limits = c(0, ymax+10000), expand = c(0, 0)) +
+  xlab("Days Since Recognition of COVID-19") +
+  ylab("Daily COVID-19 Deaths based on Excess Mortality") +
+  expand_limits(x = 0, y = 0)
+
+
+# now make our arrows
+arrows <- data.frame(
+  "label" = c("Start of \"100 Days Mission\" \nVaccination Campaign",
+              "Start of Real World \nVaccination in Japan"),
+  "x1" = c(100-30, as.numeric(as.Date("2021-02-27") - as.Date("2020-01-08"))-30),
+  "x2" = c(95, vline2$x-10),
+  "y1" = rep(max(out3[[iso3c]]$deaths_baseline_med, na.rm = TRUE)),
+  "y2" = rep(max(out3[[iso3c]]$deaths_baseline_med, na.rm = TRUE)),
+  "color" = colors
+)
+
+rwdeaths <- data.frame(
+  "label" = "Real World \nExcess Deaths",
+  "x1" = c(200),
+  "x2" = c(150),
+  "y1" = ymax - 30,
+  "y2" = ymax-60,
+  "color" = colors[1]
+)
+
+mission_deaths <- data.frame(
+  "label" = "\"100 Days Mission\" \nCOVID-19 Deaths",
+  "x1" = c(245),
+  "x2" = c(325),
+  "y1" =72,
+  "y2" = 62,
+  "color" = colors[2]
+)
+
+saves_deaths <- data.frame(
+  "label" = "Additional Lives Saved By \n\"100 Days Mission\"",
+  "x1" = c(575),
+  "x2" = c(515),
+  "y1" = 15,
+  "y2" = 15,
+  "color" = colors[2]
+)
+
+gg_global <- gg +
+  geom_curve(
+    data = arrows, aes(x = x1, y = y1+20, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = rev(colors), curvature = 0.4, ncp = 10) +
+  geom_curve(
+    data = rwdeaths, aes(x = x1+90, y = y1, xend = x1+150, yend = y2+18),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[1], curvature = -0.4, ncp = 10) +
+  geom_curve(
+    data = mission_deaths, aes(x = x1, y = y1, xend = x2+20, yend = y2-10),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[2], curvature = -0.4, ncp = 10) +
+  geom_text(data = arrows, aes(label = label, x = x1-5, y = y1+35),color = rev(colors), hjust = "left", size = 6) +
+  geom_text(data = rwdeaths, aes(label = label, x = x1+45, y = y1-5),color = colors[1],  size = 6) +
+  geom_text(data = mission_deaths, aes(label = label, x = x1-60, y = y1),color = colors[2],  size = 6) +
+  geom_text(data = saves_deaths, aes(label = label, x = x1+60, y = y1+15),color = "black",  size = 6) +
+  labs(title = ~ underline("Japan: Modelled Impact of \"100 Days Mission\" by the end of 2021                                                                                 "),
+       subtitle = "") +
+  theme(plot.title = element_text(color = "grey30"))
+gg_global
+
+
+save_figs("deaths_japan_science", gg_global, width = 14, height = 7)
+
 
 # ------------------------------------------------------------------------- #
 # 4f. Global cumulative ------------------------------------------------------------
@@ -924,28 +1036,44 @@ gg_global <- gg_global +
   theme(legend.position = c(0.75, 0.96), legend.title.align = 0.5) +
   guides(fill = guide_legend(nrow=2,byrow=TRUE,label.position = "left",title.hjust = 1))
 
-save_figs("deaths_global_cumulative_wb", gg_global, width = 14, height = 7, root = "analysis/plots_update/")
+save_figs("deaths_global_cumulative_wb", gg_global, width = 14, height = 7)
 
 
 
 # ------------------------------------------------------------------------- #
-# 4h. VSL Totals
+# 4h. Simple VSL Totals -------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
+# get out per iso3c vsl estimates
 vsl <- readxl::read_excel("analysis/data_raw/GNIPC 2021_VSL estimates 03-13-2023 income groups VSL estimates 04-05-2023-1_OJ.xls", skip = 6) %>%
   select(c(9,10,12,18)) %>%
   setNames(c("country", "gni", "iso3c", "vsl"))
 
-out5 <- readRDS("analysis/data_out/run_deaths_iso3c_age_total.rds")
-for(i in seq_along(out5)){
-  out5[[i]]$iso3c <- names(out5)[i]
+out6 <- readRDS("analysis/data_out/run_deaths_iso3c_age_total.rds")
+for(i in seq_along(out6)){
+  out6[[i]]$iso3c <- names(out6)[i]
 }
-out5 %>% lapply(function(x){
-  x %>% group_by(iso3c, scenario) %>%
-    mutate(l)
-})
+da_by_iso3c <- do.call(rbind, out6)
 
-deaths_averted <- out4 %>%
+
+
+# our results with costs per scenario
+res_full <- left_join(da_by_iso3c, vsl, by = "iso3c") %>%
+  mutate(across(starts_with("deaths_averted"), ~.x * vsl)) %>%
+  group_by(scenario) %>%
+  summarise(
+    across(starts_with("deaths_averted"), ~sum(.x, na.rm = TRUE)),
+    .groups = "drop"
+  )
+
+# get the scenario descriptions
+source("src/run_simulations/funcs.R")
+scenarios <- read.csv("src/run_simulations/scenarios.csv") %>%
+  mutate(scenario = as.integer(rownames(.))) %>%
+  describe_scenarios()
+
+
+vsl_averted <- res_full %>%
   left_join(scenarios, by = "scenario") %>%
   mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
   ggplot(aes(x = Rt, y = deaths_averted_med,
@@ -959,11 +1087,11 @@ deaths_averted <- out4 %>%
   ggpubr::theme_pubr(base_size = 14) +
   theme(panel.grid.major = element_line()) +
   scale_color_manual(name = "", values = c(pals::stepped3()[c(1,5,9,13)])) +
-  labs(x = "", y = "\nCumulative Deaths Averted (median, IQR, 95% quantile)") +
+  labs(x = "", y = "\nTotal Value of Statistical Lives Saved (median, IQR, 95% quantile)") +
   scale_y_continuous(n.breaks = 6) +
   guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
   coord_flip() +
-  scale_y_continuous(labels = scales::unit_format(unit = "Million", scale = 1e-6))
+  scale_y_continuous(labels = scales::unit_format(prefix = "$", unit = "Trillion", scale = 1e-12))
 
-save_figs("deaths_scenario_averted", deaths_averted, width = 10, height = 7, root = "analysis/plots_update/")
+save_figs("vsl_averted", vsl_averted, width = 10, height = 7)
