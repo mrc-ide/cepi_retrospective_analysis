@@ -1,0 +1,759 @@
+indicator_id,indicator,iso2c,iso3c,country,date,value,unit,obs_status,footnote,last_updated
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AF,AFG,Afghanistan,2011,1.05999994277954,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AL,ALB,Albania,2021,69.2341995239258,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DZ,DZA,Algeria,2011,79.0739974975586,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AO,AGO,Angola,2016,39.6110191345215,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AG,ATG,Antigua and Barbuda,2018,70.2536010742188,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AR,ARG,Argentina,2020,76.186653137207,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AM,ARM,Armenia,2021,28.7847690582275,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AW,ABW,Aruba,2015,103.520858764648,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AU,AUS,Australia,2020,160.214385986328,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AT,AUT,Austria,2020,102.857139587402,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AZ,AZE,Azerbaijan,2021,46.2895889282227,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BS,BHS,"Bahamas, The",2019,39.7394790649414,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BH,BHR,Bahrain,2020,52.6030311584473,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BD,BGD,Bangladesh,2021,36.380687713623,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BB,BRB,Barbados,2021,75.1266479492188,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BY,BLR,Belarus,2021,96.7663269042969,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BE,BEL,Belgium,2020,112.43090057373,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BZ,BLZ,Belize,2021,34.1667709350586,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BJ,BEN,Benin,2021,23.1280193328857,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BM,BMU,Bermuda,2015,68.75,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BT,BTN,Bhutan,2021,51.9293251037598,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BO,BOL,Bolivia,2020,78.4713287353516,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BA,BIH,Bosnia and Herzegovina,2021,25.4686393737793,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BW,BWA,Botswana,2015,21.4478702545166,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BR,BRA,Brazil,2020,85.9419708251953,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",VG,VGB,British Virgin Islands,2021,87.878791809082,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BN,BRN,Brunei Darussalam,2020,63.4778442382813,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BG,BGR,Bulgaria,2020,84.2854766845703,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BF,BFA,Burkina Faso,2021,6.50381708145142,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",BI,BDI,Burundi,2021,16.4923000335693,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CV,CPV,Cabo Verde,2019,74.7021484375,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KH,KHM,Cambodia,2021,33.5721702575684,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CM,CMR,Cameroon,2019,35.6178703308105,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CA,CAN,Canada,2020,48.9200401306152,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KY,CYM,Cayman Islands,2018,89.3333282470703,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CF,CAF,Central African Republic,2017,2.92554998397827,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TD,TCD,Chad,2021,1.27060997486115,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CL,CHL,Chile,2020,84.5110778808594,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CN,CHN,China,2021,93.0686721801758,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CO,COL,Colombia,2020,85.9283218383789,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KM,COM,Comoros,2018,21.8078594207764,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CD,COD,"Congo, Dem. Rep.",2020,6.86351013183594,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CG,COG,"Congo, Rep.",2018,14.2859601974487,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CR,CRI,Costa Rica,2021,95.2350387573242,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CI,CIV,Cote d'Ivoire,2021,10.4376497268677,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",HR,HRV,Croatia,2020,70.9137268066406,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CU,CUB,Cuba,2021,99.6210021972656,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CW,CUW,Curacao,2020,94.01708984375,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CY,CYP,Cyprus,2020,86.661247253418,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CZ,CZE,Czechia,2020,113.5302734375,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DK,DNK,Denmark,2020,103.195510864258,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DJ,DJI,Djibouti,2021,11.6162700653076,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DM,DMA,Dominica,2021,66.0313873291016,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DO,DOM,Dominican Republic,2021,33.3575210571289,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",EC,ECU,Ecuador,2021,55.2859191894531,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",EG,EGY,"Egypt, Arab Rep.",2019,29.2698307037354,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SV,SLV,El Salvador,2014,65.3474578857422,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GQ,GNQ,Equatorial Guinea,2015,43.3619918823242,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ER,ERI,Eritrea,2019,23.8528347015381,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",EE,EST,Estonia,2019,94.311767578125,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SZ,SWZ,Eswatini,2014,30.0100002288818,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ET,ETH,Ethiopia,2021,30.118839263916,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",FJ,FJI,Fiji,2021,31.3401336669922,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",FI,FIN,Finland,2020,88.3590774536133,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",FR,FRA,France,2020,106.658348083496,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GA,GAB,Gabon,2019,42.9866485595703,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GM,GMB,"Gambia, The",2021,41.5170402526855,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GE,GEO,Georgia,2020,95.2487030029297,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",DE,DEU,Germany,2020,108.031730651855,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GH,GHA,Ghana,2020,116.13671875,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GI,GIB,Gibraltar,2021,105.602920532227,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GR,GRC,Greece,2020,93.2796173095703,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GD,GRD,Grenada,2020,130.813323974609,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GT,GTM,Guatemala,2021,49.8383483886719,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GN,GIN,Guinea,2021,19.6575222015381,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GW,GNB,Guinea-Bissau,2014,13.210000038147,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GY,GUY,Guyana,2014,62.3300018310547,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",HN,HND,Honduras,2021,33.7702293395996,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",HK,HKG,"Hong Kong SAR, China",2020,93.6461334228516,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",HU,HUN,Hungary,2020,90.8407669067383,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IS,ISL,Iceland,2020,95.1041030883789,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IN,IND,India,2021,51.6870307922363,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ID,IDN,Indonesia,2018,62.3436584472656,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IR,IRN,"Iran, Islamic Rep.",2020,72.4765472412109,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IQ,IRQ,Iraq,2011,3.8199999332428,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IE,IRL,Ireland,2020,95.3538970947266,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IL,ISR,Israel,2020,111.230239868164,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",IT,ITA,Italy,2020,92.6589508056641,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",JM,JAM,Jamaica,2011,92.3600006103516,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",JP,JPN,Japan,2015,86.695426940918,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",JO,JOR,Jordan,2021,26.5996608734131,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KZ,KAZ,Kazakhstan,2020,74.1345901489258,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KE,KEN,Kenya,2019,65.1438522338867,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KI,KIR,Kiribati,2020,88.8116683959961,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KR,KOR,"Korea, Rep.",2020,91.7819137573242,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KW,KWT,Kuwait,2020,60.2476997375488,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KG,KGZ,Kyrgyz Republic,2021,38.5439682006836,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LA,LAO,Lao PDR,2021,49.3228950500488,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LV,LVA,Latvia,2020,94.6291198730469,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LS,LSO,Lesotho,2019,33.0466079711914,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LR,LBR,Liberia,2020,128.478256225586,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LY,LBY,Libya,2006,9.819899559021,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LI,LIE,Liechtenstein,2020,102.236839294434,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LT,LTU,Lithuania,2020,89.1377716064453,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LU,LUX,Luxembourg,2020,92.1959075927734,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MO,MAC,"Macao SAR, China",2021,86.4049682617188,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MG,MDG,Madagascar,2019,40.1499214172363,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MW,MWI,Malawi,2015,83.58056640625,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MY,MYS,Malaysia,2021,87.4983444213867,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MV,MDV,Maldives,2020,76.0612411499023,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ML,MLI,Mali,2020,7.59596967697144,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MT,MLT,Malta,2020,112.487106323242,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MH,MHL,Marshall Islands,2021,67.7650375366211,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MR,MRT,Mauritania,2015,10.4913702011108,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MU,MUS,Mauritius,2021,102.004051208496,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MX,MEX,Mexico,2020,70.5982513427734,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",FM,FSM,"Micronesia, Fed. Sts.",2021,5.88564252853394,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MD,MDA,Moldova,2021,90.3316802978516,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MN,MNG,Mongolia,2021,80.1474227905273,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ME,MNE,Montenegro,2021,72.8723220825195,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MA,MAR,Morocco,2021,59.870189666748,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MM,MMR,Myanmar,2018,8.53092956542969,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NA,NAM,Namibia,2021,36.5069999694824,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NR,NRU,Nauru,2020,32.1515884399414,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NP,NPL,Nepal,2021,104.662170410156,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NL,NLD,Netherlands,2020,91.9532470703125,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NZ,NZL,New Zealand,2020,91.6810607910156,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NI,NIC,Nicaragua,2020,69.0436401367188,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NE,NER,Niger,2021,7.02583980560303,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NG,NGA,Nigeria,2018,23.4557495117188,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",MK,MKD,North Macedonia,2020,31.04128074646,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",NO,NOR,Norway,2020,96.3390502929688,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",OM,OMN,Oman,2021,27.3968696594238,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PK,PAK,Pakistan,2019,82.5566711425781,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PW,PLW,Palau,2020,70.5093765258789,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PA,PAN,Panama,2020,26.9723892211914,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PG,PNG,Papua New Guinea,2018,45.845401763916,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PY,PRY,Paraguay,2020,51.0917205810547,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PE,PER,Peru,2021,96.441780090332,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PH,PHL,Philippines,2021,90.2253494262695,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PL,POL,Poland,2020,93.8656768798828,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PT,PRT,Portugal,2020,99.3589935302734,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PR,PRI,Puerto Rico,2016,37.5336608886719,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",QA,QAT,Qatar,2021,53.9965209960938,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",RO,ROU,Romania,2020,94.9140777587891,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",RU,RUS,Russian Federation,2019,85.9931564331055,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",RW,RWA,Rwanda,2021,28.1999607086182,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",WS,WSM,Samoa,2021,41.425178527832,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SM,SMR,San Marino,2021,100.129867553711,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ST,STP,Sao Tome and Principe,2016,50.308048248291,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SA,SAU,Saudi Arabia,2021,18.319730758667,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SN,SEN,Senegal,2021,17.5804004669189,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",RS,SRB,Serbia,2021,63.7926902770996,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SC,SYC,Seychelles,2021,104.291038513184,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SL,SLE,Sierra Leone,2021,25.0021991729736,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SG,SGP,Singapore,2020,96.0698699951172,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SX,SXM,Sint Maarten (Dutch part),2014,78.1483993530273,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SK,SVK,Slovak Republic,2020,101.775810241699,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SI,SVN,Slovenia,2020,93.9730987548828,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SB,SLB,Solomon Islands,2019,93.2664794921875,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SO,SOM,Somalia,2021,1.14606761932373,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ZA,ZAF,South Africa,2020,17.5463600158691,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SS,SSD,South Sudan,2018,11.5904998779297,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ES,ESP,Spain,2020,101.828903198242,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LK,LKA,Sri Lanka,2020,71.8412780761719,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",KN,KNA,St. Kitts and Nevis,2021,93.6827011108398,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",LC,LCA,St. Lucia,2020,78.046028137207,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",VC,VCT,St. Vincent and the Grenadines,2020,113.829132080078,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SD,SDN,Sudan,2018,47.3999404907227,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SR,SUR,Suriname,2021,78.1529693603516,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SE,SWE,Sweden,2020,100.388809204102,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",CH,CHE,Switzerland,2020,102.872566223145,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",SY,SYR,Syrian Arab Republic,2013,5.54877996444702,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TJ,TJK,Tajikistan,2017,9.91370010375977,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TZ,TZA,Tanzania,2021,77.2501220703125,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TH,THA,Thailand,2021,74.004280090332,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TL,TLS,Timor-Leste,2020,27.8652362823486,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TG,TGO,Togo,2021,29.1930904388428,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TO,TON,Tonga,2020,48.3202590942383,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TT,TTO,Trinidad and Tobago,2021,64.4892807006836,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TN,TUN,Tunisia,2016,44.6150703430176,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TR,TUR,Turkiye,2020,39.7459297180176,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TM,TKM,Turkmenistan,2020,35.9144515991211,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TC,TCA,Turks and Caicos Islands,2021,96.1538467407227,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",TV,TUV,Tuvalu,2021,85.9393920898438,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",UG,UGA,Uganda,2017,14.4080801010132,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",UA,UKR,Ukraine,2020,85.8198318481445,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",AE,ARE,United Arab Emirates,2020,94.2054061889648,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",GB,GBR,United Kingdom,2020,105.762809753418,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",US,USA,United States,2020,72.3956832885742,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",UY,URY,Uruguay,2020,97.1439590454102,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",UZ,UZB,Uzbekistan,2021,44.0116310119629,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",VU,VUT,Vanuatu,2020,102.605842590332,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",VE,VEN,"Venezuela, RB",2017,69.5150680541992,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",VN,VNM,Vietnam,2021,92.4453887939453,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",PS,PSE,West Bank and Gaza,2021,49.4757385253906,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",YE,YEM,"Yemen, Rep.",2016,1.59277999401093,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ZM,ZMB,Zambia,2017,8.70263004302979,NA,NA,NA,2023-03-01
+SE.PRE.ENRR,"School enrollment, preprimary (% gross)",ZW,ZWE,Zimbabwe,2021,74.3152465820313,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AL,ALB,Albania,2018,94.52966,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DZ,DZA,Algeria,2018,97.63517,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AO,AGO,Angola,2011,78.02393,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AG,ATG,Antigua and Barbuda,2018,95.69547,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AR,ARG,Argentina,2017,99.184,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AM,ARM,Armenia,2018,90.72273,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AW,ABW,Aruba,2014,99.23471,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AU,AUS,Australia,2017,96.38096,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AT,AUT,Austria,2017,88.61718,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AZ,AZE,Azerbaijan,2018,92.42467,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BS,BHS,"Bahamas, The",2018,74.22717,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BH,BHR,Bahrain,2018,96.71489,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BD,BGD,Bangladesh,2010,90.53203,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BB,BRB,Barbados,2018,96.69287,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BY,BLR,Belarus,2018,94.92861,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BE,BEL,Belgium,2017,98.76482,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BZ,BLZ,Belize,2018,95.94237,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BJ,BEN,Benin,2018,97.21103,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BM,BMU,Bermuda,2012,92.71386,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BT,BTN,Bhutan,2018,88.02597,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BO,BOL,Bolivia,2018,92.85137,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BW,BWA,Botswana,2014,87.65678,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BR,BRA,Brazil,2017,96.29925,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",VG,VGB,British Virgin Islands,2014,91.05875,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BN,BRN,Brunei Darussalam,2018,93.14673,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BG,BGR,Bulgaria,2017,86.4454,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BF,BFA,Burkina Faso,2018,78.64517,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",BI,BDI,Burundi,2018,92.8047,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CV,CPV,Cabo Verde,2018,93.42191,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KH,KHM,Cambodia,2018,90.26554,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CM,CMR,Cameroon,2017,92.87395,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CA,CAN,Canada,2017,99.8825,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CF,CAF,Central African Republic,2012,66.29549,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TD,TCD,Chad,2016,73.15289,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CL,CHL,Chile,2017,94.74067,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CO,COL,Colombia,2018,92.91999,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KM,COM,Comoros,2018,80.75383,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CG,COG,"Congo, Rep.",2012,87.88284,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CR,CRI,Costa Rica,2018,97.33255,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CI,CIV,Cote d'Ivoire,2018,90.32837,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",HR,HRV,Croatia,2017,88.0407,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CU,CUB,Cuba,2018,97.73994,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CY,CYP,Cyprus,2017,97.49342,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CZ,CZE,Czechia,2017,89.3503,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DK,DNK,Denmark,2017,98.53748,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DJ,DJI,Djibouti,2019,66.48037,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DM,DMA,Dominica,2016,95.42178,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DO,DOM,Dominican Republic,2018,92.71356,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",EC,ECU,Ecuador,2018,90.94167,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",EG,EGY,"Egypt, Arab Rep.",2018,97.03257,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SV,SLV,El Salvador,2018,80.99537,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GQ,GNQ,Equatorial Guinea,2015,43.48324,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ER,ERI,Eritrea,2018,51.45515,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",EE,EST,Estonia,2017,93.68129,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SZ,SWZ,Eswatini,2017,82.52357,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ET,ETH,Ethiopia,2015,84.62346,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",FJ,FJI,Fiji,2016,96.76212,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",FI,FIN,Finland,2017,98.62944,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",FR,FRA,France,2017,98.92727,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GM,GMB,"Gambia, The",2018,76.81635,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GE,GEO,Georgia,2018,96.43624,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",DE,DEU,Germany,2017,90.14286,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GH,GHA,Ghana,2019,86.15823,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GI,GIB,Gibraltar,2016,99.70191,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GR,GRC,Greece,2017,98.22037,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GD,GRD,Grenada,2018,95.86628,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GT,GTM,Guatemala,2018,86.88631,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GN,GIN,Guinea,2016,76.01588,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GW,GNB,Guinea-Bissau,2010,71.25324,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GY,GUY,Guyana,2012,93.09037,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",HN,HND,Honduras,2017,80.09489,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",HK,HKG,"Hong Kong SAR, China",2018,95.45476,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",HU,HUN,Hungary,2017,90.83399,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IS,ISL,Iceland,2017,99.83367,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IN,IND,India,2013,92.25734,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ID,IDN,Indonesia,2018,93.4963,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IR,IRN,"Iran, Islamic Rep.",2017,99.70291,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IQ,IRQ,Iraq,2007,92.79598,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IE,IRL,Ireland,2017,95.78041,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IL,ISR,Israel,2017,97.01884,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",IT,ITA,Italy,2017,95.65574,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",JM,JAM,Jamaica,2018,81.0188,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",JO,JOR,Jordan,2018,80.8644,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KZ,KAZ,Kazakhstan,2019,86.85584,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KE,KEN,Kenya,2012,79.96782,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KI,KIR,Kiribati,2017,94.69278,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KP,PRK,"Korea, Dem. People's Rep.",2009,94.02788,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KR,KOR,"Korea, Rep.",2017,97.25516,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KW,KWT,Kuwait,2018,82.63321,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KG,KGZ,Kyrgyz Republic,2018,89.85774,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LA,LAO,Lao PDR,2018,91.46712,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LV,LVA,Latvia,2017,96.30354,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LS,LSO,Lesotho,2017,93.31062,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LR,LBR,Liberia,2017,44.25563,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LI,LIE,Liechtenstein,2016,92.1204,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LT,LTU,Lithuania,2017,98.17529,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LU,LUX,Luxembourg,2017,95.03083,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MO,MAC,"Macao SAR, China",2018,96.39553,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MG,MDG,Madagascar,2018,95.60378,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MW,MWI,Malawi,2009,97.6489,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MY,MYS,Malaysia,2017,99.64564,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MV,MDV,Maldives,2017,95.4151,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ML,MLI,Mali,2018,58.94142,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MT,MLT,Malta,2017,99.53764,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MH,MHL,Marshall Islands,2016,73.15121,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MR,MRT,Mauritania,2018,79.5744,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MU,MUS,Mauritius,2018,94.80512,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MX,MEX,Mexico,2017,95.30064,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",FM,FSM,"Micronesia, Fed. Sts.",2015,85.45699,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MD,MDA,Moldova,2018,86.31417,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MN,MNG,Mongolia,2018,97.69756,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ME,MNE,Montenegro,2018,96.54847,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MA,MAR,Morocco,2018,99.09904,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MZ,MOZ,Mozambique,2018,93.92934,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MM,MMR,Myanmar,2018,97.93192,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NA,NAM,Namibia,2018,97.48892,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NR,NRU,Nauru,2016,93.69858,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NP,NPL,Nepal,2019,96.2984,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NL,NLD,Netherlands,2017,98.64765,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NZ,NZL,New Zealand,2017,99.11677,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NI,NIC,Nicaragua,2010,94.89265,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NE,NER,Niger,2017,65.12458,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NG,NGA,Nigeria,2010,64.13783,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",MK,MKD,North Macedonia,2017,94.8883,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",NO,NOR,Norway,2017,99.88251,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",OM,OMN,Oman,2018,86.25355,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PK,PAK,Pakistan,2018,67.5748,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PW,PLW,Palau,2014,94.91704,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PA,PAN,Panama,2017,86.23979,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PG,PNG,Papua New Guinea,2016,73.65048,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PY,PRY,Paraguay,2012,87.19751,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PE,PER,Peru,2018,95.65167,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PH,PHL,Philippines,2017,93.7756,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PL,POL,Poland,2017,95.78475,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PT,PRT,Portugal,2017,97.56411,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PR,PRI,Puerto Rico,2016,76.27147,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",QA,QAT,Qatar,2018,94.09431,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",RO,ROU,Romania,2017,82.22835,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",RU,RUS,Russian Federation,2017,95.09612,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",RW,RWA,Rwanda,2018,94.78978,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",WS,WSM,Samoa,2018,94.41308,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SM,SMR,San Marino,2004,93.89214,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ST,STP,Sao Tome and Principe,2017,93.0763,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SA,SAU,Saudi Arabia,2018,94.5456,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SN,SEN,Senegal,2017,75.3821,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",RS,SRB,Serbia,2018,94.55098,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SC,SYC,Seychelles,2018,92.21011,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SL,SLE,Sierra Leone,2016,98.11179,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SG,SGP,Singapore,2017,99.66959,NA,NA,National estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SK,SVK,Slovak Republic,2017,83.09318,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SI,SVN,Slovenia,2017,98.26288,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SB,SLB,Solomon Islands,2018,67.47257,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ZA,ZAF,South Africa,2017,87.01258,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SS,SSD,South Sudan,2015,35.20717,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ES,ESP,Spain,2017,97.27171,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LK,LKA,Sri Lanka,2018,99.10711,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",KN,KNA,St. Kitts and Nevis,2016,93.7852,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",LC,LCA,St. Lucia,2018,95.39814,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",VC,VCT,St. Vincent and the Grenadines,2017,93.58439,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SD,SDN,Sudan,2017,60.00534,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SR,SUR,Suriname,2018,86.02531,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SE,SWE,Sweden,2017,99.18177,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",CH,CHE,Switzerland,2017,93.19583,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",SY,SYR,Syrian Arab Republic,2013,67.96461,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TJ,TJK,Tajikistan,2017,98.28703,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TZ,TZA,Tanzania,2018,81.32921,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TH,THA,Thailand,2009,98.08255,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TL,TLS,Timor-Leste,2018,92.30953,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TG,TGO,Togo,2018,90.73097,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TO,TON,Tonga,2015,85.94145,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TT,TTO,Trinidad and Tobago,2010,95.28261,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TN,TUN,Tunisia,2013,97.80391,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TR,TUR,Turkiye,2017,87.90006,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",TV,TUV,Tuvalu,2016,76.2475,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",UG,UGA,Uganda,2013,95.49324,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",UA,UKR,Ukraine,2014,91.66472,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",AE,ARE,United Arab Emirates,2017,95.02753,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",GB,GBR,United Kingdom,2017,99.49182,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",US,USA,United States,2017,94.62633,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",UY,URY,Uruguay,2017,99.3775,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",UZ,UZB,Uzbekistan,2018,94.59704,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",VU,VUT,Vanuatu,2015,79.84105,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",VE,VEN,"Venezuela, RB",2017,87.39174,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",VN,VNM,Vietnam,2013,97.96511,NA,NA,UIS estimate,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",PS,PSE,West Bank and Gaza,2018,94.84281,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",YE,YEM,"Yemen, Rep.",2016,84.16556,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ZM,ZMB,Zambia,2017,83.16745,NA,NA,NA,2023-03-01
+SE.PRM.NENR,"School enrollment, primary (% net)",ZW,ZWE,Zimbabwe,2013,94.14912,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AF,AFG,Afghanistan,2018,50.1407,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AL,ALB,Albania,2018,86.60827,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AO,AGO,Angola,2010,11.29064,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AG,ATG,Antigua and Barbuda,2018,88.78981,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AR,ARG,Argentina,2017,90.79605,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AM,ARM,Armenia,2011,87.74122,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AW,ABW,Aruba,2011,76.94634,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AU,AUS,Australia,2017,92.28431,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AT,AUT,Austria,2017,87.00131,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AZ,AZE,Azerbaijan,2018,88.53256,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BS,BHS,"Bahamas, The",2018,62.4958,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BH,BHR,Bahrain,2018,90.19346,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BD,BGD,Bangladesh,2018,66.54968,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BB,BRB,Barbados,2018,93.63078,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BY,BLR,Belarus,2018,95.63948,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BE,BEL,Belgium,2017,94.94691,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BZ,BLZ,Belize,2018,71.149,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BJ,BEN,Benin,2015,46.58049,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BM,BMU,Bermuda,2011,72.76762,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BT,BTN,Bhutan,2018,70.19893,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BO,BOL,Bolivia,2018,76.55438,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BW,BWA,Botswana,2003,59.78544,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BR,BRA,Brazil,2017,81.72855,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",VG,VGB,British Virgin Islands,2017,68.10811,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BN,BRN,Brunei Darussalam,2018,82.64549,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BG,BGR,Bulgaria,2017,89.05757,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BF,BFA,Burkina Faso,2018,31.00148,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",BI,BDI,Burundi,2018,27.52277,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CV,CPV,Cabo Verde,2018,70.42826,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KH,KHM,Cambodia,2008,38.33132,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CM,CMR,Cameroon,2016,45.99349,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CA,CAN,Canada,2017,99.80968,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CF,CAF,Central African Republic,2017,12.71989,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TD,TCD,Chad,2016,18.8551,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CL,CHL,Chile,2017,88.65187,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CO,COL,Colombia,2018,77.47078,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KM,COM,Comoros,2018,50.35748,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CR,CRI,Costa Rica,2018,82.44799,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CI,CIV,Cote d'Ivoire,2018,40.19814,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",HR,HRV,Croatia,2017,92.39267,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CU,CUB,Cuba,2018,84.18162,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CY,CYP,Cyprus,2017,95.337,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CZ,CZE,Czechia,2017,90.51857,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",DK,DNK,Denmark,2017,90.92146,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",DJ,DJI,Djibouti,2015,37.8168,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",DM,DMA,Dominica,2016,87.73568,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",DO,DOM,Dominican Republic,2018,70.60614,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",EC,ECU,Ecuador,2018,84.67039,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",EG,EGY,"Egypt, Arab Rep.",2018,82.77635,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SV,SLV,El Salvador,2018,61.83092,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GQ,GNQ,Equatorial Guinea,2005,20.36275,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ER,ERI,Eritrea,2018,41.57501,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",EE,EST,Estonia,2017,94.36474,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SZ,SWZ,Eswatini,2015,41.69996,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ET,ETH,Ethiopia,2015,30.8138,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",FJ,FJI,Fiji,2012,84.52339,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",FI,FIN,Finland,2017,96.1047,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",FR,FRA,France,2017,94.66595,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GE,GEO,Georgia,2018,95.94754,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",DE,DEU,Germany,2017,85.29882,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GH,GHA,Ghana,2019,57.24406,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GI,GIB,Gibraltar,2017,93.83962,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GR,GRC,Greece,2017,93.34588,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GD,GRD,Grenada,2017,87.72998,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GT,GTM,Guatemala,2018,43.77665,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GN,GIN,Guinea,2014,32.20633,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GW,GNB,Guinea-Bissau,2000,8.55698,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GY,GUY,Guyana,2012,82.33976,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",HN,HND,Honduras,2017,43.77822,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",HK,HKG,"Hong Kong SAR, China",2018,96.14117,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",HU,HUN,Hungary,2017,89.27911,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IS,ISL,Iceland,2017,91.2734,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IN,IND,India,2013,61.63147,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ID,IDN,Indonesia,2018,78.73112,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IR,IRN,"Iran, Islamic Rep.",2017,81.37533,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IQ,IRQ,Iraq,2007,45.16146,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IE,IRL,Ireland,2017,98.6613,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IL,ISR,Israel,2017,98.63822,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",IT,ITA,Italy,2017,94.66346,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",JM,JAM,Jamaica,2018,73.96802,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",JO,JOR,Jordan,2018,62.59678,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KZ,KAZ,Kazakhstan,2019,99.83989,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KE,KEN,Kenya,2009,47.42096,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KI,KIR,Kiribati,2005,69.13151,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KR,KOR,"Korea, Rep.",2017,98.00711,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KW,KWT,Kuwait,2015,86.52941,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KG,KGZ,Kyrgyz Republic,2018,84.38733,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LA,LAO,Lao PDR,2018,60.0122,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LV,LVA,Latvia,2017,93.79965,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LS,LSO,Lesotho,2016,41.35206,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LR,LBR,Liberia,2015,15.69147,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LI,LIE,Liechtenstein,2017,85.94145,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LT,LTU,Lithuania,2017,98.42562,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LU,LUX,Luxembourg,2017,83.58238,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MO,MAC,"Macao SAR, China",2018,86.42111,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MG,MDG,Madagascar,2018,29.84739,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MW,MWI,Malawi,2018,34.23885,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MY,MYS,Malaysia,2018,72.21113,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MV,MDV,Maldives,2002,47.03503,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ML,MLI,Mali,2018,29.92706,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MT,MLT,Malta,2017,92.96077,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MH,MHL,Marshall Islands,2016,55.85237,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MR,MRT,Mauritania,2018,30.97658,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MU,MUS,Mauritius,2018,84.30832,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MX,MEX,Mexico,2017,81.15596,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MD,MDA,Moldova,2018,77.95594,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MN,MNG,Mongolia,2006,81.88655,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ME,MNE,Montenegro,2018,89.07485,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MA,MAR,Morocco,2018,64.4924,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MZ,MOZ,Mozambique,2015,19.27829,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MM,MMR,Myanmar,2018,64.05857,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NA,NAM,Namibia,2007,52.04122,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NR,NRU,Nauru,2016,71.80984,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NP,NPL,Nepal,2019,61.87253,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NL,NLD,Netherlands,2017,93.16439,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NZ,NZL,New Zealand,2017,96.86035,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NI,NIC,Nicaragua,2010,48.4211,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NE,NER,Niger,2017,20.06691,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",MK,MKD,North Macedonia,2005,78.93037,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",NO,NOR,Norway,2017,95.60786,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",OM,OMN,Oman,2018,96.19256,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PK,PAK,Pakistan,2018,37.40039,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PA,PAN,Panama,2017,63.79138,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PG,PNG,Papua New Guinea,2016,32.38128,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PY,PRY,Paraguay,2012,65.88458,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PE,PER,Peru,2018,89.30975,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PH,PHL,Philippines,2015,65.55881,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PL,POL,Poland,2017,94.08406,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PT,PRT,Portugal,2017,94.66479,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PR,PRI,Puerto Rico,2016,75.91911,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",QA,QAT,Qatar,2010,93.8946,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",RO,ROU,Romania,2017,82.84805,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",RU,RUS,Russian Federation,2017,90.67886,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",RW,RWA,Rwanda,2018,35.87144,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",WS,WSM,Samoa,2016,85.51776,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SM,SMR,San Marino,2018,66.54351,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ST,STP,Sao Tome and Principe,2015,65.23344,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SA,SAU,Saudi Arabia,2018,96.36052,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SN,SEN,Senegal,2017,37.66861,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",RS,SRB,Serbia,2018,92.06535,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SC,SYC,Seychelles,2018,80.06115,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SL,SLE,Sierra Leone,2018,41.76675,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SG,SGP,Singapore,2017,99.78462,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SX,SXM,Sint Maarten (Dutch part),2014,69.75968,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SK,SVK,Slovak Republic,2017,84.75751,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SI,SVN,Slovenia,2017,95.68577,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SB,SLB,Solomon Islands,2007,30.99458,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ZA,ZAF,South Africa,2017,71.92661,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SS,SSD,South Sudan,2015,5.48403,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ES,ESP,Spain,2017,96.87779,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LK,LKA,Sri Lanka,2018,91.03783,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",KN,KNA,St. Kitts and Nevis,2016,98.00256,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",LC,LCA,St. Lucia,2018,81.31252,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",VC,VCT,St. Vincent and the Grenadines,2018,89.47196,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SD,SDN,Sudan,2011,31.4995,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SR,SUR,Suriname,2015,57.78983,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SE,SWE,Sweden,2016,99.06336,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",CH,CHE,Switzerland,2017,85.32946,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",SY,SYR,Syrian Arab Republic,2013,48.50187,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TJ,TJK,Tajikistan,2011,83.21746,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TZ,TZA,Tanzania,2018,26.54777,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TH,THA,Thailand,2015,77.27069,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TL,TLS,Timor-Leste,2018,62.73563,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TG,TGO,Togo,2017,41.01339,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TO,TON,Tonga,2015,82.07469,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TT,TTO,Trinidad and Tobago,2004,72.64738,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TR,TUR,Turkiye,2017,87.22819,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",TV,TUV,Tuvalu,2018,66.72794,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",UG,UGA,Uganda,2008,22.37343,NA,NA,UIS estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",UA,UKR,Ukraine,2014,85.67634,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",AE,ARE,United Arab Emirates,2017,92.79992,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",GB,GBR,United Kingdom,2017,97.13247,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",US,USA,United States,2017,92.45022,NA,NA,National estimate,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",UY,URY,Uruguay,2017,88.21273,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",UZ,UZB,Uzbekistan,2017,90.85635,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",VU,VUT,Vanuatu,2015,48.94452,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",VE,VEN,"Venezuela, RB",2017,73.24477,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",PS,PSE,West Bank and Gaza,2018,87.22641,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",YE,YEM,"Yemen, Rep.",2016,47.59088,NA,NA,NA,2023-03-01
+SE.SEC.NENR,"School enrollment, secondary (% net)",ZW,ZWE,Zimbabwe,2013,48.73362,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AF,AFG,Afghanistan,2020,10.5625200271606,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AL,ALB,Albania,2021,56.7215309143066,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",DZ,DZA,Algeria,2021,53.7417411804199,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AO,AGO,Angola,2019,10.6302900314331,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AG,ATG,Antigua and Barbuda,2012,24.8302593231201,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AR,ARG,Argentina,2020,99.1662673950195,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AM,ARM,Armenia,2021,55.4135894775391,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AW,ABW,Aruba,2016,15.5992097854614,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AU,AUS,Australia,2020,114.189888000488,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AT,AUT,Austria,2020,87.2113876342773,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AZ,AZE,Azerbaijan,2021,38.2371788024902,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BH,BHR,Bahrain,2021,64.5310821533203,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BD,BGD,Bangladesh,2021,25.1015949249268,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BB,BRB,Barbados,2011,65.4253387451172,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BY,BLR,Belarus,2021,82.2388534545898,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BE,BEL,Belgium,2020,80.8887481689453,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BZ,BLZ,Belize,2021,23.2297706604004,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BJ,BEN,Benin,2020,11.0893602371216,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BM,BMU,Bermuda,2018,19.0272598266602,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BT,BTN,Bhutan,2021,23.2721309661865,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BA,BIH,Bosnia and Herzegovina,2021,39.2339515686035,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BW,BWA,Botswana,2021,24.7283897399902,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BR,BRA,Brazil,2020,54.5727996826172,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",VG,VGB,British Virgin Islands,2021,30.1643695831299,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BN,BRN,Brunei Darussalam,2020,31.9932994842529,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BG,BGR,Bulgaria,2020,75.4057998657227,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BF,BFA,Burkina Faso,2021,9.54242038726807,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",BI,BDI,Burundi,2021,5.9513053894043,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CV,CPV,Cabo Verde,2018,23.6165103912354,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KH,KHM,Cambodia,2021,12.9837551116943,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CM,CMR,Cameroon,2018,14.2672700881958,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CA,CAN,Canada,2020,79.5169219970703,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KY,CYM,Cayman Islands,2015,25.8510608673096,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CF,CAF,Central African Republic,2012,2.980299949646,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TD,TCD,Chad,2015,3.25130009651184,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CL,CHL,Chile,2020,91.6693496704102,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CN,CHN,China,2021,63.6019592285156,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CO,COL,Colombia,2020,54.2392883300781,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KM,COM,Comoros,2014,8.99477958679199,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CD,COD,"Congo, Dem. Rep.",2020,7.00149011611938,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CG,COG,"Congo, Rep.",2017,12.6668796539307,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CR,CRI,Costa Rica,2019,57.6748199462891,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CI,CIV,Cote d'Ivoire,2020,9.91298961639404,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",HR,HRV,Croatia,2020,68.0964813232422,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CU,CUB,Cuba,2021,53.7602806091309,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CW,CUW,Curacao,2021,15.9029903411865,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CY,CYP,Cyprus,2020,92.9377593994141,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CZ,CZE,Czechia,2020,68.0618133544922,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",DK,DNK,Denmark,2020,82.8392868041992,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",DJ,DJI,Djibouti,2011,5.34532022476196,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",DO,DOM,Dominican Republic,2019,61.1612281799316,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",EC,ECU,Ecuador,2020,52.5878105163574,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",EG,EGY,"Egypt, Arab Rep.",2018,38.9049491882324,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SV,SLV,El Salvador,2019,29.9244194030762,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GQ,GNQ,Equatorial Guinea,2000,1.85288000106812,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ER,ERI,Eritrea,2016,3.36256003379822,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",EE,EST,Estonia,2019,74.2319869995117,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SZ,SWZ,Eswatini,2013,6.74796009063721,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ET,ETH,Ethiopia,2018,10.4265699386597,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",FJ,FJI,Fiji,2019,53.4931602478027,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",FI,FIN,Finland,2020,95.0478897094727,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",FR,FRA,France,2020,69.3463821411133,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GA,GAB,Gabon,2019,21.0658702850342,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GM,GMB,"Gambia, The",2012,2.72461009025574,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GE,GEO,Georgia,2021,72.5372619628906,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",DE,DEU,Germany,2020,72.9891967773438,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GH,GHA,Ghana,2020,18.6874504089355,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GR,GRC,Greece,2020,150.876068115234,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GD,GRD,Grenada,2018,104.561882019043,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GT,GTM,Guatemala,2019,22.1422004699707,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GN,GIN,Guinea,2021,6.72240495681763,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GW,GNB,Guinea-Bissau,2006,2.64324998855591,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GY,GUY,Guyana,2012,11.6227502822876,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",HN,HND,Honduras,2019,25.4578990936279,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",HK,HKG,"Hong Kong SAR, China",2021,88.4426879882813,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",HU,HUN,Hungary,2020,55.1555404663086,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IS,ISL,Iceland,2020,84.2737503051758,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IN,IND,India,2021,31.3036403656006,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ID,IDN,Indonesia,2018,36.3110389709473,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IR,IRN,"Iran, Islamic Rep.",2020,58.2224884033203,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IQ,IRQ,Iraq,2005,16.1574192047119,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IE,IRL,Ireland,2020,74.6803131103516,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IL,ISR,Israel,2020,61.0730285644531,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",IT,ITA,Italy,2020,69.4652786254883,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",JM,JAM,Jamaica,2015,27.1306095123291,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",JP,JPN,Japan,2019,64.6171188354492,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",JO,JOR,Jordan,2020,33.5581283569336,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KZ,KAZ,Kazakhstan,2020,70.6779403686523,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KE,KEN,Kenya,2019,10.0383996963501,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KP,PRK,"Korea, Dem. People's Rep.",2018,26.8349990844727,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KR,KOR,"Korea, Rep.",2020,102.467361450195,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KW,KWT,Kuwait,2020,61.1338691711426,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KG,KGZ,Kyrgyz Republic,2021,53.4635887145996,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LA,LAO,Lao PDR,2021,12.9773616790771,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LV,LVA,Latvia,2020,94.5108337402344,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LS,LSO,Lesotho,2018,10.1962604522705,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LR,LBR,Liberia,2012,11.9225301742554,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LY,LBY,Libya,2003,60.4973602294922,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LI,LIE,Liechtenstein,2020,42.5986099243164,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LT,LTU,Lithuania,2020,70.7869033813477,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LU,LUX,Luxembourg,2020,19.198429107666,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MO,MAC,"Macao SAR, China",2021,132.487213134766,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MG,MDG,Madagascar,2020,5.5272102355957,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MW,MWI,Malawi,2018,1.72362995147705,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MY,MYS,Malaysia,2020,42.5672149658203,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MV,MDV,Maldives,2019,34.121940612793,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ML,MLI,Mali,2019,4.90473556518555,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MT,MLT,Malta,2020,71.4981536865234,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MH,MHL,Marshall Islands,2019,25.8227806091309,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MR,MRT,Mauritania,2020,5.87461996078491,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MU,MUS,Mauritius,2020,44.2601890563965,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MX,MEX,Mexico,2020,44.8085899353027,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",FM,FSM,"Micronesia, Fed. Sts.",2000,14.1179704666138,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MD,MDA,Moldova,2021,62.875431060791,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MN,MNG,Mongolia,2021,67.6960220336914,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ME,MNE,Montenegro,2021,55.6427116394043,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MA,MAR,Morocco,2021,43.4462089538574,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MZ,MOZ,Mozambique,2018,7.31255006790161,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MM,MMR,Myanmar,2018,18.8159408569336,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NA,NAM,Namibia,2020,27.2595996856689,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NP,NPL,Nepal,2021,16.778434753418,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NL,NLD,Netherlands,2020,92.0121765136719,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NZ,NZL,New Zealand,2020,79.9078369140625,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NI,NIC,Nicaragua,2019,19.5601806640625,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NE,NER,Niger,2020,4.37343978881836,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NG,NGA,Nigeria,2018,12.1008195877075,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",MK,MKD,North Macedonia,2020,43.0172882080078,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",NO,NOR,Norway,2020,84.4436721801758,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",OM,OMN,Oman,2021,47.4133682250977,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PK,PAK,Pakistan,2019,12.2206401824951,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PW,PLW,Palau,2013,54.6894798278809,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PA,PAN,Panama,2020,44.3828506469727,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PY,PRY,Paraguay,2013,1.41728186607361,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PE,PER,Peru,2017,70.7378616333008,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PH,PHL,Philippines,2021,35.5221900939941,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PL,POL,Poland,2020,70.4771270751953,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PT,PRT,Portugal,2020,70.3820877075195,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PR,PRI,Puerto Rico,2016,97.4992523193359,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",QA,QAT,Qatar,2021,25.0412502288818,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",RO,ROU,Romania,2020,53.2308387756348,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",RU,RUS,Russian Federation,2019,86.400146484375,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",RW,RWA,Rwanda,2021,7.26613712310791,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",WS,WSM,Samoa,2021,18.5357303619385,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SM,SMR,San Marino,2021,56.7039108276367,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ST,STP,Sao Tome and Principe,2016,18.1005401611328,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SA,SAU,Saudi Arabia,2021,71.4096374511719,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SN,SEN,Senegal,2021,15.6258897781372,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",RS,SRB,Serbia,2021,69.1800231933594,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SC,SYC,Seychelles,2021,17.2974700927734,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SL,SLE,Sierra Leone,2002,1.95878005027771,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SG,SGP,Singapore,2020,93.1347732543945,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SX,SXM,Sint Maarten (Dutch part),2015,5.90923023223877,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SK,SVK,Slovak Republic,2020,47.6235885620117,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SI,SVN,Slovenia,2020,79.9208374023438,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ZA,ZAF,South Africa,2020,24.2362995147705,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SS,SSD,South Sudan,2018,0.749819993972778,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ES,ESP,Spain,2020,95.9648666381836,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LK,LKA,Sri Lanka,2020,21.6123695373535,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",KN,KNA,St. Kitts and Nevis,2015,86.6814880371094,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",LC,LCA,St. Lucia,2020,16.3550796508789,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",VC,VCT,St. Vincent and the Grenadines,2018,8.47116184234619,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SD,SDN,Sudan,2015,16.9190101623535,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SR,SUR,Suriname,2002,12.5614595413208,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SE,SWE,Sweden,2020,84.5162200927734,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",CH,CHE,Switzerland,2020,65.3340911865234,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",SY,SYR,Syrian Arab Republic,2019,43.0468788146973,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TJ,TJK,Tajikistan,2017,31.2565593719482,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TZ,TZA,Tanzania,2020,7.83071994781494,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TH,THA,Thailand,2021,43.8260650634766,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TL,TLS,Timor-Leste,2010,17.7537307739258,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TG,TGO,Togo,2020,15.4000701904297,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TO,TON,Tonga,2020,18.400239944458,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TT,TTO,Trinidad and Tobago,2004,11.9506597518921,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TN,TUN,Tunisia,2020,32.7560005187988,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TR,TUR,Turkiye,2020,117.113151550293,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TM,TKM,Turkmenistan,2020,15.6102199554443,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",TC,TCA,Turks and Caicos Islands,2015,11.4583301544189,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",UG,UGA,Uganda,2016,5.06192016601563,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",UA,UKR,Ukraine,2014,82.6711807250977,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",AE,ARE,United Arab Emirates,2020,53.7160186767578,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",GB,GBR,United Kingdom,2020,69.4837265014648,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",US,USA,United States,2020,87.5676574707031,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",UY,URY,Uruguay,2020,67.8832092285156,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",UZ,UZB,Uzbekistan,2021,21.2482395172119,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",VU,VUT,Vanuatu,2004,4.74298000335693,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",VE,VEN,"Venezuela, RB",2009,79.3005599975586,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",VN,VNM,Vietnam,2021,35.3999900817871,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",PS,PSE,West Bank and Gaza,2021,42.679069519043,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",YE,YEM,"Yemen, Rep.",2011,10.1519203186035,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ZM,ZMB,Zambia,2012,4.11603021621704,NA,NA,NA,2023-03-01
+SE.TER.ENRR,"School enrollment, tertiary (% gross)",ZW,ZWE,Zimbabwe,2017,8.87594985961914,NA,NA,NA,2023-03-01

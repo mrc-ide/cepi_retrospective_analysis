@@ -74,7 +74,7 @@ open_dates %>% group_by(wb) %>%
 
 
 # get schooling enrollment by income group
-sch_enrollment <- read.csv(file.path(here::here(), "analysis/school_enrollment.csv"))
+sch_enrollment <- read.csv(file.path(here::here(), "analysis/data_raw/school_enrollment.csv"))
 sch_enrollment$wb <- squire.page::get_income_group(sch_enrollment$iso3c)
 wb_sch <- sch_enrollment %>% filter(grepl("(\\, primary)|(\\, secondary)", indicator))
 wb_sch$type <- substr(wb_sch$indicator_id, 4, 6)
