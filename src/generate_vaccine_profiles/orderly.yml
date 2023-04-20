@@ -113,6 +113,7 @@ resources:
 packages:
   - tidyverse
   - odin
+  - ggpubr
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
