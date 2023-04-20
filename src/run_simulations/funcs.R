@@ -12,7 +12,7 @@ grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
   }
   if (booster) {
     if (excess_mortality) {
-      path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/excess_mortality/", iso3c, ".Rds")
+      path <- paste0("https://github.com/GBarnsley/booster_model_fits/blob/main/", iso3c, ".Rds?raw=true")
     } else {
       path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/reported_deaths/", iso3c, ".Rds")
     }
@@ -874,7 +874,7 @@ update_vaccine_profile <- function(fit){
     new_profile <- readRDS("vaccine_profiles.Rds")$Adenovirus
   }
   #derive variant timings
-  new_ve_values <- reduce(c("Wild", "Delta", "Omicron"), function(params, variant){
+  new_ve_values <- reduce(c("Wild", "Delta"), function(params, variant){
     new_params <- compute_VoC_fixing_changes(fit, variant, new_profile)
     if(is.null(params)){
       new_params
@@ -922,17 +922,9 @@ compute_VoC_fixing_changes <- function(fit, variant, new_profile){
       arrange(parameter) %>%
       pull(value, parameter)
     #just linear change
-    interp_values <- map(seq_along(old_profile), function(i){
-      seq(old_profile[i], profile[i], length.out = diff(t_timings) + 2)[-1]
-    })
-    tt <- seq(t_timings[1], t_timings[2])
-    params <- map(seq_along(tt), function(t){
-      out <- map_dbl(interp_values, ~.x[t])
-      names(out) <- names(old_profile)
-      extract_profile(out)
-    }) %>%
+    params <- map(list(old_profile, profile), extract_profile) %>%
       transpose()
-    params$tt <- tt
+    params$tt <- t_timings
   }
   params
 }
@@ -940,9 +932,9 @@ compute_VoC_fixing_changes <- function(fit, variant, new_profile){
 # Extract vaccine profile
 extract_profile <- function(profile){
   out <- list(
-    vaccine_efficacy_disease = profile[c("pV_1_d", "fV_1_d", "fV_2_d", "bV_1_d", "bV_2_d", "bV_3_d")],
-    vaccine_efficacy_infection = profile[c("pV_1_i", "fV_1_i", "fV_2_i", "bV_1_i", "bV_2_i", "bV_3_i")],
-    dur_V = 1/profile[c("w_p", "w_1", "w_2")]
+    vaccine_efficacy_disease = profile[c("pV_d", "fV_d_1", "fV_d_2", "fV_d_3" , "bV_d_1", "bV_d_2", "bV_d_3")],
+    vaccine_efficacy_infection = profile[c("pV_i", "fV_i_1", "fV_i_2", "fV_i_3" , "bV_i_1", "bV_i_2", "bV_i_3")],
+    dur_V = 1/profile[c("fw_1", "fw_2", "bw_1", "bw_2")]
   )
   map(out, function(x){
     names(x) <- NULL
@@ -1335,7 +1327,7 @@ simulate_early_vaccinations <- function(model_object){
     squire.page:::assign_infections
     #keep props the same across ages and vaccine status
     ages <- 4:14
-    vaccines <- 1:7
+    vaccines <- 1:8
     ages_vaccines <- map(ages, ~map_chr(vaccines, function(x){paste0(.x, ",", x)})) %>%
       unlist()
 
