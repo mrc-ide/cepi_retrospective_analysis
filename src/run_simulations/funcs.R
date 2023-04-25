@@ -30,32 +30,32 @@ describe_scenarios <- function(scenarios, variant = FALSE){
   if("Rt" %in% names(scenarios)) {
     scenarios <- mutate(scenarios,
                         Rt = case_when(
-                          Rt == "baseline" ~ "Public Health Optimum",
-                          Rt == "target" ~ "Target based",
-                          Rt == "economic" ~ "Economic based"
+                          Rt == "baseline" ~ "History Based",
+                          Rt == "target" ~ "Target Based",
+                          Rt == "economic" ~ "Economic Based"
                         ))
 
     scenarios$Rt <- factor(
       scenarios$Rt,
-      c("Public Health Optimum",
-        "Target based",
-        "Economic based"))
+      c("History Based",
+        "Target Based",
+        "Economic Based"))
   }
 
   if("Vaccine" %in% names(scenarios)) {
     scenarios <- mutate(scenarios,
                         Vaccine = case_when(
-                          Vaccine == "early" ~ "Science",
-                          Vaccine == "manufacturing" ~ "Science & Manufacturing",
-                          Vaccine == "equity" ~ "Science & Infrastructure",
-                          Vaccine == "both" ~ "Science Total (Manu. & Infr.)"))
+                          Vaccine == "early" ~ "100-Day Mission",
+                          Vaccine == "manufacturing" ~ "100-Day Mission & Manufacturing",
+                          Vaccine == "equity" ~ "100-Day Mission & Infrastructure",
+                          Vaccine == "both" ~ "100-Day Mission Total (Manu. & Infr.)"))
 
     scenarios$Vaccine <- factor(
       scenarios$Vaccine,
-      c("Science",
-        "Science & Infrastructure",
-        "Science & Manufacturing",
-        "Science Total (Manu. & Infr.)"))
+      c("100-Day Mission",
+        "100-Day Mission & Infrastructure",
+        "100-Day Mission & Manufacturing",
+        "100-Day Mission Total (Manu. & Infr.)"))
   }
 
   if("Variant" %in% names(scenarios)) {
@@ -105,6 +105,7 @@ simple_Rt <- function (model_out) {
 # implements rt trends for fits
 implement_Rt <- function(fit, Rt, iso3c, force_opening){
   if (Rt == "baseline") {
+    fit$inputs$open_date <- NA
     fit
   } else if (Rt == "target") {
 
@@ -161,7 +162,7 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   # if they only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
   if(!is.na(open_date)) {
-    if(open_date > as.Date("2021-12-31")) {
+    if(open_date > as.Date("2021-11-17")) {
       open_date <- NA
     }
   }
@@ -191,6 +192,9 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     }
 
   }
+
+  # add the open date to the fit to use later
+  fit$inputs$open_date <- open_date
   return(fit)
 
 }
@@ -200,7 +204,15 @@ adjust_open_date_for_rt_peaks <- function(x, open_date, rt_open){
   # if so we delay the open date until Rt falls back down
   # this simulates
   past_open <- x$date > open_date
-  n <- x$date[past_open][min(which(x$Rt[past_open] < rt_open))]
+  new <- x$date[past_open][min(which(x$Rt[past_open] < rt_open))]
+
+  # if na just take the closest smallest to the initial open date
+  if(is.na(new)){
+    pos <- which((abs(x$date - open_date)) == min((abs(x$date - open_date))))
+    new <- x$date[pos[which.min(x$Rt[pos])]]
+  }
+
+  new
 }
 
 # implements rt trends for economic scenario
@@ -281,6 +293,9 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     }
 
   }
+
+  # add the open date to the fit to use later
+  fit$inputs$open_date <- open_date
 
   return(fit)
 
@@ -1040,8 +1055,8 @@ quick_format <- function(x, var_select, date_0) {
 
 }
 
-get_deaths_infections_time <- function(out){
-  value <- quick_format(out, c("D", "infections_cumu"), out$inputs$start_date)
+get_deaths_infections_hosps_time <- function(out){
+  value <- quick_format(out, c("D", "infections_cumu", "hospitalisation_demand_cumu"), out$inputs$start_date)
   value$date <- as.Date(rownames(value))
   value <- value %>%
     group_by(replicate, compartment) %>%
@@ -1054,13 +1069,13 @@ get_deaths_infections_time <- function(out){
     ) %>%
     ungroup() %>%
     pivot_wider(names_from = compartment, values_from = y) %>%
-    rename(deaths = D, infections = infections_cumu)
+    rename(deaths = D, infections = infections_cumu, hospitalisations = hospitalisation_demand_cumu)
   value
 }
 
-get_deaths_infections_age <- function(out){
+get_deaths_infections_hosps_age <- function(out){
 
-  indexes <- nimue:::odin_index(out$model)[c("D", "infections_cumu")]
+  indexes <- nimue:::odin_index(out$model)[c("D", "infections_cumu", "hospitalisation_demand_cumu")]
 
   map_dfr(
     indexes, function(index){
@@ -1080,14 +1095,30 @@ get_deaths_infections_age <- function(out){
       .groups = "drop"
     ) %>%
     pivot_wider(names_from = compartment, values_from = y) %>%
-    rename(deaths = D, infections = infections_cumu)
+    rename(deaths = D, infections = infections_cumu, hospitalisations = hospitalisation_demand_cumu)
+}
+
+get_days_above_capacity <- function(out){
+
+  demand <- quick_format(out, "hospital_demand", out$inputs$start_date) %>%
+    rename(demand = y) %>% select(-compartment)
+  occupancy <- quick_format(out, "hospital_occupancy", out$inputs$start_date) %>%
+    rename(occupancy = y) %>% select(-compartment)
+
+  left_join(demand, occupancy, by = c("t", "replicate", "date")) %>%
+    mutate(excess = demand > occupancy) %>%
+    group_by(replicate) %>%
+    summarise(days = sum(excess), .groups = "drop")
+
 }
 
 save_scenario <- function(out, name){
-  df_time <- get_deaths_infections_time(out)
-  df_age <- get_deaths_infections_age(out)
+  df_time <- get_deaths_infections_hosps_time(out)
+  df_age <- get_deaths_infections_hosps_age(out)
+  df_capacity <- get_days_above_capacity(out)
   saveRDS(df_time, paste0("data/time_", name, ".Rds"))
   saveRDS(df_age, paste0("data/age_", name, ".Rds"))
+  saveRDS(df_capacity, paste0("data/capacity_", name, ".Rds"))
 }
 
 plot_deaths <- function(scenario_df, facet = FALSE){
@@ -1159,35 +1190,35 @@ plot_deaths <- function(scenario_df, facet = FALSE){
   scenarios_x <- describe_scenarios(scenarios_x)
 
   if(facet) {
-    ggplot(baseline, aes(x = date)) +
+    ggplot(baseline, aes(x = as.integer(date - cepi_start_date) + 100)) +
       geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975),
                   alpha = 0.1) +
       geom_line(aes(y = deaths_med)) +
-      geom_ribbon(data = scenarios_x, aes(x = date, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
+      geom_ribbon(data = scenarios_x, aes(x = as.integer(date - cepi_start_date) + 100, ymin = deaths_025, ymax = deaths_975, fill = scenario, group = scenario),
                   inherit.aes = FALSE,
                   alpha = 0.1) +
       geom_line(
-        data = scenarios_x, aes(x = date, y = deaths_med, colour = scenario, group = scenario),
+        data = scenarios_x, aes(x = as.integer(date - cepi_start_date) + 100, y = deaths_med, colour = scenario, group = scenario),
         inherit.aes = FALSE
       ) +
       facet_wrap(vars(scenario)) +
       ggpubr::theme_pubr(legend = "none") +
-      labs(x = "", y = "Cumulative Deaths (95% quantile and median)")
+      labs(x = "Days Since Regognition of COVID-19", y = "Cumulative Deaths (95% quantile and median)")
   } else {
-    ggplot(baseline, aes(x = date)) +
-      geomtextpath::geom_textvline(label = "100-Day Target", xintercept = as.Date(cepi_start_date), hjust = 0.59) +
-      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975, color = "Baseline"),
+    ggplot(baseline, aes(x = as.integer(date - cepi_start_date) + 100)) +
+      geomtextpath::geom_textvline(label = "100-Day Target", xintercept = 100, hjust = 0.59) +
+      geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975, color = "0"),
                   alpha = 0.1, show.legend = FALSE) +
-      geom_line(aes(y = deaths_med, color = "Baseline"), lwd = 0.75) +
+      geom_line(aes(y = deaths_med, color = "0"), lwd = 0.75) +
       geom_line(
-        data = scenarios_x, aes(x = date, y = deaths_med, colour = Vaccine, group = scenario),
+        data = scenarios_x, aes(x = as.integer(date - cepi_start_date) + 100, y = deaths_med, colour = Vaccine, group = scenario),
         inherit.aes = FALSE,
         lwd = 0.75
       ) +
       ggpubr::theme_pubr(base_size = 14) +
       facet_wrap(vars(Rt), ncol = 1) +
-      scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
-      labs(x = "Date", y = "Cumulative Deaths (95% quantile and median)") +
+      scale_color_manual(name = "", values = c("black",pals::stepped3()[c(1,5,9,13)]), labels = c("Baseline", levels(scenarios_x$Vaccine))) +
+      labs(x = "Days Since Regognition of COVID-19", y = "Cumulative Deaths (95% quantile and median)") +
       guides(color=guide_legend(nrow=2, byrow=TRUE)) +
       theme(panel.grid.major = element_line(),
             legend.key = element_rect(fill = "white", colour = "white"),
@@ -1204,18 +1235,19 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     arrange(date) %>%
     mutate(
       across(
-        c(deaths, infections), ~cumsum(.x)
+        c(deaths, infections, hospitalisations), ~cumsum(.x)
       )
     ) %>%
     rename(baseline_deaths = deaths,
-           baseline_infections = infections)
+           baseline_infections = infections,
+           baseline_hospitalisations = hospitalisations)
 
   scenarios_x <- readRDS("data/time_scenarios.Rds") %>%
     group_by(scenario, replicate) %>%
     arrange(date) %>%
     mutate(
       across(
-        c(deaths, infections), ~cumsum(.x)
+        c(deaths, infections, hospitalisations), ~cumsum(.x)
       )
     )
 
@@ -1230,29 +1262,30 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     pull(label)
 
   # now calculate deaths averted per scenario against baseline
-  scenarios_x <- left_join(scenarios_x, baseline) %>%
+  scenarios_x <- left_join(scenarios_x, baseline, by = c("date", "replicate")) %>%
     mutate(deaths_averted = baseline_deaths - deaths) %>%
     mutate(infections_averted = baseline_infections - infections) %>%
+    mutate(hospitalisations_averted = baseline_hospitalisations - hospitalisations) %>%
     group_by(scenario, date) %>%
     summarise(
       across(
-        c(deaths_averted, infections_averted), ~median(.x, na.rm=TRUE),
+        c(deaths_averted, infections_averted, hospitalisations_averted), ~median(.x, na.rm=TRUE),
         .names = "{col}_med"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.025, na.rm=TRUE),
+        c(deaths_averted, infections_averted, hospitalisations_averted), ~quantile(.x, 0.025, na.rm=TRUE),
         .names = "{col}_025"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.25, na.rm=TRUE),
+        c(deaths_averted, infections_averted, hospitalisations_averted), ~quantile(.x, 0.25, na.rm=TRUE),
         .names = "{col}_25"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.75, na.rm=TRUE),
+        c(deaths_averted, infections_averted, hospitalisations_averted), ~quantile(.x, 0.75, na.rm=TRUE),
         .names = "{col}_75"
       ),
       across(
-        c(deaths_averted, infections_averted), ~quantile(.x, 0.975, na.rm=TRUE),
+        c(deaths_averted, infections_averted, hospitalisations_averted), ~quantile(.x, 0.975, na.rm=TRUE),
         .names = "{col}_975"
       ),
       .groups = "drop"
@@ -1290,7 +1323,7 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
 
   infections_averted <- scenarios_x %>%
     group_by(scenario, Rt, Vaccine) %>%
-    summarise(across(deaths_averted_med:infections_averted_975, sum)) %>%
+    filter(date == max(.$date)) %>%
     describe_scenarios() %>%
     mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
     ggplot(aes(x = Rt, y = infections_averted_med,
@@ -1310,7 +1343,32 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
     coord_flip()
 
-  cowplot::plot_grid(deaths_averted, infections_averted + theme(legend.position = "none"), ncol = 1, rel_heights = c(1,0.9))
+  hospitalisations_averted <- scenarios_x %>%
+    group_by(scenario, Rt, Vaccine) %>%
+    filter(date == max(.$date)) %>%
+    describe_scenarios() %>%
+    mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
+    ggplot(aes(x = Rt, y = hospitalisations_averted_med,
+               ymin = hospitalisations_averted_025, ymax = hospitalisations_averted_975,
+               color = Vaccine, group = interaction(Vaccine, Rt))) +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_linerange(position = position_dodge(width = 0.5), lwd = 2, alpha = 0.3) +
+    geom_linerange(aes(ymin = hospitalisations_averted_25, ymax = hospitalisations_averted_75),
+                   position = position_dodge(width = 0.5), lwd = 2, alpha = 0.6) +
+    geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
+    ggpubr::theme_pubr(base_size = 14) +
+    theme(panel.grid.major = element_line()) +
+    scale_color_manual(name = "", values = c(pals::stepped3()[c(1,5,9,13)])) +
+    labs(x = "", y = "Cumulative Hospitalisations Averted (median, IQR, 95% quantile)") +
+    scale_y_continuous(n.breaks = 6) +
+    guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+    theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
+    coord_flip()
+
+  cowplot::plot_grid(deaths_averted,
+                     hospitalisations_averted + theme(legend.position = "none"),
+                     infections_averted + theme(legend.position = "none"),
+                     ncol = 1, rel_heights = c(1, 0.9, 0.9))
 
 }
 
