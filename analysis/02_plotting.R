@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------- #
-# 6. Quick plots ------------------------------------------------------------
+# Quick plots ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
 save_figs <- function(name,
@@ -556,8 +556,8 @@ plot_totals_by_rt <- function(res_full, var, ylab, unit = "Trillion", scale = 1e
     geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
     ggpubr::theme_pubr(base_size = 14) +
     theme(panel.grid.major = element_line()) +
-    scale_color_manual(name = "Vaccine Production and Equity:", values = c(pals::stepped3()[c(1,5,9,13)])) +
-    labs(x = "\nSpeed of Lifting NPI Restrictions", y = ylab) +
+    scale_color_manual(name = "Vaccine Production and Equity:", values = c(pals::stepped3()[c(1,9,5,13)])) +
+    labs(x = "\nSpeed of Lifting NPI Restrictions\n", y = ylab) +
     scale_y_continuous(n.breaks = 6) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
@@ -582,15 +582,15 @@ plot_totals_by_vaccine <- function(res_full, var, ylab, prefix = "$", unit = "Tr
     ggplot(aes(x = Vaccine, y = var_med,
                ymin = var_025, ymax = var_975,
                color = Rt, group = interaction(Vaccine, Rt))) +
-    geom_hline(yintercept = 0, color = "black") +
+    # geom_hline(yintercept = 0, color = "black") +
     geom_linerange(position = position_dodge(width = 0.5), lwd = 2, alpha = 0.3) +
     geom_linerange(aes(ymin = var_25, ymax = var_75),
                    position = position_dodge(width = 0.5), lwd = 2, alpha = 0.6) +
     geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
     ggpubr::theme_pubr(base_size = 14) +
     theme(panel.grid.major = element_line()) +
-    scale_color_manual(name = "Speed of Lifting NPI Restrictions:", values = c(pals::stepped3()[c(1,5,9,13)])) +
-    labs(x = "\nVaccine Production and Equity", y = ylab) +
+    scale_color_manual(name = "Speed of Lifting NPI Restrictions:", values = c(pals::stepped3()[c(1,9,5,13)])) +
+    labs(x = "\nVaccine Production and Equity\n", y = ylab) +
     scale_y_continuous(n.breaks = 6) +
     guides(color=guide_legend(nrow=1, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
@@ -598,6 +598,10 @@ plot_totals_by_vaccine <- function(res_full, var, ylab, prefix = "$", unit = "Tr
     scale_y_continuous(labels = scales::unit_format(prefix = prefix, unit = unit, scale = scale))
 
 }
+
+# ------------------------------------------------------------------------- #
+# Health Economic Plotting --------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 # Our table of impacts
 res_full <- readRDS("analysis/data_out/total_lifeyears_global.rds")
@@ -634,3 +638,112 @@ ylab <- "Total Deaths Averted"
 total_deaths_averted_by_vaccine <- plot_totals_by_vaccine(out4, var, ylab, prefix = "", unit = "Million", scale = 1e-6)
 save_figs("total_deaths_averted_by_vaccine", total_deaths_averted_by_vaccine, width = 10, height = 7)
 
+
+# ------------------------------------------------------------------------- #
+# School and NPI Plotting ---------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+plot_medians_by_vaccine <- function(res_full, var, ylab, prefix = "$", unit = "Trillion", scale = 1e-12) {
+
+ylab <- paste0("\n", ylab)
+res_sub <- res_full %>% filter(Rt != "History Based") %>% select(scenario, matches(var))
+names(res_sub) <- gsub(var, "var", names(res_sub))
+
+res_sub %>%
+  left_join(
+    scenarios %>%
+      mutate(Rt = factor(as.character(scenarios$Rt), levels = c("Economic Based", "Target Based"))),
+    by = "scenario") %>%
+
+  mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
+  ggplot(aes(x = Vaccine, y = var_med,
+             color = Rt, fill = Rt, group = interaction(Vaccine, Rt))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  # geom_errorbar(position = position_dodge(width = 0.75), width = 0.5, color = "black") +
+  ggpubr::theme_pubr(base_size = 14) +
+  theme(panel.grid.major = element_line()) +
+  scale_color_manual(name = "Speed of Lifting NPI Restrictions:", values = c(pals::stepped3()[c(9,5)])) +
+  scale_fill_manual(name = "Speed of Lifting NPI Restrictions:", values = c(pals::stepped3()[c(9,5)])) +
+  labs(x = "\nVaccine Production and Equity\n", y = ylab) +
+  scale_y_continuous(n.breaks = 6) +
+  coord_flip() +
+  guides(color=guide_legend(nrow=1, byrow=TRUE)) +
+  theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
+  scale_y_continuous(labels = scales::unit_format(prefix = prefix, unit = unit, scale = scale, big.mark = ""))
+
+}
+
+# npi gains by scenarios
+npi_gains_global <- readRDS("analysis/data_out/total_npigains_global.rds")
+
+var <- "gain_in_openness"
+ylab <- "Total Additional Days Without NPIs"
+total_npis_averted_by_vaccine <- plot_medians_by_vaccine(npi_gains_global, var, ylab, prefix = "", unit = "Thousand", scale = 1e-3)
+save_figs("total_npis_averted_by_vaccine", total_npis_averted_by_vaccine, width = 10, height = 7)
+
+# school weeks gained
+school_gains_global <- readRDS("analysis/data_out/total_schoolweeks_global.rds")
+school_gains_global <- school_gains_global %>%
+  rename(extra_full_school_weeks_total_med = extra_full_school_weeks_total) %>%
+  rename(extra_partial_school_weeks_total_med = extra_partial_school_weeks_total)
+
+var <- "extra_full_school_weeks_total"
+ylab <- "Total Extra Weeks of Schools Being Fully Open"
+total_full_school_weeks_by_vaccine <- plot_medians_by_vaccine(school_gains_global, var, ylab, prefix = "", unit = "", scale = 1)
+save_figs("total_full_school_weeks_by_vaccine", total_full_school_weeks_by_vaccine, width = 10, height = 7)
+
+var <- "extra_partial_school_weeks_total"
+ylab <- "Total Extra Weeks of Schools Being Partially Open"
+total_partial_school_weeks_by_vaccine <- plot_medians_by_vaccine(school_gains_global, var, ylab, prefix = "", unit = "", scale = 1)
+save_figs("total_partial_school_weeks_by_vaccine", total_partial_school_weeks_by_vaccine, width = 10, height = 7)
+
+# combined_npi effects
+combined_npi_impacts <- cowplot::plot_grid(
+  cowplot::get_legend(total_npis_averted_by_vaccine),
+  cowplot::plot_grid(
+    total_npis_averted_by_vaccine + theme(legend.position = "none"),
+    total_full_school_weeks_by_vaccine + theme(legend.position = "none"),
+    total_partial_school_weeks_by_vaccine + theme(legend.position = "none"),
+    ncol = 1, labels = c(letters[4:6]), scale = 0.9),
+  ncol = 1, rel_heights = c(0.1,1)
+)
+
+# combined_npi_impacts <- cowplot::plot_grid(
+#   cowplot::get_legend(total_npis_averted_by_vaccine),
+#   cowplot::plot_grid(
+#                    total_npis_averted_by_vaccine + theme(legend.position = "none"),
+#                    total_full_school_weeks_by_vaccine + theme(legend.position = "none"),
+#                    total_partial_school_weeks_by_vaccine + theme(legend.position = "none"),
+#                    ncol = 3, labels = c(letters[4:6]), scale = 0.95),
+#   ncol = 1, rel_heights = c(0.1,1)
+# )
+
+# combine with scenario VSL
+combined_vsl_impacts <- cowplot::plot_grid(
+  cowplot::get_legend(vsl_scenario_averted_by_vaccine),
+  cowplot::plot_grid(
+    vsl_scenario_averted_by_vaccine + theme(legend.position = "none"),
+    vsly_scenario_averted_by_vaccine + theme(legend.position = "none"),
+    productive_years_averted_by_vaccine + theme(legend.position = "none"),
+    ncol = 1, labels = c(letters[1:3]), scale = 0.9),
+  ncol = 1, rel_heights = c(0.1,1)
+)
+# combined_vsl_impacts <- cowplot::plot_grid(
+#   vsl_scenario_averted_by_vaccine + theme(legend.position = "none"),
+#   vsly_scenario_averted_by_vaccine + theme(legend.position = "none"),
+#   productive_years_averted_by_vaccine + theme(legend.position = "none"),
+#   cowplot::get_legend(vsl_scenario_averted_by_vaccine),
+#   ncol = 4, labels = c(letters[1:3], ""), rel_widths = c(1,1,1,0.2))
+
+combined_impacts <- cowplot::plot_grid(combined_vsl_impacts, combined_npi_impacts, ncol = 2) + theme(plot.background = element_rect(fill = "white"))
+save_figs("combined_impacts_by_scenario", combined_impacts, width = 22, height = 15)
+
+
+# combine with scenario VSL
+combined_death_vsl_npi_impacts <-  cowplot::plot_grid(
+    total_deaths_averted_by_vaccine,
+    vsl_scenario_averted_by_vaccine,
+    total_npis_averted_by_vaccine,
+    ncol = 1, labels = c(letters[1:3]), scale = 0.9
+    ) + theme(plot.background = element_rect(fill = "white"))
+save_figs("combined_death_vsl_npi_impacts", combined_death_vsl_npi_impacts, width = 14, height = 12)
