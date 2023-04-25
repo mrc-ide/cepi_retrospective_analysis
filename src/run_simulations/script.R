@@ -21,10 +21,20 @@ end_date <- as.Date("2022-01-01")
 
 ## Get fit from github
 fit <- grab_fit(iso3c, excess_mortality, booster)
+
+## Update model fit objects
 fit$inputs$data <- fit$inputs$data %>% filter((date_start <= end_date))
+fit$squire_model <- squire.page:::nimue_booster_min_model(use_dde = TRUE, use_difference = FALSE)
+fit$model <- fit$squire_model$odin_model(
+  user = squire.page:::assign_infections(
+    squire.page:::setup_parameters(fit$squire_model, fit$parameters),
+    mean(fit$inputs$initial_infections_interval)
+  ),
+  unused_user_action = "ignore"
+)
 
 ## Setup Scenarios
-scenarios <- read_csv("scenarios.csv")
+scenarios <- read_csv("scenarios.csv", show_col_types = FALSE)
 
 # Note have just set to the default here for Rt
 scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
@@ -32,11 +42,17 @@ scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
 # Plot of our vaccine and Rt scenarios
 vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE, end_date)
 #rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
-rt_plot <- rt_complex_scenario_plot(scenarios, scenario_objects, fit, end_date)
+rt_plot <- rt_two_by_one_scenario_plot(scenarios, scenario_objects, fit, end_date)
 
-#calculate a measure openness gained over the baseline in each scenario
+# calculate a measure openness gained over the baseline in each scenario
 calculate_openness(fit, scenario_objects, end_date) %>%
   saveRDS("gain_in_openness.Rds")
+
+# collate open day
+data.frame("open_date" = unlist(map(scenario_objects, function(x) as.character(x$inputs$open_date)))) %>%
+  mutate(open_date = as.Date(open_date)) %>%
+  mutate(scenario = seq_len(n())) %>%
+  saveRDS("open_dates.Rds")
 
 # ---------------------------------------------------------------------------- #
 # 3. Run new scenarios
@@ -63,7 +79,7 @@ if(simulate_counterfactuals){
   }, .progress = TRUE)
 
   #recombine into a single file
-  walk(c("time", "age"), function(name){
+  walk(c("time", "age", "capacity"), function(name){
     map_dfr(seq_len(nrow(scenarios)), function(scenario){
       out <- readRDS(paste0("data/", name, "_", scenario, ".Rds")) %>%
         mutate(scenario = scenario)

@@ -22,10 +22,10 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
   )) %>%
     filter(date <= end_date)
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
-                                              "Science",
-                                              "Science & Infrastructure",
-                                              "Science & Manufacturing",
-                                              "Science Total (Manu. & Infr.)"))
+                                              "100-Day Mission",
+                                              "100-Day Mission & Infrastructure",
+                                              "100-Day Mission & Manufacturing",
+                                              "100-Day Mission Total (Manu. & Infr.)"))
 
   # get forty_vac
   pop_size <- squire::get_population(fit$parameters$country)$n
@@ -46,7 +46,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
           legend.key = element_rect(fill = "white")) +
-    scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
+    scale_color_manual(name = "", values = c("black", pals::stepped3()[c(1,5,9,13)])) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14)) +
     xlab("Days Since Recognition of COVID-19") +
@@ -67,7 +67,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
           legend.key = element_rect(fill = "white")) +
-    scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
+    scale_color_manual(name = "", values = c("black", pals::stepped3()[c(1,5,9,13)])) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14)) +
     xlab("Days Since Recognition of COVID-19") +
@@ -86,7 +86,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
           legend.key = element_rect(fill = "white")) +
-    scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
+    scale_color_manual(name = "", values = c("black", pals::stepped3()[c(1,5,9,13)])) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14)) +
     xlab("Days Since Recognition of COVID-19") +
@@ -107,7 +107,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
           legend.key = element_rect(fill = "white")) +
-    scale_color_manual(name = "", values = c("Black", pals::stepped3()[c(1,5,9,13)])) +
+    scale_color_manual(name = "", values = c("black", pals::stepped3()[c(1,5,9,13)])) +
     guides(color=guide_legend(nrow=2, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14)) +
     xlab("Days Since Recognition of COVID-19") +
@@ -158,7 +158,7 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
           legend.key = element_rect(fill = "white")) +
     scale_color_discrete(name = "Scenario:") +
     xlab("Days Since Recognition of COVID-19") +
-    ylab("Rt (Science Vaccine Scenario)") +
+    ylab("Rt (100-Day Mission Vaccine Scenario)") +
     scale_color_manual(name = "", values = c("Black", "yellow3", "pink3")) +
     guides(color=guide_legend(nrow=1, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14), legend.position = "top")
@@ -220,6 +220,74 @@ rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit, end_date)
 
 }
 
+rt_two_by_one_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
+
+  # create our vaccine allocation dataframe
+  rt_list <- list()
+  for(i in seq_along(scenarios$Rt)) {
+    rt <- squire.page:::get_Rt(scenario_objects[[i]])
+    rt$scenario <- scenarios$Rt[i]
+    rt$Vaccine <- scenarios$Vaccine[i]
+    rt_list[[i]] <- rt
+  }
+  rt_list[[length(rt_list) + 1]] <- squire.page:::get_Rt(fit)
+  rt_list[[length(rt_list)]]$scenario <- "baseline"
+  rt_list[[length(rt_list)]]$Vaccine <- unique(scenarios$Vaccine)[1]
+
+  for(i in seq_along(unique(scenarios$Vaccine))[-1]) {
+    rt_list[[length(rt_list) + 1]] <- rt_list[[length(rt_list)]]
+    rt_list[[length(rt_list)]]$Vaccine <- unique(scenarios$Vaccine)[i]
+  }
+
+  # bind and summarise
+  df <- do.call(rbind, rt_list)
+  df <- df %>%
+    filter(date > as.Date("2020-01-08")) %>%
+    group_by(scenario, Vaccine, date) %>%
+    summarise(Rt = median(Rt)) %>%
+    rename(rt = Rt,
+           Rt = scenario) %>%
+    describe_scenarios() %>%
+    filter(date <= end_date)
+
+  # remove the optimum as we want to put this in all the other plots
+  df2 <- df %>% filter(Rt != "Public Health Optimum")
+
+  # create target_based one
+  df <- df %>% filter(Rt == "Public Health Optimum" & Vaccine == "100-Day Mission") %>%
+    mutate(Vaccine = "Baseline") %>%
+    mutate(Rt = "Target based")
+
+  # Bring back together
+  df <- rbind(df2, df) %>% rbind(df %>% mutate(Rt = "Economic based"))
+
+  df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
+                                              "100-Day Mission",
+                                              "100-Day Mission & Infrastructure",
+                                              "100-Day Mission & Manufacturing",
+                                              "100-Day Mission Total (Manu. & Infr.)"))
+
+  df %>%
+    ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Vaccine)) +
+    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geom_smooth(aes(linetype = Vaccine), method = "loess", span = 0.02, se = FALSE) +
+    ggpubr::theme_pubclean(base_size = 14) +
+    theme(axis.line = element_line(),
+          panel.grid.major = element_line(),
+          legend.key = element_rect(fill = "white")) +
+    scale_color_discrete(name = "Scenario:") +
+    xlab("Days Since Recognition of COVID-19") +
+    ylab("Rt") +
+    scale_color_manual(name = "", values = c("black",pals::stepped3()[c(1,5,9,13)])) +
+    scale_linetype_manual(name = "", values = c("longdash", rep("solid", 4))) +
+    guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+    theme(legend.text = element_text(size = 14), legend.position = "top") +
+    facet_wrap(~Rt, ncol = 1) +
+    theme(panel.border = element_rect(color = "black", fill = NA))
+
+}
+
+
 combine_plot_outputs <- function(vacc_plot, rt_plot, death_plot, death_averted_plot){
 
   # vertical line to separate plots
@@ -250,7 +318,7 @@ combine_plot_outputs <- function(vacc_plot, rt_plot, death_plot, death_averted_p
   row2a <- cowplot::plot_grid(vacc_plot[[2]], vacc_plot[[4]] + theme(legend.position = "none"),
                              ncol = 1, rel_heights = c(1,0.8), align = "v")
 
-  row2 <- cowplot::plot_grid(row2a, line_v, rt_plot,
+  row2 <- cowplot::plot_grid(rt_plot, line_v, row2a,
                              ncol = 3, rel_widths = c(1,0.02,1))
 
   outplot <-  cowplot::plot_grid(row1, line_h, row2,

@@ -55,6 +55,7 @@ artefacts:
         - data/time_scenarios.Rds
         - data/age_scenarios.Rds
         - gain_in_openness.Rds
+        - open_dates.Rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
