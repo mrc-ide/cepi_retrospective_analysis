@@ -29,3 +29,10 @@
 1. `total_npigains_income.csv`: Total NPI Gains By Income Group
 1. `total_schoolweeks_global.csv`: Total Full and Partial Weeks of Schooling Gained Globally
 1. `total_schoolweeks_income.csv`: Total Full and Partial Weeks of Schooling Gained By Income Group
+
+## Grouped Summary Tables
+
+1. `table_one.csv` - Table of Health Impacts for 100 Days Mission
+1. `table_two.csv` - Table of Health Economic Impacts for 100 Days Mission
+1. `appendix_scenario_health_tables.csv` - Appendix Table of All Health Impacts by Scenario
+1. `appendix_senariocenario_vsl_tables.csv` - Appendix Table of All Health Economic Impacts by Scenario

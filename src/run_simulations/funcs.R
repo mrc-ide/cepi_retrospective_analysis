@@ -45,17 +45,17 @@ describe_scenarios <- function(scenarios, variant = FALSE){
   if("Vaccine" %in% names(scenarios)) {
     scenarios <- mutate(scenarios,
                         Vaccine = case_when(
-                          Vaccine == "early" ~ "100-Day Mission",
-                          Vaccine == "manufacturing" ~ "100-Day Mission & Manufacturing",
-                          Vaccine == "equity" ~ "100-Day Mission & Infrastructure",
-                          Vaccine == "both" ~ "100-Day Mission Total (Manu. & Infr.)"))
+                          Vaccine == "early" ~ "100-Days Mission",
+                          Vaccine == "manufacturing" ~ "100-Days Mission & Manufacturing",
+                          Vaccine == "equity" ~ "100-Days Mission & Infrastructure",
+                          Vaccine == "both" ~ "100-Days Mission Total (Manu. & Infr.)"))
 
     scenarios$Vaccine <- factor(
       scenarios$Vaccine,
-      c("100-Day Mission",
-        "100-Day Mission & Infrastructure",
-        "100-Day Mission & Manufacturing",
-        "100-Day Mission Total (Manu. & Infr.)"))
+      c("100-Days Mission",
+        "100-Days Mission & Infrastructure",
+        "100-Days Mission & Manufacturing",
+        "100-Days Mission Total (Manu. & Infr.)"))
   }
 
   if("Variant" %in% names(scenarios)) {
@@ -1206,7 +1206,7 @@ plot_deaths <- function(scenario_df, facet = FALSE){
       labs(x = "Days Since Regognition of COVID-19", y = "Cumulative Deaths (95% quantile and median)")
   } else {
     ggplot(baseline, aes(x = as.integer(date - cepi_start_date) + 100)) +
-      geomtextpath::geom_textvline(label = "100-Day Target", xintercept = 100, hjust = 0.59) +
+      geomtextpath::geom_textvline(label = "100-Days Target", xintercept = 100, hjust = 0.59) +
       geom_ribbon(aes(ymin = deaths_025, ymax = deaths_975, color = "0"),
                   alpha = 0.1, show.legend = FALSE) +
       geom_line(aes(y = deaths_med, color = "0"), lwd = 0.75) +

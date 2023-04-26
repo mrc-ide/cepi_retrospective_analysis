@@ -284,6 +284,9 @@ flatten_name <- function(x, name){
 # function to also save to equivalent csv
 save_outputs <- function(x, path){
 
+  to_round <- c("deaths", "infections", "hospitalisation", "days", "year", "economic", "openness")
+  x <- x %>% mutate(across(matches(to_round), round))
+
   if(grepl("\\.rds$", path)){
   path <- gsub("\\.rds", "", path)
   }
@@ -357,7 +360,7 @@ total_hospitalisations_income %>% flatten_name("income") %>% left_join(scenarios
   save_outputs("analysis/data_out/total_hospitalisations_income.rds")
 
 # ------------------------------------------------------------------------- #
-# 4. Gather life year economic outputs --------------------------------------
+# 4a. Gather life year economic outputs --------------------------------------
 # ------------------------------------------------------------------------- #
 
 life_years_saved <- function(orderly_ids, grouping = NULL, replicates = 10, max_date = as.Date("2022-01-01"), vsly){
@@ -483,6 +486,118 @@ ly_out_global %>% left_join(scenarios) %>% relocate(scenario, Rt, Vaccine) %>%
 ly_out_income <- life_years_saved(orderly_ids, squire.page::get_income_group, 100, vsly = vsly)
 ly_out_income %>% flatten_name("income") %>% left_join(scenarios) %>% relocate(scenario, income, Rt, Vaccine) %>%
   save_outputs("analysis/data_out/total_lifeyears_income.rds")
+
+# ------------------------------------------------------------------------- #
+# 4b. Gather Hospitalisation costs --------------------------------------
+# ------------------------------------------------------------------------- #
+
+hosp_costs_saved <- function(orderly_ids, grouping = NULL, replicates = 10, max_date = as.Date("2022-01-01"), choice){
+
+  if(is.null(grouping)){
+    grouping <- function(x){"temp"}
+  }
+
+  iso3cs <- mutate(orderly_ids, group = grouping(iso3c))
+  #get the replicates for each country using the age df (smaller)
+  iso3cs <- mutate(iso3cs, replicates = map(id, function(id){
+    readRDS(file.path("archive", "run_simulations", id, "data", "age_baseline.Rds")) %>%
+      pull(replicate) %>%
+      unique()
+  }))
+
+  type <- "hospitalisations"
+
+  indv_country_func <- function(id, replicates, type){
+
+    rep <- sample(replicates, 1)
+    df <- readRDS(file.path("archive", "run_simulations", id, "data", "age_scenarios.Rds")) %>%
+      filter(replicate == rep) %>%
+      group_by(across(all_of(c("scenario")))) %>%
+      summarise(
+        across(all_of(type), sum), .groups = "drop"
+      )
+
+    df[[paste0(type, "_baseline")]] <- readRDS(file.path("archive", "run_simulations", id, "data", "age_baseline.Rds")) %>%
+      filter(replicate == rep) %>%
+      select(all_of(type)) %>%
+      pull(all_of(type)) %>%
+      sum()
+
+
+    df[[paste0(type, "_averted")]] <- df[[paste0(type, "_baseline")]] - df[[type]]
+
+    # add the iso3c in
+    or <- readRDS(file.path("archive", "run_simulations", id, "orderly_run.rds"))
+    df$iso3c <- or$meta$parameters$iso3c
+
+    # merge the choice in
+    df <- df %>% left_join(choice, by = "iso3c")
+
+    # calculate our outputs
+    df %>%
+      mutate(hospitalisation_costs_averted = hospitalisations_averted*choice) %>%
+      select(scenario, hospitalisation_costs_averted)
+
+  }
+  combine_func <- function(x){
+    map_dfr(x$deaths_averted, function(y){y}) %>%
+      group_by(across(all_of("scenario"))) %>%
+      summarise(
+        across(-any_of("scenario"), sum),
+        .groups = "drop"
+      )
+  }
+  summarise_func <- function(g, totals){
+    vars <- all_of(names(totals[[1]][[1]])[-1])
+    map_dfr(totals, function(df, g){
+      df[[which(names(df) == g)]]
+    }, g = g) %>%
+      group_by(across(all_of("scenario"))) %>%
+      summarise(
+        across(all_of(vars), ~median(.x, na.rm=TRUE), .names = "{col}_med"),
+        across(all_of(vars), ~quantile(.x, 0.025, na.rm=TRUE), .names = "{col}_025"),
+        across(all_of(vars), ~quantile(.x, 0.25, na.rm=TRUE), .names = "{col}_25"),
+        across(all_of(vars), ~quantile(.x, 0.75, na.rm=TRUE), .names = "{col}_75"),
+        across(all_of(vars), ~quantile(.x, 0.975, na.rm=TRUE), .names = "{col}_975"),
+        .groups = "drop"
+      )
+  }
+
+  totals <- map(seq_len(replicates), function(i, iso3cs, type, indv_country_func, combine_func){
+    message(i)
+    df <- iso3cs %>%
+      transmute(
+        group = group,
+        deaths_averted = future_map2(id, replicates, indv_country_func,
+                                     type = type,
+                                     .options = furrr_options(seed = TRUE))
+      ) %>%
+      split(~group, drop = TRUE) %>%
+      map(
+        combine_func
+      )
+  }, iso3cs = iso3cs, type = type, indv_country_func = indv_country_func, combine_func = combine_func)
+
+  out <- future_map(unique(iso3cs$group), summarise_func, totals)
+  if(length(out) == 1){
+    out[[1]]
+  } else {
+    names(out) <- unique(iso3cs$group)
+    out
+  }
+}
+
+choice <- readRDS("analysis/data_raw/who_choice.rds")
+
+# hospitalisation costs globally
+hosp_costs_global <- hosp_costs_saved(orderly_ids, NULL, 100, choice = choice)
+hosp_costs_global %>% left_join(scenarios) %>% relocate(scenario, Rt, Vaccine) %>%
+  save_outputs("analysis/data_out/total_hospcosts_global.rds")
+
+# life years by income
+hosp_costs_income <- hosp_costs_saved(orderly_ids, squire.page::get_income_group, 100, choice = choice)
+hosp_costs_income %>% flatten_name("income") %>% left_join(scenarios) %>% relocate(scenario, income, Rt, Vaccine) %>%
+  save_outputs("analysis/data_out/total_hospcosts_income.rds")
 
 
 # ------------------------------------------------------------------------- #

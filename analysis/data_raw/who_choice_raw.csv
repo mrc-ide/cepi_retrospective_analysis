@@ -1,0 +1,267 @@
+Country Name,Country Code,CHOICE
+Aruba,ABW,
+Africa Eastern and Southern,AFE,#DIV/0!
+Afghanistan,AFG,7.07544018589222
+Africa Western and Central,AFW,#DIV/0!
+Angola,AGO,105.525031761834
+Albania,ALB,169.160977659933
+Andorra,AND,#DIV/0!
+Arab World,ARB,#DIV/0!
+United Arab Emirates,ARE,837.28280990958
+Argentina,ARG,409.565196842573
+Armenia,ARM,113.498788443681
+American Samoa,ASM,#DIV/0!
+Antigua and Barbuda,ATG,355.131703798931
+Australia,AUS,1157.86451417727
+Austria,AUT,1186.6773817923
+Azerbaijan,AZE,169.780618964971
+Burundi,BDI,6.91106335185006
+Belgium,BEL,1103.04847510914
+Benin,BEN,21.3392049437874
+Burkina Faso,BFA,17.6098490077725
+Bangladesh,BGD,28.9378179879391
+Bulgaria,BGR,339.612639684523
+Bahrain,BHR,399.643876681741
+Bahamas,BHS,796.91653843172
+Bosnia and Herzegovina,BIH,176.770592303269
+Belarus,BLR,299.959528990645
+Belize,BLZ,117.838168226753
+Bermuda,BMU,0
+Bolivia,BOL,94.1051952216663
+Brazil,BRA,41.6228029065256
+Barbados,BRB,450.936520454265
+Brunei Darussalam,BRN,1042.79909419587
+Bhutan,BTN,110.113385863615
+Botswana,BWA,285.162589155098
+Central African Republic,CAF,11.0370206621125
+Canada,CAN,1028.5422352751
+Central Europe and the Baltics,CEB,#DIV/0!
+Switzerland,CHE,1415.13684755362
+Channel Islands,CHI,#DIV/0!
+Chile,CHL,448.131006517225
+China,CHN,120.472802614462
+Cote d'Ivoire,CIV,26.4495363815901
+Cameroon,CMR,33.2498050755439
+Democratic Republic of the Congo,COD,4.87531902158241
+Congo,COG,61.2309797447338
+Colombia,COL,192.530329764828
+Comoros,COM,17.9261520713254
+Cabo Verde,CPV,64.5850298271683
+Costa Rica,CRI,272.989511294733
+Caribbean small states,CSS,#DIV/0!
+Cuba,CUB,#DIV/0!
+Curacao,CUW,0
+Cayman Islands,CYM,0
+Cyprus,CYP,746.839388749766
+Czech Republic,CZE,669.644843133275
+Germany,DEU,1061.97087789686
+Djibouti,DJI,0
+Dominica,DMA,273.818593797967
+Denmark,DNK,1155.41892437466
+Dominican Republic,DOM,183.391400514899
+Algeria,DZA,116.226994450916
+East Asia & Pacific (excluding high income),EAP,#DIV/0!
+Early-demographic dividend,EAR,#DIV/0!
+East Asia & Pacific,EAS,#DIV/0!
+Europe & Central Asia (excluding high income),ECA,#DIV/0!
+Europe & Central Asia,ECS,#DIV/0!
+Ecuador,ECU,175.919334106587
+Egypt,EGY,110.654680621115
+Euro area,EMU,#DIV/0!
+Eritrea,ERI,#DIV/0!
+Spain,ESP,816.926743176856
+Estonia,EST,512.208623541624
+Ethiopia,ETH,13.946730941212
+European Union,EUU,#DIV/0!
+Fragile and conflict affected situations,FCS,#DIV/0!
+Finland,FIN,1004.20333378928
+Fiji,FJI,95.4851058151247
+France,FRA,961.048336878856
+Faroe Islands,FRO,#DIV/0!
+"Micronesia, Fed. Sts.",FSM,58.3321668473461
+Gabon,GAB,266.346184873197
+United Kingdom,GBR,950.298841472701
+Georgia,GEO,104.43772422762
+Ghana,GHA,27.2222249258437
+Gibraltar,GIB,#DIV/0!
+Guinea,GIN,13.0604526820762
+"Gambia, The",GMB,24.8688415348785
+Guinea-Bissau,GNB,18.0895132272627
+Equatorial Guinea,GNQ,659.667883356242
+Greece,GRC,701.461964369429
+Grenada,GRD,233.721071290808
+Greenland,GRL,#DIV/0!
+Guatemala,GTM,82.9438252317972
+Guam,GUM,#DIV/0!
+Guyana,GUY,44.7094775735178
+High income,HIC,#DIV/0!
+"Hong Kong SAR, China",HKG,0
+Honduras,HND,73.5054497162717
+Heavily indebted poor countries (HIPC),HPC,#DIV/0!
+Croatia,HRV,463.871473866447
+Haiti,HTI,14.3802892504599
+Hungary,HUN,477.056042309503
+IBRD only,IBD,#DIV/0!
+IDA & IBRD total,IBT,#DIV/0!
+IDA total,IDA,#DIV/0!
+IDA blend,IDB,#DIV/0!
+Indonesia,IDN,64.1792866985854
+IDA only,IDX,#DIV/0!
+Isle of Man,IMN,#DIV/0!
+India,IND,50.9370103021774
+Not classified,INX,#DIV/0!
+Ireland,IRL,1137.12739582451
+Iran,IRN,260.767311467183
+Iraq,IRQ,37.7983395994963
+Iceland,ISL,965.065392274484
+Israel,ISR,655.389202567259
+Italy,ITA,889.25020051071
+Jamaica,JAM,150.510924367481
+Jordan,JOR,109.993609251656
+Japan,JPN,772.321775407626
+Kazakhstan,KAZ,252.015617317281
+Kenya,KEN,29.4014064519023
+Kyrgyzstan,KGZ,41.8967642094447
+Cambodia,KHM,32.2981914724078
+Kiribati,KIR,35.5236618530156
+St. Kitts and Nevis,KNA,369.882686865929
+"Korea, Rep.",KOR,659.742807089303
+Kuwait,KWT,#DIV/0!
+Latin America & Caribbean (excluding high income),LAC,#DIV/0!
+Lao PDR,LAO,43.5826448778996
+Lebanon,LBN,338.360561742464
+Liberia,LBR,8.09620764666625
+Libya,LBY,360.169005992486
+St. Lucia,LCA,232.187986403342
+Latin America & Caribbean,LCN,#DIV/0!
+Least developed countries: UN classification,LDC,#DIV/0!
+Low income,LIC,#DIV/0!
+Liechtenstein,LIE,#DIV/0!
+Sri Lanka,LKA,89.4927266309213
+Lower middle income,LMC,#DIV/0!
+Low & middle income,LMY,#DIV/0!
+Lesotho,LSO,25.082751765136
+Late-demographic dividend,LTE,#DIV/0!
+Lithuania,LTU,444.885908557551
+Luxembourg,LUX,3048.124277978
+Latvia,LVA,404.74312258692
+"Macao SAR, China",MAC,0
+St. Martin (French part),MAF,#DIV/0!
+Morocco,MAR,69.6873829812822
+Monaco,MCO,#DIV/0!
+Moldova,MDA,61.1743759278341
+Madagascar,MDG,10.7726096824273
+Maldives,MDV,181.019374221229
+Middle East & North Africa,MEA,#DIV/0!
+Mexico,MEX,339.629554353404
+Marshall Islands,MHL,37.8254375863886
+Middle income,MIC,#DIV/0!
+North Macedonia,MKD,246.26945191976
+Mali,MLI,17.0406267449758
+Malta,MLT,682.028388444058
+Myanmar,MMR,13.2653073216996
+Middle East & North Africa (excluding high income),MNA,#DIV/0!
+Montenegro,MNE,319.933538286246
+Mongolia,MNG,61.0488234909353
+Northern Mariana Islands,MNP,#DIV/0!
+Mozambique,MOZ,10.8607595320417
+Mauritania,MRT,33.3626906287273
+Mauritius,MUS,314.078426855465
+Malawi,MWI,13.0179360685621
+Malaysia,MYS,299.07744427001
+North America,NAC,#DIV/0!
+Namibia,NAM,119.683012877505
+New Caledonia,NCL,#DIV/0!
+Niger,NER,6.42631239033651
+Nigeria,NGA,33.6841847316032
+Nicaragua,NIC,62.0605136814434
+Netherlands,NLD,1166.54341130699
+Norway,NOR,1724.46885130373
+Nepal,NPL,20.4088078790139
+Nauru,NRU,35.1297750965025
+New Zealand,NZL,791.936690158567
+OECD members,OED,#DIV/0!
+Oman,OMN,346.003725965126
+Other small states,OSS,#DIV/0!
+Pakistan,PAK,42.0478498702861
+Panama,PAN,367.654260231113
+Peru,PER,174.064093419401
+Philippines,PHL,62.5473569448375
+Palau,PLW,389.419313926123
+Papua New Guinea,PNG,39.5914475325567
+Poland,POL,465.330608397229
+Pre-demographic dividend,PRE,#DIV/0!
+Puerto Rico,PRI,0
+"Korea, Dem. People's Rep.",PRK,#VALUE!
+Portugal,PRT,635.72400759774
+Paraguay,PRY,100.00483667596
+West Bank and Gaza,PSE,0
+Pacific island small states,PSS,#DIV/0!
+Post-demographic dividend,PST,#DIV/0!
+French Polynesia,PYF,#DIV/0!
+Qatar,QAT,1510.74533536835
+Romania,ROU,361.686872718138
+Russian Federation,RUS,535.023674168803
+Rwanda,RWA,15.6416260656247
+South Asia,SAS,#DIV/0!
+Saudi Arabia,SAU,425.297437438958
+Sudan,SDN,41.8427097898061
+Senegal,SEN,25.4689098539558
+Singapore,SGP,1518.46098131462
+Solomon Islands,SLB,43.5761983810759
+Sierra Leone,SLE,16.2080077118191
+El Salvador,SLV,131.626153178375
+San Marino,SMR,#DIV/0!
+Somalia,SOM,#VALUE!
+Serbia,SRB,227.997905968254
+Sub-Saharan Africa (excluding high income),SSA,#DIV/0!
+South Sudan,SSD,#VALUE!
+Sub-Saharan Africa,SSF,#DIV/0!
+Small states,SST,#DIV/0!
+Sao Tome and Principe,STP,28.1009954797806
+Suriname,SUR,188.925729191989
+Slovak Republic,SVK,479.189046938057
+Slovenia,SVN,695.119426871896
+Sweden,SWE,1065.28085767646
+Eswatini,SWZ,80.0891023859126
+Sint Maarten (Dutch part),SXM,#DIV/0!
+Seychelles,SYC,535.171428206484
+Syrian Arab Republic,SYR,#DIV/0!
+Turks and Caicos Islands,TCA,0
+Chad,TCD,16.7771052164654
+East Asia & Pacific (IDA & IBRD countries),TEA,#DIV/0!
+Europe & Central Asia (IDA & IBRD countries),TEC,#DIV/0!
+Togo,TGO,15.5572236192039
+Thailand,THA,170.355940236798
+Tajikistan,TJK,26.2891492426681
+Turkmenistan,TKM,#DIV/0!
+Latin America & the Caribbean (IDA & IBRD countries),TLA,#DIV/0!
+Timor-Leste,TLS,28.5715635777766
+Middle East & North Africa (IDA & IBRD countries),TMN,#DIV/0!
+Tonga,TON,79.6635965047533
+South Asia (IDA & IBRD),TSA,#DIV/0!
+Sub-Saharan Africa (IDA & IBRD countries),TSS,#DIV/0!
+Trinidad and Tobago,TTO,535.569361059407
+Tunisia,TUN,167.213343179586
+Turkiye,TUR,314.274020671707
+Tuvalu,TUV,42.2935904805827
+Tanzania,TZA,16.4704310100453
+Uganda,UGA,13.617428651832
+Ukraine,UKR,158.702758642152
+Upper middle income,UMC,#DIV/0!
+Uruguay,URY,307.437410679363
+United States,USA,1274.48358681908
+Uzbekistan,UZB,41.1016859317095
+St. Vincent and the Grenadines,VCT,206.984905768568
+Venezuela,VEN,#DIV/0!
+British Virgin Islands,VGB,#DIV/0!
+Virgin Islands (U.S.),VIR,#DIV/0!
+Vietnam,VNM,52.6600208582745
+Vanuatu,VUT,76.8325354423158
+World,WLD,#DIV/0!
+Samoa,WSM,72.8444320326215
+Kosovo,XKX,0
+"Yemen, Rep.",YEM,#DIV/0!
+South Africa,ZAF,196.032966340647
+Zambia,ZMB,18.7819216676293
+Zimbabwe,ZWE,#VALUE!

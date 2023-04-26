@@ -22,10 +22,10 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
   )) %>%
     filter(date <= end_date)
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
-                                              "100-Day Mission",
-                                              "100-Day Mission & Infrastructure",
-                                              "100-Day Mission & Manufacturing",
-                                              "100-Day Mission Total (Manu. & Infr.)"))
+                                              "100-Days Mission",
+                                              "100-Days Mission & Infrastructure",
+                                              "100-Days Mission & Manufacturing",
+                                              "100-Days Mission Total (Manu. & Infr.)"))
 
   # get forty_vac
   pop_size <- squire::get_population(fit$parameters$country)$n
@@ -41,7 +41,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     fill(doses, .direction = "down") %>%
     filter(date > as.Date("2020-01-08")) %>%
     ggplot(aes(x = as.integer(date - cepi_start_date)+100, doses, color = Vaccine)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     geom_line(lwd = 1) +
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
@@ -60,7 +60,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     fill(doses, .direction = "down") %>%
     filter(date > as.Date("2020-01-08")) %>%
     ggplot(aes(x = as.integer(date - cepi_start_date)+100, doses, color = Vaccine)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     #geom_vline(xintercept = as.integer(as.Date("2022-01-01") - scenario_objects[[ii]]$inputs$start_date)) +
     #geom_hline(yintercept = forty_vac) +
     geom_line(lwd = 1) +
@@ -81,7 +81,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     fill(doses, .direction = "down") %>%
     filter(date > as.Date("2020-01-08")) %>%
     ggplot(aes(x = as.integer(date - cepi_start_date)+100, doses, color = Vaccine)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     geom_line(lwd = 1) +
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(), legend.position = "top",
@@ -100,7 +100,7 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     fill(doses, .direction = "down") %>%
     filter(date > as.Date("2020-01-08")) %>%
     ggplot(aes(x = as.integer(date - cepi_start_date)+100, doses, color = Vaccine)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     #geom_vline(xintercept = as.integer(as.Date("2022-01-01") - scenario_objects[[ii]]$inputs$start_date)) +
     #geom_hline(yintercept = forty_vac) +
     geom_line(lwd = 1) +
@@ -149,7 +149,7 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
   # Demonstration Plot of it all together
   gg <- df %>%
     ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Rt)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE, data = . %>% filter(Rt == "Public Health Optimum")) +
     ggpubr::theme_pubclean(base_size = 14) +
@@ -158,7 +158,7 @@ rt_scenario_plot <- function(scenarios, scenario_objects, fit, end_date) {
           legend.key = element_rect(fill = "white")) +
     scale_color_discrete(name = "Scenario:") +
     xlab("Days Since Recognition of COVID-19") +
-    ylab("Rt (100-Day Mission Vaccine Scenario)") +
+    ylab("Rt (100-Days Mission Vaccine Scenario)") +
     scale_color_manual(name = "", values = c("Black", "yellow3", "pink3")) +
     guides(color=guide_legend(nrow=1, byrow=TRUE)) +
     theme(legend.text = element_text(size = 14), legend.position = "top")
@@ -200,7 +200,7 @@ rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit, end_date)
   # Demonstration Plot of it all together
   gg <- df %>%
     ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Rt)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE) +
     geom_smooth(method = "loess", span = 0.02, se = FALSE, data = . %>% filter(Rt == "Public Health Optimum")) +
     ggpubr::theme_pubclean(base_size = 14) +
@@ -254,7 +254,7 @@ rt_two_by_one_scenario_plot <- function(scenarios, scenario_objects, fit, end_da
   df2 <- df %>% filter(Rt != "Public Health Optimum")
 
   # create target_based one
-  df <- df %>% filter(Rt == "Public Health Optimum" & Vaccine == "100-Day Mission") %>%
+  df <- df %>% filter(Rt == "Public Health Optimum" & Vaccine == "100-Days Mission") %>%
     mutate(Vaccine = "Baseline") %>%
     mutate(Rt = "Target based")
 
@@ -262,14 +262,14 @@ rt_two_by_one_scenario_plot <- function(scenarios, scenario_objects, fit, end_da
   df <- rbind(df2, df) %>% rbind(df %>% mutate(Rt = "Economic based"))
 
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
-                                              "100-Day Mission",
-                                              "100-Day Mission & Infrastructure",
-                                              "100-Day Mission & Manufacturing",
-                                              "100-Day Mission Total (Manu. & Infr.)"))
+                                              "100-Days Mission",
+                                              "100-Days Mission & Infrastructure",
+                                              "100-Days Mission & Manufacturing",
+                                              "100-Days Mission Total (Manu. & Infr.)"))
 
   df %>%
     ggplot(aes(x = as.integer(date - cepi_start_date) + 100, rt, color = Vaccine)) +
-    geomtextpath::geom_textvline(label = "100-Day Mission Target", xintercept = 100, hjust = 0.59) +
+    geomtextpath::geom_textvline(label = "100-Days Mission Target", xintercept = 100, hjust = 0.59) +
     geom_smooth(aes(linetype = Vaccine), method = "loess", span = 0.02, se = FALSE) +
     ggpubr::theme_pubclean(base_size = 14) +
     theme(axis.line = element_line(),
