@@ -107,7 +107,7 @@ saveRDS(orderly_ids, "analysis/data_out/orderly_ids.rds")
 pdftools::pdf_combine(
   file.path(
     "archive/run_simulations/",
-    orderly_ids$id,
+    orderly_ids$orderly_id,
     "scenario_plot.pdf"
   ),
   "analysis/plots/scenario_plots_with_runs.pdf")
