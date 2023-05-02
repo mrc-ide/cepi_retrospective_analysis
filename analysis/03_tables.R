@@ -229,6 +229,7 @@ create_table_npis_averted_for_scenario <- function(scen) {
 
 }
 
+# Bring these all together
 all_death_tables <- lapply(1:12, create_table_deaths_averted_for_scenario) %>%
   lapply(as.data.frame) %>%
   setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
@@ -261,6 +262,7 @@ all_npi_tables <- lapply(1:12, create_table_npis_averted_for_scenario) %>%
 all_npi_tables <- all_npi_tables %>% mutate(
   Income = strsplit(rownames(all_npi_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = `NPI Scenario`
 ) %>% `rownames<-`(NULL)
+all_npi_tables <- all_npi_tables %>% filter(`NPI Scenario` != "History Based")
 
 write.csv(all_death_tables, "analysis/data_out/appendix_scenario_health_tables.csv", row.names = FALSE)
 write.csv(all_vsl_tables, "analysis/data_out/appendix_scenario_vsl_tables.csv", row.names = FALSE)

@@ -1,9 +1,4 @@
 "Income","NPI Scenario","Vaccine Scenario","Additional Days Without NPIs","Extra Weeks of Schools Being Fully Open","Extra Weeks of Schools Being Partially Open"
-"Worldwide","History Based","100-Days Mission","0  [0 - 0]",0,0
-"High-Income","History Based","100-Days Mission","0  [0 - 0]",0,0
-"Upper-middle-Income","History Based","100-Days Mission","0  [0 - 0]",0,0
-"Lower-middle-Income","History Based","100-Days Mission","0  [0 - 0]",0,0
-"Low-Income","History Based","100-Days Mission","0  [0 - 0]",0,0
 "Worldwide","Target Based","100-Days Mission","15 794  [15 285 - 16 434]",547,1448
 "High-Income","Target Based","100-Days Mission","5 159  [5 018 - 5 343]",106,401
 "Upper-middle-Income","Target Based","100-Days Mission","5 786  [5 464 - 6 116]",188,647
@@ -14,11 +9,6 @@
 "Upper-middle-Income","Economic Based","100-Days Mission","3 671  [3 448 - 3 875]",547,1129
 "Lower-middle-Income","Economic Based","100-Days Mission","2 426  [2 291 - 2 635]",427,748
 "Low-Income","Economic Based","100-Days Mission","302  [245 - 349]",111,220
-"Worldwide","History Based","100-Days Mission & Manufacturing","0  [0 - 0]",0,0
-"High-Income","History Based","100-Days Mission & Manufacturing","0  [0 - 0]",0,0
-"Upper-middle-Income","History Based","100-Days Mission & Manufacturing","0  [0 - 0]",0,0
-"Lower-middle-Income","History Based","100-Days Mission & Manufacturing","0  [0 - 0]",0,0
-"Low-Income","History Based","100-Days Mission & Manufacturing","0  [0 - 0]",0,0
 "Worldwide","Target Based","100-Days Mission & Manufacturing","24 494  [23 895 - 25 342]",1846,3412
 "High-Income","Target Based","100-Days Mission & Manufacturing","8 454  [8 235 - 8 707]",372,1071
 "Upper-middle-Income","Target Based","100-Days Mission & Manufacturing","8 015  [7 570 - 8 453]",681,1216
@@ -29,11 +19,6 @@
 "Upper-middle-Income","Economic Based","100-Days Mission & Manufacturing","5 612  [5 244 - 5 919]",786,1250
 "Lower-middle-Income","Economic Based","100-Days Mission & Manufacturing","4 457  [4 189 - 4 766]",696,897
 "Low-Income","Economic Based","100-Days Mission & Manufacturing","1 156  [1 065 - 1 273]",263,283
-"Worldwide","History Based","100-Days Mission & Infrastructure","0  [0 - 0]",0,0
-"High-Income","History Based","100-Days Mission & Infrastructure","0  [0 - 0]",0,0
-"Upper-middle-Income","History Based","100-Days Mission & Infrastructure","0  [0 - 0]",0,0
-"Lower-middle-Income","History Based","100-Days Mission & Infrastructure","0  [0 - 0]",0,0
-"Low-Income","History Based","100-Days Mission & Infrastructure","0  [0 - 0]",0,0
 "Worldwide","Target Based","100-Days Mission & Infrastructure","21 618  [21 011 - 22 309]",1394,3002
 "High-Income","Target Based","100-Days Mission & Infrastructure","8 167  [7 962 - 8 418]",347,969
 "Upper-middle-Income","Target Based","100-Days Mission & Infrastructure","6 697  [6 320 - 7 072]",529,1105
@@ -44,11 +29,6 @@
 "Upper-middle-Income","Economic Based","100-Days Mission & Infrastructure","4 415  [4 177 - 4 659]",558,1142
 "Lower-middle-Income","Economic Based","100-Days Mission & Infrastructure","3 424  [3 198 - 3 661]",441,763
 "Low-Income","Economic Based","100-Days Mission & Infrastructure","1 063  [966 - 1 162]",119,228
-"Worldwide","History Based","100-Days Mission Total (Manu. & Infr.)","0  [0 - 0]",0,0
-"High-Income","History Based","100-Days Mission Total (Manu. & Infr.)","0  [0 - 0]",0,0
-"Upper-middle-Income","History Based","100-Days Mission Total (Manu. & Infr.)","0  [0 - 0]",0,0
-"Lower-middle-Income","History Based","100-Days Mission Total (Manu. & Infr.)","0  [0 - 0]",0,0
-"Low-Income","History Based","100-Days Mission Total (Manu. & Infr.)","0  [0 - 0]",0,0
 "Worldwide","Target Based","100-Days Mission Total (Manu. & Infr.)","27 928  [27 235 - 28 834]",2033,3492
 "High-Income","Target Based","100-Days Mission Total (Manu. & Infr.)","9 758  [9 506 - 10 047]",393,1092
 "Upper-middle-Income","Target Based","100-Days Mission Total (Manu. & Infr.)","8 696  [8 190 - 9 160]",743,1239
