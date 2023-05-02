@@ -134,116 +134,6 @@ gg_global <- gg +
 save_figs("deaths_global", gg_global, width = 14, height = 7)
 
 # ------------------------------------------------------------------------- #
-# Global Hosps ------------------------------------------------------------
-# ------------------------------------------------------------------------- #
-
-out_hosps <- readRDS("analysis/data_out/run_hospitalisations_global.rds")
-colors <- c("#ff5f58", "#00244f")
-cepi_date <- cepi_start_date <- as.Date("2020-04-20")
-ymax <- sum(out_hosps$hospitalisations_baseline_med[out_hosps$scenario==1], na.rm = TRUE)
-xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
-
-vline1 <- data.frame(x = 100,
-                     xend = 100,
-                     y = 0,
-                     yend = ymax)
-
-vline2 <- data.frame(x = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
-                     xend = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
-                     y = 0,
-                     yend = ymax)
-
-
-gg <- out_hosps %>%
-  filter(scenario == 1) %>%
-  filter(date < as.Date("2022-01-01")) %>%
-  ggplot(aes(as.integer(as.Date(date)-cepi_date)+100)) +
-  #geom_vline(xintercept = as.integer(as.Date("2020-12-08") - cepi_date) + 100, color = colors[1], lwd = 0.8) +
-  geom_segment(data = vline1, aes(x = x, xend = xend, y = y, yend = yend), color = colors[2], lwd = 0.8) +
-  geom_segment(data = vline2, aes(x = x, xend = xend, y = y, yend = yend), color = colors[1], lwd = 0.8) +
-  #geom_vline(xintercept = 100, color = colors[2], lwd = 0.8) +
-  geom_ribbon(aes(ymin=cumsum(hospitalisations_med),ymax=cumsum(hospitalisations_baseline_med)), fill="#fff3b5", alpha=1) +
-  geom_line(lwd = 1.2, aes(y = cumsum(hospitalisations_baseline_med), linetype = "dashed"), show.legend = FALSE, color = colors[1]) +
-  geom_line(lwd = 1.2, aes(y = cumsum(hospitalisations_med), linetype = "solid"), show.legend = FALSE, color = colors[2]) +
-  ggpubr::theme_pubclean(base_size = 14) +
-  theme(axis.line.x = element_line(color = "grey"),
-        panel.grid.major.y = element_line(color = "grey", linetype = "dashed", size = 0.25)) +
-  scale_x_continuous(breaks = c(100, 465), limits = c(0, xmax)) +
-  xlab("Days Since Recognition of COVID-19") +
-  ylab("Global Cumulative COVID-19 Hospitalisations") +
-  expand_limits(x = 0, y = 0)
-
-# now make our arrows
-arrows <- data.frame(
-  "label" = c("Start of \"100 Days Mission\" \nVaccination Campaign",
-              "Start of Real World \nVaccination Campaign"),
-  "x1" = c(100-30, 332-30),
-  "x2" = c(95, 327),
-  "y1" = rep(ymax + 3000),
-  "y2" = rep(ymax),
-  "color" = colors
-)
-
-rwdeaths <- data.frame(
-  "label" = "Real World \nCOVID-19 \nHospitalisations",
-  "x1" = c(550),
-  "x2" = c(500),
-  "y1" = ymax - 3000,
-  "y2" = ymax,
-  "color" = colors[1]
-)
-
-mission_deaths <- data.frame(
-  "label" = "\"100 Days Mission\" \nCOVID-19 \nHospitalisations",
-  "x1" = c(260),
-  "x2" = c(285),
-  "y1" =4000,
-  "y2" = 9000,
-  "color" = colors[2]
-)
-
-saves_deaths <- data.frame(
-  "label" = "Additional Hospitalisations \nPrevented By\n\"100 Days Mission\"",
-  "x1" = c(625),
-  "x2" = c(575),
-  "y1" =4000,
-  "y2" = 9000,
-  "color" = colors[2]
-)
-
-gg_global_hosps_cumulative <- gg +
-  geom_curve(
-    data = arrows, aes(x = x1, y = y1+1e6, xend = x2, yend = y2),
-    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
-    color = rev(colors), curvature = 0.4, ncp = 10) +
-  geom_curve(
-    data = rwdeaths, aes(x = x1+100, y = y1+1500, xend = x2+200, yend = y2),
-    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
-    color = colors[1], curvature = -0.4, ncp = 10) +
-  geom_curve(
-    data = mission_deaths, aes(x = x1-20, y = y1+2e7, xend = x2, yend = y2+1.3e7),
-    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
-    color = colors[2], curvature = -0.4, ncp = 10) +
-  # geom_curve(
-  #   data = saves_deaths, aes(x = x1-30, y = y1+300, xend = x2-30, yend = y2),
-  #   arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
-  #   color = "black", curvature = -0.4, ncp = 10) +
-  geom_text(data = arrows, aes(label = label, x = x1-5, y = y1+6e6),color = rev(colors), hjust = "left", size = 6) +
-  geom_text(data = rwdeaths, aes(label = label, x = x1+50, y = y1+1e6),color = colors[1],  size = 6) +
-  geom_text(data = mission_deaths, aes(label = label, x = x1-70, y = y1+2e7),color = colors[2],  size = 6) +
-  # geom_text(data = saves_deaths, aes(label = label, x = x1+55, y = y1+1000),color = "black",  size = 6) +
-  # geom_segment(data = saves_deaths, aes(x = x1-88, xend = x1-88, y = 27500, yend = 4000), color = "black", lwd = 0.8,
-  #              arrow = grid::arrow(ends = "both", length = ggplot2::unit(0.75, "lines"))) +
-  geom_label(data = saves_deaths, aes(label = label, x = x1-20, y = y1+3.2e7),
-             fill = "#fff3b5",  size = 5.5, label.size = 0, label.padding = ggplot2::unit(0.5, "lines")) +
-  labs(title = ~ underline("World: Modelled Impact of \"100 Days Mission\" by the end of 2021                                                                                 "),
-       subtitle = "") +
-  theme(plot.title = element_text(color = "grey30"))
-
-# save figs to plots directory
-save_figs("hosps_global_cumulative", gg_global_hosps_cumulative, width = 14, height = 7)
-
-# ------------------------------------------------------------------------- #
 # Global by income group ------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
@@ -634,6 +524,228 @@ gg_global_income_cumulative <- gg_global_income_cumulative +
 save_figs("deaths_global_cumulative_income", gg_global_income_cumulative, width = 14, height = 7)
 
 # ------------------------------------------------------------------------- #
+# Global Hosps Cumulative ------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+out_hosps <- readRDS("analysis/data_out/run_hospitalisations_global.rds")
+colors <- c("#ff5f58", "#00244f")
+cepi_date <- cepi_start_date <- as.Date("2020-04-20")
+ymax <- sum(out_hosps$hospitalisations_baseline_med[out_hosps$scenario==1], na.rm = TRUE)
+xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
+
+vline1 <- data.frame(x = 100,
+                     xend = 100,
+                     y = 0,
+                     yend = ymax)
+
+vline2 <- data.frame(x = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
+                     xend = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
+                     y = 0,
+                     yend = ymax)
+
+
+gg <- out_hosps %>%
+  filter(scenario == 1) %>%
+  filter(date < as.Date("2022-01-01")) %>%
+  ggplot(aes(as.integer(as.Date(date)-cepi_date)+100)) +
+  #geom_vline(xintercept = as.integer(as.Date("2020-12-08") - cepi_date) + 100, color = colors[1], lwd = 0.8) +
+  geom_segment(data = vline1, aes(x = x, xend = xend, y = y, yend = yend), color = colors[2], lwd = 0.8) +
+  geom_segment(data = vline2, aes(x = x, xend = xend, y = y, yend = yend), color = colors[1], lwd = 0.8) +
+  #geom_vline(xintercept = 100, color = colors[2], lwd = 0.8) +
+  geom_ribbon(aes(ymin=cumsum(hospitalisations_med),ymax=cumsum(hospitalisations_baseline_med)), fill="#fff3b5", alpha=1) +
+  geom_line(lwd = 1.2, aes(y = cumsum(hospitalisations_baseline_med), linetype = "dashed"), show.legend = FALSE, color = colors[1]) +
+  geom_line(lwd = 1.2, aes(y = cumsum(hospitalisations_med), linetype = "solid"), show.legend = FALSE, color = colors[2]) +
+  ggpubr::theme_pubclean(base_size = 14) +
+  theme(axis.line.x = element_line(color = "grey"),
+        panel.grid.major.y = element_line(color = "grey", linetype = "dashed", size = 0.25)) +
+  scale_x_continuous(breaks = c(100, 465), limits = c(0, xmax)) +
+  xlab("Days Since Recognition of COVID-19") +
+  ylab("Global Cumulative COVID-19 Hospitalisations") +
+  expand_limits(x = 0, y = 0)
+
+# now make our arrows
+arrows <- data.frame(
+  "label" = c("Start of \"100 Days Mission\" \nVaccination Campaign",
+              "Start of Real World \nVaccination Campaign"),
+  "x1" = c(100-30, 332-30),
+  "x2" = c(95, 327),
+  "y1" = rep(ymax + 3000),
+  "y2" = rep(ymax),
+  "color" = colors
+)
+
+rwdeaths <- data.frame(
+  "label" = "Real World \nCOVID-19 \nHospitalisations",
+  "x1" = c(550),
+  "x2" = c(500),
+  "y1" = ymax - 3000,
+  "y2" = ymax,
+  "color" = colors[1]
+)
+
+mission_deaths <- data.frame(
+  "label" = "\"100 Days Mission\" \nCOVID-19 \nHospitalisations",
+  "x1" = c(260),
+  "x2" = c(285),
+  "y1" =4000,
+  "y2" = 9000,
+  "color" = colors[2]
+)
+
+saves_deaths <- data.frame(
+  "label" = "Additional Hospitalisations \nPrevented By\n\"100 Days Mission\"",
+  "x1" = c(625),
+  "x2" = c(575),
+  "y1" =4000,
+  "y2" = 9000,
+  "color" = colors[2]
+)
+
+gg_global_hosps_cumulative <- gg +
+  geom_curve(
+    data = arrows, aes(x = x1, y = y1+1e6, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = rev(colors), curvature = 0.4, ncp = 10) +
+  geom_curve(
+    data = rwdeaths, aes(x = x1+100, y = y1+1500, xend = x2+200, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[1], curvature = -0.4, ncp = 10) +
+  geom_curve(
+    data = mission_deaths, aes(x = x1-20, y = y1+2e7, xend = x2, yend = y2+1.3e7),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[2], curvature = -0.4, ncp = 10) +
+  # geom_curve(
+  #   data = saves_deaths, aes(x = x1-30, y = y1+300, xend = x2-30, yend = y2),
+  #   arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+  #   color = "black", curvature = -0.4, ncp = 10) +
+  geom_text(data = arrows, aes(label = label, x = x1-5, y = y1+6e6),color = rev(colors), hjust = "left", size = 6) +
+  geom_text(data = rwdeaths, aes(label = label, x = x1+50, y = y1+1e6),color = colors[1],  size = 6) +
+  geom_text(data = mission_deaths, aes(label = label, x = x1-70, y = y1+2e7),color = colors[2],  size = 6) +
+  # geom_text(data = saves_deaths, aes(label = label, x = x1+55, y = y1+1000),color = "black",  size = 6) +
+  # geom_segment(data = saves_deaths, aes(x = x1-88, xend = x1-88, y = 27500, yend = 4000), color = "black", lwd = 0.8,
+  #              arrow = grid::arrow(ends = "both", length = ggplot2::unit(0.75, "lines"))) +
+  geom_label(data = saves_deaths, aes(label = label, x = x1-20, y = y1+3.2e7),
+             fill = "#fff3b5",  size = 5.5, label.size = 0, label.padding = ggplot2::unit(0.5, "lines")) +
+  labs(title = ~ underline("World: Modelled Impact of \"100 Days Mission\" by the end of 2021                                                                                 "),
+       subtitle = "") +
+  theme(plot.title = element_text(color = "grey30"))
+
+# save figs to plots directory
+save_figs("hosps_global_cumulative", gg_global_hosps_cumulative, width = 14, height = 7)
+
+# ------------------------------------------------------------------------- #
+# Global Infections Cumulative ------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+out_infections <- readRDS("analysis/data_out/run_infections_global.rds")
+colors <- c("#ff5f58", "#00244f")
+cepi_date <- cepi_start_date <- as.Date("2020-04-20")
+ymax <- sum(out_infections$infections_baseline_med[out_infections$scenario==1], na.rm = TRUE)
+xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
+
+vline1 <- data.frame(x = 100,
+                     xend = 100,
+                     y = 0,
+                     yend = ymax)
+
+vline2 <- data.frame(x = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
+                     xend = as.integer(as.Date("2020-12-08") - cepi_date) + 100,
+                     y = 0,
+                     yend = ymax)
+
+
+gg <- out_infections %>%
+  filter(scenario == 1) %>%
+  filter(date < as.Date("2022-01-01")) %>%
+  ggplot(aes(as.integer(as.Date(date)-cepi_date)+100)) +
+  #geom_vline(xintercept = as.integer(as.Date("2020-12-08") - cepi_date) + 100, color = colors[1], lwd = 0.8) +
+  geom_segment(data = vline1, aes(x = x, xend = xend, y = y, yend = yend), color = colors[2], lwd = 0.8) +
+  geom_segment(data = vline2, aes(x = x, xend = xend, y = y, yend = yend), color = colors[1], lwd = 0.8) +
+  #geom_vline(xintercept = 100, color = colors[2], lwd = 0.8) +
+  geom_ribbon(aes(ymin=cumsum(infections_med),ymax=cumsum(infections_baseline_med)), fill="#fff3b5", alpha=1) +
+  geom_line(lwd = 1.2, aes(y = cumsum(infections_baseline_med), linetype = "dashed"), show.legend = FALSE, color = colors[1]) +
+  geom_line(lwd = 1.2, aes(y = cumsum(infections_med), linetype = "solid"), show.legend = FALSE, color = colors[2]) +
+  ggpubr::theme_pubclean(base_size = 14) +
+  theme(axis.line.x = element_line(color = "grey"),
+        panel.grid.major.y = element_line(color = "grey", linetype = "dashed", size = 0.25)) +
+  scale_x_continuous(breaks = c(100, 465), limits = c(0, xmax)) +
+  xlab("Days Since Recognition of COVID-19") +
+  ylab("Global Cumulative COVID-19 infections") +
+  expand_limits(x = 0, y = 0)
+
+# now make our arrows
+arrows <- data.frame(
+  "label" = c("Start of \"100 Days Mission\" \nVaccination Campaign",
+              "Start of Real World \nVaccination Campaign"),
+  "x1" = c(100-30, 332-30),
+  "x2" = c(95, 327),
+  "y1" = rep(ymax + 3000),
+  "y2" = rep(ymax),
+  "color" = colors
+)
+
+rwdeaths <- data.frame(
+  "label" = "Real World \nCOVID-19 \nInfections",
+  "x1" = c(550),
+  "x2" = c(500),
+  "y1" = ymax - 3000,
+  "y2" = ymax,
+  "color" = colors[1]
+)
+
+mission_deaths <- data.frame(
+  "label" = "\"100 Days Mission\" \nCOVID-19 \nInfections",
+  "x1" = c(260),
+  "x2" = c(285),
+  "y1" =4000,
+  "y2" = 9000,
+  "color" = colors[2]
+)
+
+saves_deaths <- data.frame(
+  "label" = "Additional Infections \nPrevented By\n\"100 Days Mission\"",
+  "x1" = c(625),
+  "x2" = c(575),
+  "y1" =4000,
+  "y2" = 9000,
+  "color" = colors[2]
+)
+
+gg_global_infections_cumulative <- gg +
+  geom_curve(
+    data = arrows, aes(x = x1, y = y1+3e8, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = rev(colors), curvature = 0.4, ncp = 10) +
+  geom_curve(
+    data = rwdeaths, aes(x = x1+100, y = y1+1500, xend = x2+200, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[1], curvature = -0.4, ncp = 10) +
+  geom_curve(
+    data = mission_deaths, aes(x = x1-20, y = y1+2e9, xend = x2+40, yend = y2+1.1e9),
+    arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+    color = colors[2], curvature = -0.4, ncp = 10) +
+  # geom_curve(
+  #   data = saves_deaths, aes(x = x1-30, y = y1+300, xend = x2-30, yend = y2),
+  #   arrow = arrow(length = unit(0.08, "inch"), type = "closed", angle = 45), size = 0.75,
+  #   color = "black", curvature = -0.4, ncp = 10) +
+  geom_text(data = arrows, aes(label = label, x = x1-5, y = y1+6e8),color = rev(colors), hjust = "left", size = 6) +
+  geom_text(data = rwdeaths, aes(label = label, x = x1+50, y = y1+1e6),color = colors[1],  size = 6) +
+  geom_text(data = mission_deaths, aes(label = label, x = x1-70, y = y1+2e9),color = colors[2],  size = 6) +
+  # geom_text(data = saves_deaths, aes(label = label, x = x1+55, y = y1+1000),color = "black",  size = 6) +
+  # geom_segment(data = saves_deaths, aes(x = x1-88, xend = x1-88, y = 27500, yend = 4000), color = "black", lwd = 0.8,
+  #              arrow = grid::arrow(ends = "both", length = ggplot2::unit(0.75, "lines"))) +
+  geom_label(data = saves_deaths, aes(label = label, x = x1+20, y = y1+2.55e9),
+             fill = "#fff3b5",  size = 5.5, label.size = 0, label.padding = ggplot2::unit(0.5, "lines")) +
+  labs(title = ~ underline("World: Modelled Impact of \"100 Days Mission\" by the end of 2021                                                                                 "),
+       subtitle = "") +
+  theme(plot.title = element_text(color = "grey30"))
+gg_global_infections_cumulative
+
+# save figs to plots directory
+save_figs("infections_global_cumulative", gg_global_infections_cumulative, width = 14, height = 7)
+
+
+# ------------------------------------------------------------------------- #
 # Totals Functions -------------------------------------------------------------
 # ------------------------------------------------------------------------- #
 
@@ -875,12 +987,10 @@ total_npis_averted_by_vaccine <- plot_medians_by_vaccine(npi_gains_global, var, 
 var <- "economic_lives_saved"
 ylab <- "Global Value of Statistical Life"
 vsl_scenario_averted_by_vaccine <- plot_totals_by_vaccine(res_full,  var, ylab, n.breaks = 3)
-save_figs("vsl_scenario_averted_by_vaccine", vsl_scenario_averted_by_vaccine, width = 10, height = 7)
 
 var <- "deaths_averted"
 ylab <- "Global Deaths Averted"
 total_deaths_averted_by_vaccine <- plot_totals_by_vaccine(death_totals_global, var, ylab, prefix = "", unit = "Million", scale = 1e-6, n.breaks = 3)
-save_figs("total_deaths_averted_by_vaccine", total_deaths_averted_by_vaccine, width = 10, height = 7)
 
 combined_death_vsl_npi_impacts <-  cowplot::plot_grid(
   cowplot::plot_grid(
