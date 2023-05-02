@@ -193,12 +193,26 @@ table_2
 
 all_death_tables <- lapply(1:12, create_table_deaths_averted_for_scenario) %>%
   lapply(as.data.frame) %>%
-  setNames(paste(scenarios$Rt, "&", scenarios$Vaccine)) %>%
-  flatten_name("scenario")
+  setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
+  flatten_name("scenario") %>%
+  mutate(NPI_Scenario = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Deaths Averted (Millions)`) %>%
+  mutate(Vaccine_Scenario = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Deaths Averted (Millions)`) %>%
+  select(-scenario)
+all_death_tables <- all_death_tables %>% mutate(
+  Income = strsplit(rownames(all_death_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = NPI_Scenario
+) %>% `rownames<-`(NULL)
+
 all_vsl_tables <- lapply(1:12, create_table_vsl_averted_for_scenario) %>%
   lapply(as.data.frame) %>%
-  setNames(paste(scenarios$Rt, "&", scenarios$Vaccine)) %>%
-  flatten_name("scenario")
+  setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
+  flatten_name("scenario") %>%
+  mutate(NPI_Scenario = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
+  mutate(Vaccine_Scenario = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
+  select(-scenario)
+all_vsl_tables <- all_vsl_tables %>% mutate(
+  Income = strsplit(rownames(all_vsl_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = NPI_Scenario
+) %>% `rownames<-`(NULL)
+
 write.csv(all_death_tables, "analysis/data_out/appendix_scenario_health_tables.csv")
 write.csv(all_vsl_tables, "analysis/data_out/appendix_scenario_vsl_tables.csv")
 
