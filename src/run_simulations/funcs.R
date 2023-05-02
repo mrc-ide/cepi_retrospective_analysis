@@ -1365,10 +1365,11 @@ plot_deaths_averted <- function(scenario_df, facet = FALSE){
     theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
     coord_flip()
 
-  cowplot::plot_grid(deaths_averted,
+  cowplot::plot_grid(cowplot::get_legend(deaths_averted),
+                     deaths_averted + theme(legend.position = "none"),
                      hospitalisations_averted + theme(legend.position = "none"),
                      infections_averted + theme(legend.position = "none"),
-                     ncol = 1, rel_heights = c(1, 0.9, 0.9))
+                     ncol = 1, rel_heights = c(0.5, 1, 1, 1))
 
 }
 

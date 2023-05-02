@@ -110,7 +110,7 @@ if(simulate_counterfactuals){
 outplot <- combine_plot_outputs(vacc_plot, rt_plot, death_plot, death_averted_plot)
 
 #plot output
-ggsave("scenario_plot.pdf", outplot, width = 19, height = 16)
+ggsave("scenario_plot.pdf", outplot, width = 24, height = 16)
 
 # close the session
 # future::plan(future::sequential())
