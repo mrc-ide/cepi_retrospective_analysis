@@ -1,13 +1,13 @@
-"scenario","Rt","Vaccine","extra_full_school_weeks_total","extra_partial_school_weeks_total","extra_full_school_weeks_med","extra_partial_school_weeks_med","extra_full_school_weeks_025","extra_partial_school_weeks_025","extra_full_school_weeks_25","extra_partial_school_weeks_25","extra_full_school_weeks_75","extra_partial_school_weeks_75","extra_full_school_weeks_975","extra_partial_school_weeks_975","Variant"
-1,"History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0,"As it occurred"
-2,"Target Based","100-Day Mission",547,1448,0,5,0,0,0,0,5,14,19.7,30,"As it occurred"
-3,"Economic Based","100-Day Mission",1439,3084,5,16,0,0,0,5,13,28,40.4,51,"As it occurred"
-4,"History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0,"As it occurred"
-5,"Target Based","100-Day Mission & Manufacturing",1846,3412,7,18,0,0,1.5,6.5,16.5,30.5,46.7,57.55,"As it occurred"
-6,"Economic Based","100-Day Mission & Manufacturing",2152,3545,9,19,0,0,3,8,18.5,30.5,49.55,57.7,"As it occurred"
-7,"History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0,"As it occurred"
-8,"Target Based","100-Day Mission & Infrastructure",1394,3002,5,15,0,0,0,4.5,13,28,38.55,50.85,"As it occurred"
-9,"Economic Based","100-Day Mission & Infrastructure",1477,3134,5,16,0,0,0,5,13,28,41.4,51.85,"As it occurred"
-10,"History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0,"As it occurred"
-11,"Target Based","100-Day Mission Total (Manu. & Infr.)",2033,3492,8,18,0,0,2.5,8,17.5,30.5,48.55,57.7,"As it occurred"
-12,"Economic Based","100-Day Mission Total (Manu. & Infr.)",2234,3577,9,19,0,0,4,8,19.5,30.5,50.55,57.7,"As it occurred"
+"scenario","Rt","Vaccine","extra_full_school_weeks_total","extra_partial_school_weeks_total","extra_full_school_weeks_med","extra_partial_school_weeks_med","extra_full_school_weeks_025","extra_partial_school_weeks_025","extra_full_school_weeks_25","extra_partial_school_weeks_25","extra_full_school_weeks_75","extra_partial_school_weeks_75","extra_full_school_weeks_975","extra_partial_school_weeks_975"
+1,"History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0
+2,"Target Based","100-Day Mission",547,1448,0,5,0,0,0,0,5,14,19.7,30
+3,"Economic Based","100-Day Mission",1439,3084,5,16,0,0,0,5,13,28,40.4,51
+4,"History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0
+5,"Target Based","100-Day Mission & Manufacturing",1846,3412,7,18,0,0,1.5,6.5,16.5,30.5,46.7,57.55
+6,"Economic Based","100-Day Mission & Manufacturing",2152,3545,9,19,0,0,3,8,18.5,30.5,49.55,57.7
+7,"History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0
+8,"Target Based","100-Day Mission & Infrastructure",1394,3002,5,15,0,0,0,4.5,13,28,38.55,50.85
+9,"Economic Based","100-Day Mission & Infrastructure",1477,3134,5,16,0,0,0,5,13,28,41.4,51.85
+10,"History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0
+11,"Target Based","100-Day Mission Total (Manu. & Infr.)",2033,3492,8,18,0,0,2.5,8,17.5,30.5,48.55,57.7
+12,"Economic Based","100-Day Mission Total (Manu. & Infr.)",2234,3577,9,19,0,0,4,8,19.5,30.5,50.55,57.7

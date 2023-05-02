@@ -85,3 +85,38 @@ lg_new <- lg_new %>%
 
 saveRDS(lg_new, "analysis/data_raw/vsly.rds")
 write.csv(lg_new, "analysis/data_raw/vsly.csv")
+
+# ----------------------------------#
+# 2. Choice Formatting
+# ----------------------------------#
+
+choice <- read.csv("analysis/data_raw/who_choice_raw.csv") %>%
+  setNames(c("country", "iso3c", "choice")) %>%
+  mutate(choice = replace(choice, choice == "#DIV/0!", NA)) %>%
+  mutate(choice = replace(choice, choice == "0", NA)) %>%
+  mutate(choice = replace(choice, choice == "#VALUE!", NA)) %>%
+  select(iso3c, choice) %>%
+  filter(iso3c %in% iso3cs) %>%
+  mutate(choice = as.numeric(choice)) %>%
+  na.omit()
+
+
+income_choice <- choice %>% mutate(income = squire.page::get_income_group(iso3c)) %>%
+  group_by(income) %>%
+  summarise(choice = median(choice, na.rm = TRUE))
+needed_choice <- iso3cs[which(!iso3cs %in% choice$iso3c)]
+
+choice_new <- data.frame(iso3c = needed_choice) %>%
+  mutate(income = squire.page::get_income_group(iso3c)) %>%
+  split(.$iso3c) %>%
+  map_dfr(function(x) {
+    income_choice %>%
+      filter(income == x$income) %>%
+      mutate(income = x$iso3c) %>%
+      rename(iso3c = income)}
+  ) %>%
+  rbind(choice) %>%
+  arrange(iso3c, choice)
+
+saveRDS(choice_new, "analysis/data_raw/who_choice.rds")
+write.csv(choice_new, "analysis/data_raw/who_choice.csv")
