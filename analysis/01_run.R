@@ -535,7 +535,7 @@ hosp_costs_saved <- function(orderly_ids, grouping = NULL, replicates = 10, max_
 
     # calculate our outputs
     df %>%
-      mutate(hospitalisation_costs_averted = hospitalisations_averted*choice) %>%
+      mutate(hospitalisation_costs_averted = hospitalisations_averted*choice*7.5) %>%
       select(scenario, hospitalisation_costs_averted)
 
   }
@@ -594,7 +594,7 @@ hosp_costs_global <- hosp_costs_saved(orderly_ids, NULL, 100, choice = choice)
 hosp_costs_global %>% left_join(scenarios) %>% relocate(scenario, Rt, Vaccine) %>%
   save_outputs("analysis/data_out/total_hospcosts_global.rds")
 
-# life years by income
+# hospitalisation costs by income
 hosp_costs_income <- hosp_costs_saved(orderly_ids, squire.page::get_income_group, 100, choice = choice)
 hosp_costs_income %>% flatten_name("income") %>% left_join(scenarios) %>% relocate(scenario, income, Rt, Vaccine) %>%
   save_outputs("analysis/data_out/total_hospcosts_income.rds")

@@ -565,7 +565,7 @@ colors <- c("#ff5f58", "#00244f")
 wbcols <- rev(viridis::viridis(4))
 names(wbcols) <- c("Low-Income Countries","Low-Middle Income Countries","Upper-Middle Income Countries","High-Income Countries")
 
-cepi_date <- as.Date("2020-04-20")
+cepi_date <- cepi_start_date <- as.Date("2020-04-20")
 ymax <- sum(out1$deaths_baseline_med[out1$scenario == 1], na.rm = TRUE)
 xmax <- as.integer(as.Date("2022-01-01") - cepi_start_date) + 110
 

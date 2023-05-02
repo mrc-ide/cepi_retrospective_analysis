@@ -1,13 +1,13 @@
-"scenario","Rt","Vaccine","hospitalisation_costs_averted_med","hospitalisation_costs_averted_025","hospitalisation_costs_averted_25","hospitalisation_costs_averted_75","hospitalisation_costs_averted_975","Variant"
-1,"History Based","100-Day Mission",9665622042,7903390553,8918637562,10603618013,11637032788,"As it occurred"
-2,"Target Based","100-Day Mission",7132801976,5721872891,6360982830,7864786675,9045599712,"As it occurred"
-3,"Economic Based","100-Day Mission",6666955681,5497407553,6268836837,7425873301,8415201847,"As it occurred"
-4,"History Based","100-Day Mission & Manufacturing",12051105703,9218173977,10662244066,13078426591,15500707221,"As it occurred"
-5,"Target Based","100-Day Mission & Manufacturing",10134512896,7488619111,8898889591,11123010202,13422248993,"As it occurred"
-6,"Economic Based","100-Day Mission & Manufacturing",10571093076,7794870798,9215920222,11540753543,13894504667,"As it occurred"
-7,"History Based","100-Day Mission & Infrastructure",11985555696,9016011510,10544558880,12895426804,14674139650,"As it occurred"
-8,"Target Based","100-Day Mission & Infrastructure",9581222204,7229985277,8510583586,10417764549,12086442135,"As it occurred"
-9,"Economic Based","100-Day Mission & Infrastructure",10018659495,7721816290,8970188781,11088885873,12756295238,"As it occurred"
-10,"History Based","100-Day Mission Total (Manu. & Infr.)",13043039924,9823830668,11563996841,14255666035,16924733866,"As it occurred"
-11,"Target Based","100-Day Mission Total (Manu. & Infr.)",11067679919,8148870899,9696498636,12064125179,14613022087,"As it occurred"
-12,"Economic Based","100-Day Mission Total (Manu. & Infr.)",11481064521,8489994685,10213654976,12666347330,15127917802,"As it occurred"
+"scenario","Rt","Vaccine","hospitalisation_costs_averted_med","hospitalisation_costs_averted_025","hospitalisation_costs_averted_25","hospitalisation_costs_averted_75","hospitalisation_costs_averted_975"
+1,"History Based","100-Days Mission",74490396364,60309081823,67254609219,79337909884,87514268708
+2,"Target Based","100-Days Mission",54505441924,44300471017,49006720988,59029886762,66525498255
+3,"Economic Based","100-Days Mission",52154479095,39430015613,45851757799,57159575846,64293076952
+4,"History Based","100-Days Mission & Manufacturing",91100770402,68462116448,79073610951,99471420408,118704103621
+5,"Target Based","100-Days Mission & Manufacturing",78550389960,56274029960,65362456709,86379767876,102876858125
+6,"Economic Based","100-Days Mission & Manufacturing",80238409806,59131870154,68101962770,89642635898,104729419495
+7,"History Based","100-Days Mission & Infrastructure",89146399831,67924488749,77830917182,96015552009,114246011576
+8,"Target Based","100-Days Mission & Infrastructure",73237476468,53975404290,61511828419,79820870877,92808548297
+9,"Economic Based","100-Days Mission & Infrastructure",77009186708,57694478518,65151865358,84186441011,96176427729
+10,"History Based","100-Days Mission Total (Manu. & Infr.)",99313229905,73253745853,84268512967,109108573773,130643150283
+11,"Target Based","100-Days Mission Total (Manu. & Infr.)",85623360609,61017630668,70726212424,93485931372,110835538898
+12,"Economic Based","100-Days Mission Total (Manu. & Infr.)",89032658601,64047073171,74378855308,97492792389,114650422980
