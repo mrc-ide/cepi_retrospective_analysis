@@ -191,29 +191,79 @@ table_2
 
 }
 
+# Economic Impacts Table
+npi_total <- readRDS("analysis/data_out/total_npigains_global.rds")
+npi_income <- readRDS("analysis/data_out/total_npigains_income.rds")
+school_total <- readRDS("analysis/data_out/total_schoolweeks_global.rds")
+school_income <- readRDS("analysis/data_out/total_schoolweeks_income.rds")
+
+create_table_npis_averted_for_scenario <- function(scen) {
+
+  global_npi <- create_range(npi_total, "gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = 1, scen = scen)
+  income_npi <- do.call(rbind, lapply(income, function(x){
+    accuracy <- ifelse(x == "LIC", 1, 1)
+    npi_income %>% filter(income == x) %>%
+      create_range("gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = accuracy, scen = scen)
+  }))
+
+  # schools
+  global_school <- school_total %>%
+    filter(scenario == scen) %>%
+    select(extra_full_school_weeks_total, extra_partial_school_weeks_total)
+
+  income_school <- school_income %>%
+    filter(scenario == scen) %>%
+    select(extra_full_school_weeks_total, extra_partial_school_weeks_total)
+
+  # Bring together into one table
+  table_2 <- cbind(
+    rbind(global_npi, income_npi),
+    rbind(global_school, income_school)
+  )
+  rownames(table_2) <- c("Worldwide", "High-Income", "Upper-middle-Income", "Lower-middle-Income","Low-Income")
+  colnames(table_2) <- c("Additional Days Without NPIs",
+                         "Extra Weeks of Schools Being Fully Open",
+                         "Extra Weeks of Schools Being Partially Open")
+
+  table_2
+
+}
+
 all_death_tables <- lapply(1:12, create_table_deaths_averted_for_scenario) %>%
   lapply(as.data.frame) %>%
   setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
   flatten_name("scenario") %>%
-  mutate(NPI_Scenario = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Deaths Averted (Millions)`) %>%
-  mutate(Vaccine_Scenario = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Deaths Averted (Millions)`) %>%
+  mutate(`NPI Scenario` = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Deaths Averted (Millions)`) %>%
+  mutate(`Vaccine Scenario` = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Deaths Averted (Millions)`) %>%
   select(-scenario)
 all_death_tables <- all_death_tables %>% mutate(
-  Income = strsplit(rownames(all_death_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = NPI_Scenario
+  Income = strsplit(rownames(all_death_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = `NPI Scenario`
 ) %>% `rownames<-`(NULL)
 
 all_vsl_tables <- lapply(1:12, create_table_vsl_averted_for_scenario) %>%
   lapply(as.data.frame) %>%
   setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
   flatten_name("scenario") %>%
-  mutate(NPI_Scenario = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
-  mutate(Vaccine_Scenario = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
+  mutate(`NPI Scenario` = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
+  mutate(`Vaccine Scenario` = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Value of Statistical Life ($, Trillions)`) %>%
   select(-scenario)
 all_vsl_tables <- all_vsl_tables %>% mutate(
-  Income = strsplit(rownames(all_vsl_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = NPI_Scenario
+  Income = strsplit(rownames(all_vsl_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = `NPI Scenario`
 ) %>% `rownames<-`(NULL)
 
-write.csv(all_death_tables, "analysis/data_out/appendix_scenario_health_tables.csv")
-write.csv(all_vsl_tables, "analysis/data_out/appendix_scenario_vsl_tables.csv")
+all_npi_tables <- lapply(1:12, create_table_npis_averted_for_scenario) %>%
+  lapply(as.data.frame) %>%
+  setNames(paste(scenarios$Rt, "and", scenarios$Vaccine)) %>%
+  flatten_name("scenario") %>%
+  mutate(`NPI Scenario` = gsub("(.*)( and )(.*)", "\\1", scenario), .before = `Additional Days Without NPIs`) %>%
+  mutate(`Vaccine Scenario` = gsub("(.*)( and )(.*)", "\\3", scenario), .before = `Additional Days Without NPIs`) %>%
+  select(-scenario)
+all_npi_tables <- all_npi_tables %>% mutate(
+  Income = strsplit(rownames(all_npi_tables), ".", fixed = TRUE) %>% map_chr(.f = function(x){tail(x,1)}), .before = `NPI Scenario`
+) %>% `rownames<-`(NULL)
+
+write.csv(all_death_tables, "analysis/data_out/appendix_scenario_health_tables.csv", row.names = FALSE)
+write.csv(all_vsl_tables, "analysis/data_out/appendix_scenario_vsl_tables.csv", row.names = FALSE)
+write.csv(all_npi_tables, "analysis/data_out/appendix_scenario_npi_tables.csv", row.names = FALSE)
 
 
