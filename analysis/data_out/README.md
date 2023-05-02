@@ -35,4 +35,5 @@
 1. `table_one.csv` - Table of Health Impacts for 100 Days Mission
 1. `table_two.csv` - Table of Health Economic Impacts for 100 Days Mission
 1. `appendix_scenario_health_tables.csv` - Appendix Table of All Health Impacts by Scenario
-1. `appendix_senariocenario_vsl_tables.csv` - Appendix Table of All Health Economic Impacts by Scenario
+1. `appendix_scenario_vsl_tables.csv` - Appendix Table of All Health Economic Impacts by Scenario
+1. `appendix_scenario_npi_tables.csv` - Appendix Table of All NPI Impacts by Scenario
