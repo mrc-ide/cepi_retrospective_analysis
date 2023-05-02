@@ -670,7 +670,7 @@ gg <- out_infections %>%
         panel.grid.major.y = element_line(color = "grey", linetype = "dashed", size = 0.25)) +
   scale_x_continuous(breaks = c(100, 465), limits = c(0, xmax)) +
   xlab("Days Since Recognition of COVID-19") +
-  ylab("Global Cumulative COVID-19 infections") +
+  ylab("Global Cumulative COVID-19 Infections") +
   expand_limits(x = 0, y = 0)
 
 # now make our arrows
@@ -739,7 +739,6 @@ gg_global_infections_cumulative <- gg +
   labs(title = ~ underline("World: Modelled Impact of \"100 Days Mission\" by the end of 2021                                                                                 "),
        subtitle = "") +
   theme(plot.title = element_text(color = "grey30"))
-gg_global_infections_cumulative
 
 # save figs to plots directory
 save_figs("infections_global_cumulative", gg_global_infections_cumulative, width = 14, height = 7)
