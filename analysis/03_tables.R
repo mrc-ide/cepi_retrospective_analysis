@@ -19,7 +19,7 @@ nums <- as.numeric((x %>% filter(scenario == scen))[,grab])
 
 mid <- scales::unit_format(prefix = prefix, scale = scale, unit = unit, accuracy = accuracy)(sort(nums)[2])
 range <- paste(scales::unit_format(scale = scale, unit = "", suffix = "", accuracy = accuracy)(sort(nums)[c(1, 3)]), collapse = " - ")
-range <- paste0("[", range, "]")
+range <- paste0("(", range, ")")
 
 combined <- paste(mid, range)
 combined
@@ -61,35 +61,35 @@ hospcosts_total <- readRDS("analysis/data_out/total_hospcosts_global.rds")
 hospcosts_income <- readRDS("analysis/data_out/total_hospcosts_income.rds")
 
 # vsl
-global_vsl <- create_range(vsl_total, "economic_lives_saved", scale = 1e-12, unit = "", prefix = "$", accuracy = 0.01)
+global_vsl <- create_range(vsl_total, "economic_lives_saved", scale = 1e-12, unit = "", prefix = "", accuracy = 0.01)
 income_vsl <- do.call(rbind, lapply(income, function(x){
   accuracy <- ifelse(x == "LIC", 0.001, 0.01)
   vsl_income %>% filter(income == x) %>%
-    create_range("economic_lives_saved", scale = 1e-12, unit = "", prefix = "$", accuracy = accuracy)
+    create_range("economic_lives_saved", scale = 1e-12, unit = "", prefix = "", accuracy = accuracy)
   }))
 
 # vsly
-global_vsly <- create_range(vsl_total, "economic_life_years_saved", scale = 1e-12, unit = "", prefix = "$", accuracy = 0.01)
+global_vsly <- create_range(vsl_total, "economic_life_years_saved", scale = 1e-12, unit = "", prefix = "", accuracy = 0.01)
 income_vsly <- do.call(rbind, lapply(income, function(x){
   accuracy <- ifelse(x == "LIC", 0.001, 0.01)
   vsl_income %>% filter(income == x) %>%
-    create_range("economic_life_years_saved", scale = 1e-12, unit = "", prefix = "$", accuracy = accuracy)
+    create_range("economic_life_years_saved", scale = 1e-12, unit = "", prefix = "", accuracy = accuracy)
 }))
 
 # productivity
-global_productivity <- create_range(vsl_total, "economic_productive_loss", scale = 1e-12, unit = "", prefix = "$", accuracy = 0.01)
+global_productivity <- create_range(vsl_total, "economic_productive_loss", scale = 1e-12, unit = "", prefix = "", accuracy = 0.01)
 income_productivity <- do.call(rbind, lapply(income, function(x){
   accuracy <- ifelse(x == "LIC", 0.0001, 0.01)
   vsl_income %>% filter(income == x) %>%
-    create_range("economic_productive_loss", scale = 1e-12, unit = "", prefix = "$", accuracy = accuracy)
+    create_range("economic_productive_loss", scale = 1e-12, unit = "", prefix = "", accuracy = accuracy)
 }))
 
 # hosp costs
-global_hospcosts <- create_range(hospcosts_total, "hospitalisation_costs_averted", scale = 1e-9, unit = "", prefix = "$", accuracy = 0.01)
+global_hospcosts <- create_range(hospcosts_total, "hospitalisation_costs_averted", scale = 1e-9, unit = "", prefix = "", accuracy = 0.01)
 income_hospcosts <- do.call(rbind, lapply(income, function(x){
   accuracy <- ifelse(x == "LIC", 0.001, 0.01)
   hospcosts_income %>% filter(income == x) %>%
-    create_range("hospitalisation_costs_averted", scale = 1e-9, unit = "", prefix = "$", accuracy = accuracy)
+    create_range("hospitalisation_costs_averted", scale = 1e-9, unit = "", prefix = "", accuracy = accuracy)
 }))
 
 # Bring together into one table
@@ -199,21 +199,23 @@ school_income <- readRDS("analysis/data_out/total_schoolweeks_income.rds")
 
 create_table_npis_averted_for_scenario <- function(scen) {
 
-  global_npi <- create_range(npi_total, "gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = 1, scen = scen)
+  global_npi <- create_range(npi_total, "gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = 100, scen = scen)
   income_npi <- do.call(rbind, lapply(income, function(x){
     accuracy <- ifelse(x == "LIC", 1, 1)
     npi_income %>% filter(income == x) %>%
-      create_range("gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = accuracy, scen = scen)
+      create_range("gain_in_openness", scale = 1, unit = "", prefix = "", accuracy = 100, scen = scen)
   }))
 
   # schools
   global_school <- school_total %>%
     filter(scenario == scen) %>%
-    select(extra_full_school_weeks_total, extra_partial_school_weeks_total)
+    select(extra_full_school_weeks_total, extra_partial_school_weeks_total) %>%
+    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10)(x)})
 
   income_school <- school_income %>%
     filter(scenario == scen) %>%
-    select(extra_full_school_weeks_total, extra_partial_school_weeks_total)
+    select(extra_full_school_weeks_total, extra_partial_school_weeks_total) %>%
+    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10)(x)})
 
   # Bring together into one table
   table_2 <- cbind(
