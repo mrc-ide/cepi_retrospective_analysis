@@ -8,4 +8,7 @@ This is an [`orderly`](https://github.com/vimc/orderly) project.  The directorie
 
 For more documentation please see: `vignettes/cepi_analysis.rmd`.
 
-Note: use squire.page ref fc27dcabec55d70ec293328813cec644c56a63db
+All analysis and outputs are in:
+
+* `analysis`
+
