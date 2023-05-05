@@ -1,3 +1,18 @@
+flatten_name <- function(x, name){
+  nms <- names(x)
+  for(i in seq_along(x)) {
+    x[[i]][[name]] <- nms[i]
+  }
+  do.call(rbind, x)
+}
+
+# get our scenario match table
+source("src/run_simulations/funcs.R")
+scenarios <- read.csv("src/run_simulations/scenarios.csv") %>%
+  mutate(scenario = as.integer(rownames(.))) %>%
+  describe_scenarios() %>%
+  select(scenario, Rt, Vaccine)
+
 # -------------------------------------------------- #
 # Health Outcome Totals
 # -------------------------------------------------- #
@@ -34,8 +49,8 @@ income_deaths <- do.call(rbind, lapply(income, function(x){deaths_income %>% fil
 global_hosp <- create_range(hosp)
 income_hosp <- do.call(rbind, lapply(income, function(x){hosp_income %>% filter(income == x) %>% create_range()}))
 
-global_infections <- create_range(infections, scale = 1e-9, "")
-income_infections <- do.call(rbind, lapply(income, function(x){infections_income %>% filter(income == x) %>% create_range( scale = 1e-9, "")}))
+global_infections <- create_range(infections, var = "averted", scale = 1e-9, unit = "")
+income_infections <- do.call(rbind, lapply(income, function(x){infections_income %>% filter(income == x) %>% create_range(var = "averted", scale = 1e-9, "")}))
 
 # Bring together into one table
 table_1 <- cbind(
@@ -122,8 +137,8 @@ income_deaths <- do.call(rbind, lapply(income, function(x){deaths_income %>% fil
 global_hosp <- create_range(hosp, scen = scen)
 income_hosp <- do.call(rbind, lapply(income, function(x){hosp_income %>% filter(income == x) %>% create_range(scen = scen)}))
 
-global_infections <- create_range(infections, scale = 1e-9, "", scen = scen)
-income_infections <- do.call(rbind, lapply(income, function(x){infections_income %>% filter(income == x) %>% create_range( scale = 1e-9, "", scen = scen)}))
+global_infections <- create_range(infections, var = "averted", scale = 1e-9, "", scen = scen)
+income_infections <- do.call(rbind, lapply(income, function(x){infections_income %>% filter(income == x) %>% create_range(var = "averted",  scale = 1e-9, "", scen = scen)}))
 
 # Bring together into one table
 table_1 <- cbind(
@@ -210,12 +225,12 @@ create_table_npis_averted_for_scenario <- function(scen) {
   global_school <- school_total %>%
     filter(scenario == scen) %>%
     select(extra_full_school_weeks_total, extra_partial_school_weeks_total) %>%
-    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10)(x)})
+    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10, scale = 1, unit = "", prefix = "", )(x)})
 
   income_school <- school_income %>%
     filter(scenario == scen) %>%
     select(extra_full_school_weeks_total, extra_partial_school_weeks_total) %>%
-    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10)(x)})
+    mutate_all(.funs = function(x){scales::unit_format(accuracy = 10, scale = 1, unit = "", prefix = "", )(x)})
 
   # Bring together into one table
   table_2 <- cbind(
