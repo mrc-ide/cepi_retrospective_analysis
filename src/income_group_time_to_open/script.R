@@ -94,7 +94,7 @@ ic_labs_df <- plot_df %>%
 
 
 
-ggsave("diagnostic_plot.pdf",
+ggsave("diagnostic_plot.png",
        ggplot(
          plot_df,
          aes(x = fct_reorder(iso3c, ordering), y = time_to_open, fill = income_group)
@@ -107,6 +107,6 @@ ggsave("diagnostic_plot.pdf",
               colour = "Income Group:", fill = "Income Group:") +
          coord_flip() +
          theme_pubclean(flip = TRUE),
-       height = 22, width = 10
+       height = 22, width = 20
 )
 

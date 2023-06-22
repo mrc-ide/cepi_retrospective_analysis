@@ -46,7 +46,7 @@ script: script.R
 artefacts:
   - staticgraph:
       description: Plot of data + average for each income group
-      filenames: diagnostic_plot.pdf
+      filenames: diagnostic_plot.png
   - data:
       description: Average for each income group
       filenames: average_time_to_opening.Rds

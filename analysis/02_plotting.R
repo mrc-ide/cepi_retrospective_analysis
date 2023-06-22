@@ -1058,3 +1058,61 @@ save_figs("combined_impacts_by_income", income_combined, width = 18, height = 12
 
 
 
+plot_income_by_vaccine <- function(res_full, var, ylab, prefix = "$", unit = "Trillion", scale = 1e-12, n.breaks = 5) {
+
+  ylab <- paste0("\n", ylab, " (median, IQR, 95% quantile)")
+  res_sub <- res_full %>% select(scenario, income, matches(var)) %>% 
+    mutate(income = factor(income, levels = c("HIC", "UMIC", "LMIC", "LIC")))
+  names(res_sub) <- gsub(var, "var", names(res_sub))
+
+  res_sub %>%
+    left_join(
+      scenarios %>%
+        mutate(Rt = factor(as.character(scenarios$Rt), levels = c("History Based", "Economic Based", "Target Based"))),
+      by = "scenario") %>%
+    mutate(Rt = factor(gsub(" ", "\n", Rt), gsub(" ", "\n", levels(Rt)))) %>%
+    ggplot(aes(x = Vaccine, y = var_med,
+               ymin = var_025, ymax = var_975,
+               color = Rt, group = interaction(Vaccine, Rt))) +
+    # geom_hline(yintercept = 0, color = "black") +
+    geom_linerange(position = position_dodge(width = 0.5), lwd = 2, alpha = 0.3) +
+    geom_linerange(aes(ymin = var_25, ymax = var_75),
+                   position = position_dodge(width = 0.5), lwd = 2, alpha = 0.6) +
+    geom_point(shape = 21, size =2, fill = "white", position = position_dodge(width = 0.5)) +
+    facet_grid(rows = vars(income)) +
+    ggpubr::theme_pubr(base_size = 14) +
+    theme(panel.grid.major = element_line()) +
+    scale_color_manual(name = "Speed of Lifting NPI Restrictions:", values = c(pals::stepped3()[c(1,9,5,13)])) +
+    labs(x = "\nVaccine Production and Equity\n", y = ylab) +
+    guides(color=guide_legend(nrow=1, byrow=TRUE)) +
+    theme(legend.text = element_text(size = 14), plot.margin = margin(0, 1, 0, 0, "cm")) +
+    coord_flip() +
+    scale_y_continuous(n.breaks = n.breaks, labels = scales::unit_format(prefix = prefix, unit = unit, scale = scale))
+
+}
+
+# VSL
+
+res_full <- readRDS("analysis/data_out/total_lifeyears_income.rds")
+
+var <- "economic_life_years_saved"
+ylab <- "Total Value of Statistical Life Years"
+vsl_scenario_averted_by_vaccine_income <- plot_income_by_vaccine(res_full, var, ylab)
+
+
+# Averted
+
+res_full <- readRDS("analysis/data_out/total_deaths_income.rds")
+
+var <- "deaths_averted"
+ylab <- "Total Deaths Averted"
+deaths_scenario_averted_by_vaccine_income <- plot_income_by_vaccine(res_full, var, ylab, unit = "Million", prefix = "", scale = 1e-6)
+
+combined_death_income_impacts <- ggpubr::ggarrange(
+  deaths_scenario_averted_by_vaccine_income,
+  vsl_scenario_averted_by_vaccine_income + labs(x = "\n"),
+  ncol = 2, #labels = c(LETTERS[1:2]), scale = 0.9,
+  common.legend = TRUE, labels = "AUTO", legend = "bottom"
+)
+
+save_figs("combined_death_vsl_npi_impacts_income", combined_death_income_impacts, width = 20, height = 10)
