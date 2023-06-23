@@ -802,8 +802,6 @@ open_dates <- map(orderly_ids$id, function(x) {
 }) %>% setNames(orderly_ids$iso3c) %>% flatten_name("iso3c")
 save_outputs(open_dates, "analysis/data_out/open_dates.rds")
 
-# INSERT DANIELA CODE HERE TO ADD THE EXTRA COLUMNS that then produced closure_weeks
-
 closure_weeks <- readRDS("analysis/data_out/closure_weeks.RDS") %>%
   rename(extra_full_school_weeks = extra_full) %>%
   rename(extra_partial_school_weeks = extra_partial)
