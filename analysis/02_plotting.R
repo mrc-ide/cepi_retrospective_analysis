@@ -14,7 +14,8 @@ save_figs <- function(name,
   cowplot::save_plot(filename = fig_path(paste0(name,".png")),
                      plot = fig,
                      base_height = height,
-                     base_width = width)
+                     base_width = width,
+                     bg = "white")
 
   pdf(file = fig_path(paste0(name,".pdf")), width = width, height = height)
   print(fig)
@@ -1112,7 +1113,83 @@ combined_death_income_impacts <- ggpubr::ggarrange(
   deaths_scenario_averted_by_vaccine_income,
   vsl_scenario_averted_by_vaccine_income + labs(x = "\n"),
   ncol = 2, #labels = c(LETTERS[1:2]), scale = 0.9,
-  common.legend = TRUE, labels = "AUTO", legend = "bottom"
+  common.legend = TRUE, labels = "AUTO", legend = "top"
 )
 
 save_figs("combined_death_vsl_npi_impacts_income", combined_death_income_impacts, width = 20, height = 10)
+
+
+#Combined example plot of Rt and Vaccine assumptions
+source("src/run_simulations/funcs.R")
+produce_rt_vaccine_plots <- function(iso3c, cepi_start_date = "2020-04-20", equity_speed = 2, booster = TRUE, excess_mortality = TRUE, force_opening = TRUE){
+  old_wd <- getwd()
+  orderly::orderly_develop_start("run_simulations", list(iso3c = iso3c, cepi_start_date = cepi_start_date, equity_speed = equity_speed, booster = booster, excess_mortality = excess_mortality, force_opening = force_opening))
+  setwd("src/run_simulations")
+
+  # ---------------------------------------------------------------------------- #
+  # 1. Set and read in global variables/data from previous runs
+  # ---------------------------------------------------------------------------- #
+  
+  # Files to be read in
+  income_boosts <- readRDS("income_boosts.Rds")
+  
+  # Make sure provided parameters are the correct class
+  cepi_start_date <- as.Date(cepi_start_date)
+  equity_speed <- as.numeric(equity_speed)
+  booster <- as.logical(booster)
+  excess_mortality <- as.logical(excess_mortality)
+  iso3c <- as.character(iso3c)
+  
+  end_date <- as.Date("2022-01-01")
+  
+  # ---------------------------------------------------------------------------- #
+  # 2. Get fit and prepare scenarios
+  # ---------------------------------------------------------------------------- #
+  
+  ## Get fit from github
+  fit <- grab_fit(iso3c, excess_mortality, booster)
+  
+  ## Update model fit objects
+  fit$inputs$data <- fit$inputs$data %>% filter((date_start <= end_date))
+  fit$squire_model <- squire.page:::nimue_booster_min_model(use_dde = TRUE, use_difference = FALSE)
+  fit$model <- fit$squire_model$odin_model(
+    user = squire.page:::assign_infections(
+      squire.page:::setup_parameters(fit$squire_model, fit$parameters),
+      mean(fit$inputs$initial_infections_interval)
+    ),
+    unused_user_action = "ignore"
+  )
+  
+  ## Setup Scenarios
+  scenarios <- read_csv("scenarios.csv", show_col_types = FALSE)
+  
+  # Note have just set to the default here for Rt
+  scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
+  
+  # Plot of our vaccine and Rt scenarios
+  vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE, end_date)
+  rt_plot <- rt_two_by_one_scenario_plot(scenarios, scenario_objects, fit, end_date)
+
+  setwd(old_wd)
+  orderly::orderly_develop_clean("run_simulations")
+
+  list(
+    vacc_plot = vacc_plot,
+    rt_plot = rt_plot
+  )
+}
+
+example_plots <- produce_rt_vaccine_plots("AZE")
+combined_example_plot <- ggarrange(
+  as_ggplot(get_legend(example_plots$rt_plot)),
+  ggarrange(
+    ggarrange(
+      example_plots$vacc_plot[[2]] + theme(legend.position = "none"),
+      example_plots$vacc_plot[[4]] + theme(legend.position = "none"),
+      ncol = 1
+    ),
+    example_plots$rt_plot + theme(legend.position = "none"),
+    nrow = 1, labels = c("A", "B")
+  ), ncol = 1, heights = c(0.1, 1)
+)
+save_figs("vaccine_rt_example_plot", combined_example_plot, width = 20, height = 10)
