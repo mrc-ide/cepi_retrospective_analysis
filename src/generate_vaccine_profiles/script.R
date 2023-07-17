@@ -1,4 +1,9 @@
 set.seed(1000101)
+
+#setup colours
+library(scales)
+colours <- hue_pal()(3)
+names(colours) <- c("Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)", "Infection")
 ##Set-up VEs for Vaccine Types
 ves_by_type <- read_csv("vaccine_efficacy_groups.csv") %>%
   mutate(dose = if_else(dose == "Partial", "First", "Second")) %>%
@@ -77,12 +82,12 @@ ves_by_type <- ves_by_type %>%
 #  filter(vaccine_type == "mRNA")
 #load parameter chains
 ab_params <- list(
-  ni50 = log10(0.052),
-  ns50 = log10(0.01),
-  k = 2.8,
-  hl_s = 33,
-  hl_l = 580,
-  period_s = 86
+  ni50 = -1.040957,
+  ns50 = -1.675559,
+  k = 3.182298,
+  hl_s = 34.53602,
+  hl_l = 573.5029,
+  period_s = 75.1927
 )
 
 ##Fit Waning Curves
@@ -191,6 +196,11 @@ other_doses <- ves_by_type %>%
     }
     res <- optimize(err_func, interval = c(0, 10), maximum = FALSE)
     initial_ab <- res$minimum
+
+    if(platform == "mRNA" & variant == "Wild" & dose == "Second"){
+      example_ab <<- initial_ab
+    }
+
     abs <- simulate_ab(0:simulate_time, initial_ab,  ab_params$hl_s,  ab_params$hl_l,  ab_params$period_s)
     ve_i <- ab_to_ve(abs, ab_params$ni50, ab_params$k)
     ve_d <- ab_to_ve(abs, ab_params$ns50, ab_params$k)
@@ -201,13 +211,20 @@ other_doses <- ves_by_type %>%
       Infection = ve_i[1:(2*t_measure + 1)]
     ) %>% 
       pivot_longer(cols = -t, names_to = "Endpoint", values_to = "Efficacy") %>%
+      mutate(
+        Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)"))
+      ) %>%
       ggplot(aes(x = t, y = Efficacy, colour = Endpoint)) + 
       geom_line(show.legend = FALSE) +
       geom_point(data = tibble(
         t = t_measure,
         Efficacy = c(parameter_infection, parameter_hospitalisation),
         Endpoint = c("Infection", "Hospitalisation")
-      ), shape = "x", size = 5, show.legend = FALSE) +
+      ) %>%
+        mutate(
+          Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)"))
+        ), shape = "x", size = 5, show.legend = FALSE) +
+      scale_colour_manual(values = colours) +
       ggpubr::theme_pubclean() +
       labs(
         title = "Fit of initial Immune Response level, X shows the input efficacies",
@@ -299,7 +316,7 @@ other_doses <- ves_by_type %>%
     p <- tibble(
         t = rep(t_plot, 2),
         value = c(mod_value[, "ve_d"], mod_value[, "ve_i"]),
-        endpoint = c(rep("Hospitalisation", length(t_plot)), rep("Infection", length(t_plot)))
+        Endpoint = c(rep("Hospitalisation\n(Scaled for Breakthrough)", length(t_plot)), rep("Infection", length(t_plot)))
     ) %>%
       mutate(
         model = "Booster Model"
@@ -308,7 +325,7 @@ other_doses <- ves_by_type %>%
         tibble(
           t = t_plot,
           value = ve_d,
-          endpoint = "Hospitalisation",
+          Endpoint = "Hospitalisation\n(Scaled for Breakthrough)",
           model = "AB Process"
         )
       ) %>%
@@ -316,19 +333,19 @@ other_doses <- ves_by_type %>%
         tibble(
           t = t_plot,
           value = ve_i,
-          endpoint = "Infection",
+          Endpoint = "Infection",
           model = "AB Process"
         )
       ) %>%
-      ggplot(aes(x = t, y = value, color = endpoint, linetype = model)) +
+      mutate(
+        Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)"))
+      ) %>%
+      ggplot(aes(x = t, y = value, color = Endpoint, linetype = model)) +
         geom_line() +
       labs(y = "Vaccine Efficacy", x = "Days Since Dose", title = paste0("Dose: ", dose, ", Variant: ", variant, ", Type: ", df$vaccine_type[1]), linetype = "Model", colour = "Endpoint") +
       ggpubr::theme_pubclean() + scale_alpha(guide = 'none') +
+      scale_colour_manual(values = colours, drop = FALSE) +
       ylim(c(0, 1))
-
-    p <- ggarrange(
-      p, initial_ab_plot, ncol = 1, heights = c(0.6, 0.2)
-    )
 
     out$dose <- dose
     out$variant <- variant
@@ -336,14 +353,13 @@ other_doses <- ves_by_type %>%
 
     list(
       out = out,
-      plot = p
+      plot = p,
+      ab_plot = initial_ab_plot
     )
 })
 #split into plots and data
-plots <- map(other_doses, ~.x$plot)
+plots <- map(other_doses, ~list(plot = .x$plot, ab_plot = .x$ab_plot))
 other_doses <- map(other_doses, ~.x$out)
-
-##Calibration plots
 
 platform <- map_chr(other_doses, ~.x$platform[1])
 platforms <- unique(platform)
@@ -351,6 +367,13 @@ variant <- map_chr(other_doses, ~.x$variant[1])
 variants <- c("Wild", "Delta")
 dose <- map_chr(other_doses, ~.x$dose[1])
 doses <- unique(dose)
+
+#prep for example plot
+
+example_plots <- plots[platform == "mRNA" & variant == "Wild" & dose == "Second"][[1]]
+
+##Calibration plots
+plots <- map(plots, ~ggarrange(.x$plot, .x$ab_plot, ncol = 1, heights = c(0.6, 0.2)))
 p <- map(platforms, function(plat){
   dose_list <- map(doses, function(dos){
     var_list <- map(variants, function(vari){
@@ -369,21 +392,19 @@ p <- map(platforms, function(plat){
   ggarrange(plotlist = dose_list, ncol = 1, common.legend = TRUE)
 })
 
-pdf("calibration_plot.pdf", width = 20, height = 20)
-print(p)
-dev.off()
+dir.create("plots", showWarnings = FALSE)
+iwalk(p, \(x, idx) ggsave(paste0("plots/", idx, ".png"), x, width = 20, height = 20))
 
 rm(p, plots)
 
 first_doses <- map_dfr(first_doses, ~.x)
 other_doses <- map_dfr(other_doses, ~.x)
 
-
 efficacies <- other_doses %>%
   mutate(
     parameter = case_when(
       parameter == "w_1" & dose == "Second" ~ "fw_1",
-      parameter == "w_2" & dose == "Second"~ "fw_2",
+      parameter == "w_2" & dose == "Second" ~ "fw_2",
       parameter == "ved_1" & dose == "Second" ~ "fV_d_1",
       parameter == "ved_2" & dose == "Second" ~ "fV_d_2",
       parameter == "ved_3" & dose == "Second" ~ "fV_d_3",
@@ -391,7 +412,7 @@ efficacies <- other_doses %>%
       parameter == "vei_2" & dose == "Second" ~ "fV_i_2",
       parameter == "vei_3" & dose == "Second" ~ "fV_i_3",
       parameter == "w_1" & dose == "Booster" ~ "bw_1",
-      parameter == "w_2" & dose == "Booster"~ "bw_2",
+      parameter == "w_2" & dose == "Booster" ~ "bw_2",
       parameter == "ved_1" & dose == "Booster" ~ "bV_d_1",
       parameter == "ved_2" & dose == "Booster" ~ "bV_d_2",
       parameter == "ved_3" & dose == "Booster" ~ "bV_d_3",
@@ -411,3 +432,155 @@ efficacies %>%
   split(~platform) %>%
   map(~select(.x, !platform)) %>%
   saveRDS("vaccine_profiles.Rds")
+
+#example plot
+load("/home/gregbarnsley/Documents/imperial/cepi/cepi_retrospective_analysis/analysis/data_raw/mcmc_chain.Rdata", verbose = TRUE)
+n_samples <- 1000
+mcmc <- mcmc$output[mcmc$output$phase == "sampling",]
+n_its <- nrow(mcmc)
+mcmc <- mcmc[round(seq(1, n_its, length.out = n_samples)),]
+mcmc <- mcmc %>%
+  select(ni50, ns50, nd50, k, hl_s, hl_l, period_s, period_l)
+
+ab_with_stochastic <- pmap_dfr(
+  mcmc,
+  function(ni50, ns50, nd50, k, hl_s, hl_l, period_s, period_l) {
+    ab_t_measure <- simulate_ab(0:simulate_time, example_ab, hl_s, hl_l, period_s)
+    ve_i <- ab_to_ve(ab_t_measure, ni50, k)
+    ve_d <- ab_to_ve(ab_t_measure, ns50, k)
+    ve_d <- (ve_d - ve_i)/(1 - ve_i)
+    tibble(
+      t = rep(0:simulate_time, 2),
+      ve = c(ve_i, ve_d),
+      Endpoint = c(rep("Infection", simulate_time + 1), rep("Hospitalisation\n(Scaled for Breakthrough)", simulate_time + 1))
+    )
+  }, .id = "iteration"
+) %>%
+  mutate(
+    Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)"))
+  ) %>%
+  group_by(t, Endpoint) %>%
+  summarise(
+    median = median(ve),
+    lower = quantile(ve, 0.025),
+    upper = quantile(ve, 0.975),
+    .groups = "drop"
+  )
+
+#simulate the noise from the fitting VE fits
+add_noise <- function(x) {
+  N_samples <- 50
+  main_pars <- x
+  map_dfr(seq_len(N_samples), function(i){
+    pars <- main_pars
+      pars[1:2] <- 1/pars[1:2]
+      #convert pars to props
+      pars[5] <- pars[5]/pars[4]
+      pars[4] <- pars[4]/pars[3]
+      pars[8] <- pars[8]/pars[7]
+      pars[7] <- pars[7]/pars[6]
+      #add noise
+      pars <- pars + runif(length(pars), -0.05, 0.05)
+      pars[1:2] <- 1/pars[1:2]
+      pars[pars < 0] <- 0
+      pars[pars > 1] <- 1
+    
+      veds <- calculate_ve(pars[3], pars[4], pars[5])
+      veis <- calculate_ve(pars[6], pars[7], pars[8])
+      tibble(
+        value = c(pars[1:2], veds, veis),
+        parameter = names(pars),
+        iteration = i
+      )
+    })
+}
+
+random_efficacies <- efficacies  %>% 
+  filter(dose == "Second" & variant == "Wild" & platform == "mRNA") %>%
+  pull(value, parameter) %>%
+  add_noise() %>% 
+  group_by(iteration) %>% 
+  group_split() %>% 
+  map(~pull(.x, value, parameter)) %>% 
+  map_dfr(
+    function(x) {
+      t_plot <- 0:simulate_time
+      calc_eff <- calc_eff_gen$new(user = list(
+        w_1 = x["fw_1"],
+        w_2 = x["fw_2"],
+        ved = x["fV_d_1"],
+        ved_2 = x["fV_d_2"],
+        ved_3 = x["fV_d_3"],
+        vei = x["fV_i_1"],
+        vei_2 = x["fV_i_2"],
+        vei_3 = x["fV_i_3"]
+      ))
+      mod_value <- calc_eff$run(t = t_plot)
+      tibble(
+        t = mod_value[, "t"],
+        `Hospitalisation\n(Scaled for Breakthrough)` = mod_value[, "ve_d"],
+        Infection = mod_value[, "ve_i"]
+      )
+    }, .id = "sample"
+  ) %>% 
+  pivot_longer(
+    c(`Hospitalisation\n(Scaled for Breakthrough)`, Infection), names_to = "Endpoint", values_to = "ve"
+  ) %>%
+  mutate(
+    Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)"))
+  ) %>%
+  mutate(
+    sample = paste0(sample, ":", Endpoint)
+  )
+
+stoch_plot <- ggplot(ab_with_stochastic, aes(x = t, y = median, colour = Endpoint, fill = Endpoint)) +
+  geom_line(show.legend = FALSE) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, colour = NA, show.legend = FALSE) +
+  labs(x = "Days Since Dose", y = "Vaccine Efficacy", title = "", colour = "Endpoint", fill = "Endpoint") +
+  theme_pubclean() +
+  scale_colour_manual(values = colours) +
+  scale_fill_manual(values = colours) +
+  geom_line(
+    data = random_efficacies,
+    aes(x = t, y = ve, colour = Endpoint, fill = Endpoint, group = sample),
+    alpha = 0.2, linetype = "dashed", show.legend = FALSE
+  ) +
+  scale_y_continuous(labels = scales::percent)
+
+#VE data
+ves <- tribble(
+  ~Endpoint, ~Efficacy, ~lower, ~upper,
+  "Infection", 80.0,	56.0,	91.0,
+  "Infection", 90.0,	83.0,	94.0,
+  "Infection", 88.7,	68.4,	97.1,
+  "Infection", 92.8,	92.6,	93.0,
+  "Infection", 86.0,	72.0,	94.0,
+  "Infection", 91.2,	88.8,	93.1,
+  "Hospitalisation", 87.0,	55.0, 100.0
+) %>%
+  arrange(Endpoint, Efficacy) %>%
+  mutate(
+    Endpoint = factor(Endpoint, levels = c("Infection", "Hospitalisation", "Hospitalisation\n(Scaled for Breakthrough)")),
+    Efficacy = Efficacy/100,
+    lower = lower/100,
+    upper = upper/100,
+    t = 30 + seq(-2.5, 2.5, length.out = 8)[-1]#assume 30 days again?
+  )
+
+example_plot <- ggarrange(
+  ggarrange(
+    example_plots$ab_plot + labs(title = "") +
+      scale_y_continuous(labels = scales::percent) +
+      geom_point(data = ves, aes(x = t, y = Efficacy, colour = Endpoint), show.legend = FALSE) +
+      geom_errorbar(data = ves, aes(x = t, ymin = lower, ymax = upper, colour = Endpoint), show.legend = FALSE),
+    example_plots$plot + labs(title = "") +
+      scale_y_continuous(labels = scales::percent),
+    nrow = 1, common.legend = TRUE, labels = c("A", "B")
+  ),
+  stoch_plot, ncol = 1, labels = c("", "C")
+)
+ggsave("plots/example_plot.png", example_plot, width = 10, height = 10, bg = "white")
+
+zip("plots.zip", file.path("plots", list.files("plots")))
+
+unlink("plots", recursive = TRUE)

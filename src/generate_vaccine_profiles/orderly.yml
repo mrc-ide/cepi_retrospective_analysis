@@ -49,7 +49,7 @@ artefacts:
       filenames: vaccine_profiles.Rds
   - staticgraph:
       description: Fitted vaccine profiles
-      filenames: calibration_plot.pdf
+      filenames: plots.zip
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
