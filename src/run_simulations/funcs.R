@@ -3,18 +3,18 @@
 # -------------------------------------------------------------------------- ###
 
 # gathers fit from github
-grab_fit <- function(iso3c, excess_mortality, booster = FALSE){
+grab_fit <- function(iso3c, excess_mortality, booster = FALSE, commit = "main"){
 
   if (excess_mortality) {
-    path <- paste0("https://github.com/mrc-ide/covid-vaccine-impact-orderly/raw/main/data/excess_mortality/model_fits/", iso3c, ".Rds")
+    path <- paste0("https://github.com/mrc-ide/covid-vaccine-impact-orderly/raw/",commit,"/data/excess_mortality/model_fits/", iso3c, ".Rds")
   } else {
-    path <- paste0("https://github.com/mrc-ide/covid-vaccine-impact-orderly/raw/main/data/reported_deaths/model_fits/", iso3c, ".Rds")
+    path <- paste0("https://github.com/mrc-ide/covid-vaccine-impact-orderly/raw/",commit,"/data/reported_deaths/model_fits/", iso3c, ".Rds")
   }
   if (booster) {
     if (excess_mortality) {
-      path <- paste0("https://github.com/GBarnsley/booster_model_fits/blob/main/", iso3c, ".Rds?raw=true")
+      path <- paste0("https://github.com/GBarnsley/booster_model_fits/raw/",commit,"/", iso3c, ".Rds?raw=true")
     } else {
-      path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/main/reported_deaths/", iso3c, ".Rds")
+      path <- paste0("https://github.com/mrc-ide/nimue_global_fits/raw/",commit,"/reported_deaths/", iso3c, ".Rds")
     }
   }
 
@@ -68,14 +68,14 @@ describe_scenarios <- function(scenarios, variant = FALSE){
 }
 
 #convert scenario codes and fit object into a list of simulations ready to run
-implement_scenarios <- function(fit, scenarios, iso3c, force_opening){
-  pmap(scenarios, function(Rt, Vaccine, Variant, fit, force_opening){
+implement_scenarios <- function(fit, scenarios, iso3c, force_opening, dih){
+  pmap(scenarios, function(Rt, Vaccine, Variant, fit, force_opening, dih){
     #order matters since Rt can depend on vaccine coverage
     fit <- implement_vaccine(fit, Vaccine, iso3c)
-    fit <- implement_Rt(fit, Rt, iso3c, force_opening)
+    fit <- implement_Rt(fit, Rt, iso3c, force_opening, dih)
     fit <- implement_variant(fit, Variant)
     fit
-  }, fit = fit, force_opening = force_opening)
+  }, fit = fit, force_opening = force_opening, dih = dih)
 }
 
 # -------------------------------------------------------------------------- ###
@@ -103,28 +103,28 @@ simple_Rt <- function (model_out) {
 }
 
 # implements rt trends for fits
-implement_Rt <- function(fit, Rt, iso3c, force_opening){
+implement_Rt <- function(fit, Rt, iso3c, force_opening, dih){
   if (Rt == "baseline") {
     fit$inputs$open_date <- NA
     fit
   } else if (Rt == "target") {
 
-    implement_target_Rt(fit, iso3c, force_opening)
+    implement_target_Rt(fit, iso3c, force_opening, dih)
 
   } else if (Rt == "economic") {
 
-    implement_economic_Rt(fit, iso3c, force_opening)
+    implement_economic_Rt(fit, iso3c, force_opening, dih)
 
   }
 }
 
 # implements rt trends for target scenario
-implement_target_Rt <- function(fit, iso3c, force_opening){
+implement_target_Rt <- function(fit, iso3c, force_opening, dih){
   UseMethod("implement_target_Rt")
 }
 
 # implements rt trends for target scenario for booster model
-implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
+implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening, dih) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -150,7 +150,7 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     open_date <- vacc$date[which(vacc$secondary > cov_needed)[1]]
   }
 
-
+  # If they don't have an open date set to the average
   if(is.na(open_date) & force_opening){
     #if they don't open & we are forcing
     open_date <- readRDS("average_time_to_opening.Rds")
@@ -159,8 +159,10 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
   }
 
-  # if they only open after the end of 2021 then set to NA as
+
+  # if they still only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
+  # N.B. This is the last Rt date shift given the delay in infection to death
   if(!is.na(open_date)) {
     if(open_date > as.Date("2021-11-17")) {
       open_date <- NA
@@ -171,17 +173,26 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   if(!is.na(open_date)){
 
     # Rt associated with "opening" and update the Rt data frames for each sample
-    rt_new <- lapply(rt, function(x){
+    rt_new <- lapply(seq_along(rt), function(i){
+
+      x <- rt[[i]]
 
       # filter to after July 2020
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
       rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-      new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      #new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      new_open_date <- adjust_open_date_for_negative_infections(dih, open_date, i)
       rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
       # set the new rt
       x$Rt[x$date >= new_open_date] <- rt_open
-      x$Rt[x$date >= new_open_date][1:4] <- seq(rt_preopen, rt_open, length.out = 4)
+
+      # Rt stepped for the next 2 months
+      lr <- length(x$Rt[x$date > new_open_date])
+      remlr <- 1:min(lr, 4)
+      x$Rt[x$date >= new_open_date][remlr] <- seq(rt_preopen, rt_open, length.out = 4)[seq_along(remlr)]
+
+      x$open_date <- new_open_date
       return(x)
 
     })
@@ -194,6 +205,10 @@ implement_target_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   }
 
   # add the open date to the fit to use later
+  if(exists("rt_new")){
+  opds <- lapply(rt_new, function(x){as.character(x$open_date[1])})
+  open_date <- mean(as.Date(unlist(opds)))
+  }
   fit$inputs$open_date <- open_date
   return(fit)
 
@@ -215,13 +230,43 @@ adjust_open_date_for_rt_peaks <- function(x, open_date, rt_open){
   new
 }
 
+adjust_open_date_for_negative_infections <- function(dih, open_date, i){
+
+  # get the infecton output
+  dihx <- dih[dih$replicate == i,]
+
+  # get 2 week gradient
+  dihx$grads <- slider::slide_dbl(
+    dihx,
+    ~lm(infections ~ date, data = .x)$coefficients[2],
+    .before = 13,
+    .complete = TRUE
+  )
+
+  # get the first date after the open date with a negative infection gradient
+  new_open_date <- dihx %>% filter(date >= open_date & grads < 0) %>% pull(date) %>% first()
+
+  # if it is too late then adjust
+  if(!is.na(new_open_date)) {
+  if(new_open_date > as.Date("2021-11-17")) {
+    new_open_date <- as.Date("2021-11-17")
+  }
+  }
+
+  # if nothing then use the current date
+  if(is.na(new_open_date)) {
+    new_open_date <- open_date
+  }
+  new_open_date
+}
+
 # implements rt trends for economic scenario
-implement_economic_Rt <- function(fit, iso3c, force_opening){
+implement_economic_Rt <- function(fit, iso3c, force_opening, dih){
   UseMethod("implement_economic_Rt")
 }
 
 # implements rt trends for economic scenario for booster model
-implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
+implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening, dih) {
 
   # get previous rt trend
   rt <- simple_Rt(fit)
@@ -250,10 +295,11 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     open_date <- start_vaccinations_deaths + open_date$time_to_open[open_date$income_group == squire.page:::get_income_group(iso3c)]
   }
 
-  # if they only open after the end of 2021 then set to NA as
+  # if they still only open after the end of 2021 then set to NA as
   # we only care about openings before 2022
+  # N.B. This is the last Rt date shift given the delay in infection to death
   if(!is.na(open_date)) {
-    if(open_date > as.Date("2021-12-31")) {
+    if(open_date > as.Date("2021-11-17")) {
       open_date <- NA
     }
   }
@@ -266,22 +312,35 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
     school_eff <- c(0.2, 0.1, 0.05, 0.02)[as.integer(income)]
 
     # Rt associated with "opening" and update the Rt data frames for each sample
-    rt_new <- lapply(rt, function(x){
+    rt_new <- lapply(seq_along(rt), function(i){
 
+      x <- rt[[i]]
       # filter to after July 2020
       x2 <- x %>% filter(date < as.Date("2022-01-01") & date > as.Date("2020-07-01"))
       rt_open <- quantile(x2$Rt, prob = c(0.95), na.rm=TRUE)
-      new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      #new_open_date <- adjust_open_date_for_rt_peaks(x, open_date, rt_open)
+      new_open_date <- adjust_open_date_for_negative_infections(dih, open_date, i)
       rt_preopen <- (x2$Rt[x2$date >= new_open_date])[1]
 
       # set rt to be fully open
-      x$Rt[x$date > new_open_date] <- rt_open
+      x$Rt[x$date >= new_open_date] <- rt_open
 
       # set the new rt for school opening for the first month
-      x$Rt[x$date > new_open_date][1:2] <- rt_preopen * (school_eff+1)
+      if(length(x$Rt[x$date > new_open_date]) >= 2) {
+      x$Rt[x$date >= new_open_date][1:2] <- rt_preopen * (school_eff+1)
+      } else {
+      x$Rt[x$date >= new_open_date][1]  <- rt_preopen * (school_eff+1)
+      }
 
       # Rt for stepped opening over the next 6 months
-      x$Rt[x$date > new_open_date][3:14] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)
+      lr <- length(x$Rt[x$date > new_open_date])
+      if(lr > 2) {
+        remlr <- 3:min(lr, 14)
+        x$Rt[x$date >= new_open_date][remlr] <- seq((rt_preopen * (school_eff+1)), rt_open, length.out = 12)[seq_along(remlr)]
+      }
+
+      # add the open date here
+      x$open_date <- new_open_date
 
       return(x)
 
@@ -295,6 +354,10 @@ implement_economic_Rt.rt_optimised <- function(fit, iso3c, force_opening) {
   }
 
   # add the open date to the fit to use later
+  if(exists("rt_new")){
+    opds <- lapply(rt_new, function(x){as.character(x$open_date[1])})
+    open_date <- mean(as.Date(unlist(opds)))
+  }
   fit$inputs$open_date <- open_date
 
   return(fit)

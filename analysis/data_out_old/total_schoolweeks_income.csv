@@ -1,0 +1,49 @@
+"scenario","income","Rt","Vaccine","extra_full_school_weeks_total","extra_partial_school_weeks_total","extra_full_school_weeks_med","extra_partial_school_weeks_med","extra_full_school_weeks_025","extra_partial_school_weeks_025","extra_full_school_weeks_25","extra_partial_school_weeks_25","extra_full_school_weeks_75","extra_partial_school_weeks_75","extra_full_school_weeks_975","extra_partial_school_weeks_975"
+1,"HIC","History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0
+1,"UMIC","History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0
+1,"LMIC","History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0
+1,"LIC","History Based","100-Day Mission",0,0,0,0,0,0,0,0,0,0,0,0
+2,"HIC","Target Based","100-Day Mission",106,401,0,6,0,0,0,0,2,12,15.8,26.5
+2,"UMIC","Target Based","100-Day Mission",188,647,2.5,13,0,0,0,5,6.75,23,17.875,31.85
+2,"LMIC","Target Based","100-Day Mission",197,345,0,2,0,0,0,0,6,13.75,20.825,29.75
+2,"LIC","Target Based","100-Day Mission",56,55,0,0,0,0,0,0,1,2,18.8,15.5
+3,"HIC","Economic Based","100-Day Mission",354,987,6,17,0,0,0,6,10,26,31,50.7
+3,"UMIC","Economic Based","100-Day Mission",547,1129,8,21,0,0,3.25,13,19.75,39,32.5,51.4
+3,"LMIC","Economic Based","100-Day Mission",427,748,2.5,13,0,0,0,3.25,13,23,41.825,54.875
+3,"LIC","Economic Based","100-Day Mission",111,220,3,5,0,0,0,2,6,18,22.625,32.5
+4,"HIC","History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0
+4,"UMIC","History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0
+4,"LMIC","History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0
+4,"LIC","History Based","100-Day Mission & Manufacturing",0,0,0,0,0,0,0,0,0,0,0,0
+5,"HIC","Target Based","100-Day Mission & Manufacturing",372,1071,6,18,0,0,0,6,12,28,34.2,57.1
+5,"UMIC","Target Based","100-Day Mission & Manufacturing",681,1216,12.5,22,0,3.15,6,13.5,22.5,40.5,39.75,53.95
+5,"LMIC","Target Based","100-Day Mission & Manufacturing",595,856,6.5,15,0,0,2,6,19.25,25.75,51.125,56.75
+5,"LIC","Target Based","100-Day Mission & Manufacturing",198,269,5.5,9,0,0,1,5,10,21,31.75,32.5
+6,"HIC","Economic Based","100-Day Mission & Manufacturing",407,1115,6,18,0,0,1,8,12,28,36.6,59.5
+6,"UMIC","Economic Based","100-Day Mission & Manufacturing",786,1250,15.5,23,0.375,3.15,8,14,25.25,40.5,43.875,54.4
+6,"LMIC","Economic Based","100-Day Mission & Manufacturing",696,897,8.5,16,0,0.125,2.75,7.25,22.5,28.25,54.475,56.75
+6,"LIC","Economic Based","100-Day Mission & Manufacturing",263,283,8,9,0,3,3,5,14.25,21,35.75,32.5
+7,"HIC","History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0
+7,"UMIC","History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0
+7,"LMIC","History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0
+7,"LIC","History Based","100-Day Mission & Infrastructure",0,0,0,0,0,0,0,0,0,0,0,0
+8,"HIC","Target Based","100-Day Mission & Infrastructure",347,969,6,16,0,0,0,6,10,25,29.4,49.7
+8,"UMIC","Target Based","100-Day Mission & Infrastructure",529,1105,8,21,0,0,3,13,18.75,38,30.75,50.55
+8,"LMIC","Target Based","100-Day Mission & Infrastructure",413,721,2,12.5,0,0,0,3.25,12,22.75,40.65,53
+8,"LIC","Target Based","100-Day Mission & Infrastructure",105,207,2.5,5,0,0,0,1,5,17,22.2,32.5
+9,"HIC","Economic Based","100-Day Mission & Infrastructure",359,1001,6,18,0,0,0,6,11,27,31.8,51
+9,"UMIC","Economic Based","100-Day Mission & Infrastructure",558,1142,8,21,0,0,3.25,13,19.75,39,33.375,52.25
+9,"LMIC","Economic Based","100-Day Mission & Infrastructure",441,763,3,13.5,0,0,0,3.25,14,23,42.825,55.875
+9,"LIC","Economic Based","100-Day Mission & Infrastructure",119,228,3.5,5,0,0,0,3,7,19,23.05,32.5
+10,"HIC","History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0
+10,"UMIC","History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0
+10,"LMIC","History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0
+10,"LIC","History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0,0,0,0,0,0,0,0
+11,"HIC","Target Based","100-Day Mission Total (Manu. & Infr.)",393,1092,6,18,0,0,0,6,12,28,35.8,58.1
+11,"UMIC","Target Based","100-Day Mission Total (Manu. & Infr.)",743,1239,14,23,0.25,3.15,7,14,24.25,40.5,42.75,54.25
+11,"LMIC","Target Based","100-Day Mission Total (Manu. & Infr.)",658,883,7.5,15.5,0,0.125,2.75,7.25,21.5,26.75,53.3,56.75
+11,"LIC","Target Based","100-Day Mission Total (Manu. & Infr.)",239,278,6.5,9,0,2,2.75,5,12.25,21,34.175,32.5
+12,"HIC","Economic Based","100-Day Mission Total (Manu. & Infr.)",422,1128,6,18,0,0,1,9,12,28,37.6,60.2
+12,"UMIC","Economic Based","100-Day Mission Total (Manu. & Infr.)",811,1258,16,23,0.375,4,8,14.5,26.25,40.5,44.75,54.55
+12,"LMIC","Economic Based","100-Day Mission Total (Manu. & Infr.)",721,905,9,16,0,0.125,3,8,23.5,28.5,54.475,56.75
+12,"LIC","Economic Based","100-Day Mission Total (Manu. & Infr.)",280,286,9,9,0,3.5,4,5,15,21,36.75,32.5

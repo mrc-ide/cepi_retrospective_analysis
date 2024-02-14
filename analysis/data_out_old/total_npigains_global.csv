@@ -1,0 +1,13 @@
+"scenario","Rt","Vaccine","gain_in_openness_med","gain_in_openness_025","gain_in_openness_25","gain_in_openness_75","gain_in_openness_975"
+1,"History Based","100-Day Mission",0,0,0,0,0
+2,"Target Based","100-Day Mission",15794,15285,15578,15960,16434
+3,"Economic Based","100-Day Mission",13688,13258,13551,13806,14129
+4,"History Based","100-Day Mission & Manufacturing",0,0,0,0,0
+5,"Target Based","100-Day Mission & Manufacturing",24494,23895,24254,24745,25342
+6,"Economic Based","100-Day Mission & Manufacturing",19996,19556,19844,20214,20658
+7,"History Based","100-Day Mission & Infrastructure",0,0,0,0,0
+8,"Target Based","100-Day Mission & Infrastructure",21618,21011,21389,21787,22309
+9,"Economic Based","100-Day Mission & Infrastructure",17084,16626,16949,17253,17612
+10,"History Based","100-Day Mission Total (Manu. & Infr.)",0,0,0,0,0
+11,"Target Based","100-Day Mission Total (Manu. & Infr.)",27928,27235,27668,28184,28834
+12,"Economic Based","100-Day Mission Total (Manu. & Infr.)",22427,21796,22227,22642,23092

@@ -12,6 +12,7 @@ booster <- as.logical(booster)
 simulate_counterfactuals <- as.logical(simulate_counterfactuals)
 excess_mortality <- as.logical(excess_mortality)
 iso3c <- as.character(iso3c)
+commit <- as.character(commit)
 
 end_date <- as.Date("2022-01-01")
 
@@ -20,7 +21,18 @@ end_date <- as.Date("2022-01-01")
 # ---------------------------------------------------------------------------- #
 
 ## Get fit from github
-fit <- grab_fit(iso3c, excess_mortality, booster)
+fit <- grab_fit(iso3c, excess_mortality, booster, commit)
+
+# if the fit is the most recent, these forgot to include the vaccine data for 2022
+# so we will grab this from an old fit
+if(commit == "32d334d96937536e0ac9da1d8c37f12841c88af5") {
+  fit_old <- grab_fit(iso3c, excess_mortality, booster, "2e5ecf5b1b15698ff4d3b1adcb07d95aa81bc4ed")
+  fit$parameters$primary_doses <- fit_old$parameters$primary_doses
+  fit$parameters$booster_doses <- fit_old$parameters$booster_doses
+  fit$parameters$tt_primary_doses <- fit_old$parameters$tt_primary_doses
+  fit$parameters$tt_booster_doses <- fit_old$parameters$tt_booster_doses
+}
+
 
 ## Update model fit objects
 fit$inputs$data <- fit$inputs$data %>% filter((date_start <= end_date))
@@ -33,14 +45,27 @@ fit$model <- fit$squire_model$odin_model(
   unused_user_action = "ignore"
 )
 
+# run model first here to get time series of infections
+original_out <- squire.page::generate_draws(fit)
+dih <- get_deaths_infections_hosps_time(original_out)
+
+# Plot our model fit
+wdcp_plot <- weekly_death_comp_plot(dih, fit)
+cdcp_plot <- cumulative_death_comp_plot(dih, fit)
+ggsave("wdcp_plot.pdf", wdcp_plot, width = 8.3, height = 6)
+ggsave("cdcp_plot.pdf", cdcp_plot, width = 8.3, height = 6)
+
 ## Setup Scenarios
 scenarios <- read_csv("scenarios.csv", show_col_types = FALSE)
 
 # Note have just set to the default here for Rt
-scenario_objects <- implement_scenarios(fit, scenarios, iso3c, force_opening)
+scenario_objects <- implement_scenarios(
+  fit = fit, scenarios = scenarios, iso3c = iso3c, force_opening = force_opening, dih = dih
+  )
 
 # Plot of our vaccine and Rt scenarios
 vacc_plot <- vacc_allocation_plot(scenarios, scenario_objects, fit, combine = FALSE, end_date)
+
 #rt_plot <- rt_scenario_plot(scenarios, scenario_objects, fit)
 rt_plot <- rt_two_by_one_scenario_plot(scenarios, scenario_objects, fit, end_date)
 
@@ -61,10 +86,6 @@ data.frame("open_date" = unlist(map(scenario_objects, function(x) as.character(x
 # start results creation in data directory
 dir.create("data")
 if(simulate_counterfactuals){
-
-  # future::plan(future::multisession()) #not sure what the best way to do this in an orderly task is
-
-  original_out <- squire.page::generate_draws(fit)
 
   ## Run simulations and export (roughly ~<1 minute per scenario on a 12 core machine)
   walk(seq_len(nrow(scenarios)), function(i){

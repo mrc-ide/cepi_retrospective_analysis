@@ -1,10 +1,7 @@
 devtools::install_github("mrc-ide/squire.page")
 
-iso3cs <- xml2::read_html("https://github.com/mrc-ide/nimue_global_fits/tree/main/excess_mortality")
-iso3cs <- gsub("\\.Rds","",rvest::html_text(rvest::html_nodes(iso3cs,".js-navigation-open.Link--primary")))
-
-# remove ERI and FSM for lack of vaccines at the moment
-iso3cs <- iso3cs[-which(iso3cs %in% c("ERI", "FSM", "VUT"))]
+# ISO3CS being looked at
+iso3cs <- readLines("analysis/iso3cs")
 
 # ---------------------------------------------- #
 # 1. Demo Runs ------------------------------------------------------------
@@ -14,6 +11,9 @@ library(foreach)
 library(doParallel)
 library(orderly)
 library(tidyverse)
+library(dplyr)
+library(readxl)
+library(tidyr)
 
 # set up cluster
 n.cores <- 14
@@ -35,7 +35,8 @@ orderly_ids <- foreach(
   suppressWarnings(suppressMessages(
     tryCatch(
       orderly::orderly_run(
-        "run_simulations", parameters = list(iso3c = iso3cs[i], excess_mortality = TRUE, force_opening = TRUE, simulate_counterfactuals = FALSE),
+        "run_simulations", parameters = list(iso3c = iso3cs[i], excess_mortality = TRUE, force_opening = TRUE, simulate_counterfactuals = FALSE,
+                                             commit = "32d334d96937536e0ac9da1d8c37f12841c88af5"),
         echo = FALSE
       ),
       error = function(e){NA}
@@ -69,7 +70,7 @@ iso3c_to_run <- orderly_ids$iso3cs[is.na(orderly_ids$orderly_id)]
 Sys.setenv("SQUIRE_PARALLEL_DEBUG" = "TRUE")
 
 # set up cluster
-n.cores <- 5
+n.cores <- 4
 my.cluster <- parallel::makeCluster(
   n.cores,
   type = "PSOCK"
@@ -88,7 +89,8 @@ finished_orderly_ids <- foreach(
   suppressWarnings(suppressMessages(
     tryCatch(
       orderly::orderly_run(
-        "run_simulations", parameters = list(iso3c = iso3c_to_run[i], excess_mortality = TRUE, simulate_counterfactuals = TRUE, force_opening = TRUE),
+        "run_simulations", parameters = list(iso3c = iso3c_to_run[i], excess_mortality = TRUE, simulate_counterfactuals = TRUE, force_opening = TRUE,
+                                             commit = "32d334d96937536e0ac9da1d8c37f12841c88af5"),
         echo = FALSE
       ),
       error = function(e){NA}
@@ -117,7 +119,7 @@ pdftools::pdf_combine(
 # 3. Gather health outcomes   -----------------------------------------------
 # ------------------------------------------------------------------------- #
 
-orderly_ids <- readRDS("analysis/data_out/orderly_ids.rds")
+orderly_ids <- readRDS("analysis/data_out/orderly_ids_new.rds")
 names(orderly_ids) <- c("iso3c", "id")
 library(furrr)
 
@@ -797,12 +799,16 @@ npi_gains_income %>% flatten_name("income") %>% left_join(scenarios) %>% relocat
 # 5c. Gather school openings   -----------------------------------
 # ------------------------------------------------------------------------- #
 
-open_dates <- map(orderly_ids$id, function(x) {
-  readRDS(file.path("archive", "run_simulations", id, "open_dates.Rds"))
+open_dates <- map(orderly_ids$orderly_id, function(x) {
+  readRDS(file.path("archive", "run_simulations", x, "open_dates.Rds"))
 }) %>% setNames(orderly_ids$iso3c) %>% flatten_name("iso3c")
 save_outputs(open_dates, "analysis/data_out/open_dates.rds")
 
-closure_weeks <- readRDS("analysis/data_out/closure_weeks.RDS") %>%
+# now calculate closures
+source("analysis/extra_functions.R")
+closure_weeks <- closure_weeks(open_dates)
+
+closure_weeks <- closure_weeks %>%
   rename(extra_full_school_weeks = extra_full) %>%
   rename(extra_partial_school_weeks = extra_partial)
 

@@ -15,11 +15,11 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
   df <- df %>% describe_scenarios()
   df <- rbind(df,
               data.frame(
-    "date" = fit$parameters$tt_booster_doses + fit$inputs$start_date,
-    "primary" = fit$parameters$primary_doses,
-    "booster" = fit$parameters$booster_doses,
-    "Vaccine" = "Baseline"
-  )) %>%
+                "date" = fit$parameters$tt_booster_doses + fit$inputs$start_date,
+                "primary" = fit$parameters$primary_doses,
+                "booster" = fit$parameters$booster_doses,
+                "Vaccine" = "Baseline"
+              )) %>%
     filter(date <= end_date)
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
                                               "100 Days Mission",
@@ -130,11 +130,11 @@ vacc_allocation_plot <- function(scenarios, scenario_objects, fit, combine = TRU
     ylab("Cumulative Booster Vaccinations")
 
   if(combine) {
-  cowplot::plot_grid(gg1, gg2 + theme(legend.position = "none"),
-                     gg3, gg4 + theme(legend.position = "none"),
-                     ncol = 2, align = "v", rel_heights = c(1,0.8), byrow = FALSE)
+    cowplot::plot_grid(gg1, gg2 + theme(legend.position = "none"),
+                       gg3, gg4 + theme(legend.position = "none"),
+                       ncol = 2, align = "v", rel_heights = c(1,0.8), byrow = FALSE)
   } else {
-  list(gg1, gg2, gg3, gg4)
+    list(gg1, gg2, gg3, gg4)
   }
 }
 
@@ -198,8 +198,8 @@ rt_complex_scenario_plot <- function(scenarios, scenario_objects, fit, end_date)
   rt_list[[length(rt_list)]]$Vaccine <- unique(scenarios$Vaccine)[1]
 
   for(i in seq_along(unique(scenarios$Vaccine))[-1]) {
-  rt_list[[length(rt_list) + 1]] <- rt_list[[length(rt_list)]]
-  rt_list[[length(rt_list)]]$Vaccine <- unique(scenarios$Vaccine)[i]
+    rt_list[[length(rt_list) + 1]] <- rt_list[[length(rt_list)]]
+    rt_list[[length(rt_list)]]$Vaccine <- unique(scenarios$Vaccine)[i]
   }
 
   # bind and summarise
@@ -268,10 +268,10 @@ rt_two_by_one_scenario_plot <- function(scenarios, scenario_objects, fit, end_da
 
   # set up the correct full vaccine
   df$Vaccine <- factor(df$Vaccine, levels = c("Baseline",
-                                "100 Days Mission",
-                                "100 Days Mission & Infrastructure",
-                                "100 Days Mission & Manufacturing",
-                                "100 Days Mission Total (Manu. & Infr.)"))
+                                              "100 Days Mission",
+                                              "100 Days Mission & Infrastructure",
+                                              "100 Days Mission & Manufacturing",
+                                              "100 Days Mission Total (Manu. & Infr.)"))
 
   df <- df %>% mutate(Vaccine = replace_na(Vaccine, "Baseline"))
 
@@ -325,17 +325,69 @@ combine_plot_outputs <- function(vacc_plot, rt_plot, death_plot, death_averted_p
                              ncol = 3, rel_widths = c(1,0.02,1))
 
   row2a <- cowplot::plot_grid(vacc_plot[[2]], vacc_plot[[4]] + theme(legend.position = "none"),
-                             ncol = 1, rel_heights = c(1,0.8), align = "v")
+                              ncol = 1, rel_heights = c(1,0.8), align = "v")
 
   row2 <- cowplot::plot_grid(rt_plot, line_v, row2a,
                              ncol = 3, rel_widths = c(1,0.02,1))
 
   outplot <-  cowplot::plot_grid(row1, line_h, row2,
-                                  ncol = 1, rel_heights = c(1.1, 0.05, 1))
+                                 ncol = 1, rel_heights = c(1.1, 0.05, 1))
 
   final <- cowplot::plot_grid(title, line_h, outplot,
-                                ncol = 1, rel_heights = c(0.05,0.02,1))
+                              ncol = 1, rel_heights = c(0.05,0.02,1))
 
   return(final)
+
+}
+
+weekly_death_comp_plot <- function(dih, fit){
+
+  date_0 <- squire.page:::get_data_end_date(fit)
+  data <- squire.page:::get_data(fit)
+  data$date <- squire.page:::get_dates_greater(fit)
+  data$cdeaths <- cumsum(data$deaths)
+
+  dih %>% ggplot(aes(date, deaths*7, group = replicate)) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
+                   axis.title.x = ggplot2::element_blank()) +
+    ggplot2::ylab("Weekly Deaths") +
+    ggplot2::scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+    ggplot2::xlab("") +
+    ggplot2::geom_bar(
+      data = data,
+      ggplot2::aes(x = .data$date,
+                   y = .data$deaths),stat = "identity",
+      linetype = "dashed", inherit.aes = FALSE, fill = "#c6a39b"
+    ) +
+    geom_line(color = "#408da7", alpha = 0.25)  +
+    ggtitle(paste0("Baseline Fit: ", fit$parameters$country, " (",data$iso[1], ")"))
+
+}
+
+cumulative_death_comp_plot <- function(dih, fit){
+
+  date_0 <- squire.page:::get_data_end_date(fit)
+  data <- squire.page:::get_data(fit)
+  data$date <- squire.page:::get_dates_greater(fit)
+  data$cdeaths <- cumsum(data$deaths)
+  dih <- dih %>% group_by(replicate) %>%
+    mutate(cdeaths = cumsum(deaths))
+
+  dih %>% ggplot(aes(date, cdeaths, group = replicate)) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
+                   axis.title.x = ggplot2::element_blank()) +
+    ggplot2::ylab("Cumlative Deaths") +
+    ggplot2::scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+    ggplot2::xlab("") +
+    ggplot2::geom_bar(
+      data = data,
+      ggplot2::aes(x = .data$date,
+                   y = .data$cdeaths),stat = "identity",
+      linetype = "dashed", inherit.aes = FALSE,fill = "#c6a39b"
+    ) +
+    geom_line(color = "#408da7", alpha = 0.25)  +
+    ggtitle(paste0("Baseline Fit: ", fit$parameters$country, " (",data$iso[1], ")"))
 
 }

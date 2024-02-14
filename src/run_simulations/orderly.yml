@@ -47,6 +47,12 @@ artefacts:
   - staticgraph:
       description: Plot for sense-checking scenarios
       filenames: scenario_plot.pdf
+  - staticgraph:
+      description: Plot for weekly deaths fit
+      filenames: wdcp_plot.pdf
+  - staticgraph:
+      description: Plot for cumulative deaths fit
+      filenames: cdcp_plot.pdf
   - data:
       description: Scenario outputs
       filenames:
@@ -94,6 +100,8 @@ parameters:
     default: "2020-04-20"
   force_opening:
     default: FALSE
+  commit:
+    default: "main"
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual
@@ -116,6 +124,7 @@ packages:
   - ggpubr
   - paletteer
   - pals
+  - slider
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
